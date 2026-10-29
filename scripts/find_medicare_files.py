@@ -41,11 +41,13 @@ def main():
             print(f"::warning::{key}: {e}")
             out[key] = {"url": url, "error": str(e)}
             continue
+        (ROOT / "data/investigations/medicare_pages").mkdir(parents=True, exist_ok=True)
+        (ROOT / f"data/investigations/medicare_pages/{key}.html").write_text(html)
         links = []
-        for href, text in re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', html, re.S):
+        for href, text in re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', html, re.S):
             text = re.sub(r"<[^>]+>|\s+", " ", text).strip()
             full = urllib.parse.urljoin(final, href)
-            if re.search(r"\.(zip|xlsx?|csv|txt)(\?|$)", full, re.I) or re.search(r"table|addendum|clab|wage", text + full, re.I):
+            if re.search(r"\.(zip|xlsx?|csv|txt)(\?|$)|/files/", full, re.I) or re.search(r"table|addendum|clab|wage", text + full, re.I):
                 links.append({"text": text[:140], "href": full})
         out[key] = {"url": final, "links": links}
         print(f"::notice::{key}: {len(links)} candidate links")
