@@ -68,8 +68,8 @@ Query: [`sql/03_cash_vs_insured.sql`](../sql/03_cash_vs_insured.sql)
 | Beth Israel Deaconess Medical Center | CT abdomen and pelvis (with contrast) | 3,721 | 1,068 | 3.5 |
 | Massachusetts General Hospital | MRI lower back (no contrast) | 3,281 | 967 | 3.4 |
 | Boston Medical Center | MRI knee (no contrast) | 2,076 | 628 | 3.3 |
-| Beth Israel Deaconess Medical Center | Screening mammogram | 889 | 275 | 3.2 |
 | Boston Medical Center | MRI lower back (no contrast) | 1,815 | 574 | 3.2 |
+| Beth Israel Deaconess Medical Center | Screening mammogram | 889 | 275 | 3.2 |
 
 ## 04. Same insurer different hospitals
 
@@ -87,8 +87,8 @@ Query: [`sql/04_same_insurer_different_hospitals.sql`](../sql/04_same_insurer_di
 | Blue Cross Blue Shield | Cholesterol (lipid) panel | 5 | Tufts Medical Center | 11 | Brigham and Women's Hospital | 87 | 8.2 |
 | Cigna | Comprehensive metabolic panel | 5 | Boston Medical Center | 20 | Brigham and Women's Hospital | 129 | 6.3 |
 | Cigna | Complete blood count (CBC) | 5 | Boston Medical Center | 15 | Brigham and Women's Hospital | 90 | 6.1 |
-| Aetna | Complete blood count (CBC) | 4 | Tufts Medical Center | 17 | Massachusetts General Hospital | 93 | 5.4 |
 | UnitedHealthcare | Screening mammogram | 4 | Boston Medical Center | 109 | Tufts Medical Center | 582 | 5.4 |
+| Aetna | Complete blood count (CBC) | 4 | Tufts Medical Center | 17 | Massachusetts General Hospital | 93 | 5.4 |
 | Aetna | Comprehensive metabolic panel | 4 | Tufts Medical Center | 25 | Massachusetts General Hospital | 133 | 5.3 |
 | Cigna | MRI lower back (no contrast) | 3 | Massachusetts General Hospital | 673 | Boston Medical Center | 3,429 | 5.1 |
 | Cigna | Cholesterol (lipid) panel | 5 | Boston Medical Center | 26 | Brigham and Women's Hospital | 120 | 4.7 |
