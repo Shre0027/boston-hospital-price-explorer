@@ -91,12 +91,13 @@ def download(url, dest):
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     start = time.time()
     with urllib.request.urlopen(req, timeout=120) as resp, open(dest, "wb") as out:
+        print(f"::notice::Server answered {resp.status}, type '{resp.headers.get('Content-Type')}', final URL {resp.geturl()}")
         while True:
             chunk = resp.read(1024 * 1024)
             if not chunk:
                 break
             out.write(chunk)
-    print(f"Downloaded {dest.stat().st_size / 1e6:.1f} MB in {time.time() - start:.0f}s")
+    print(f"::notice::Downloaded {dest.stat().st_size / 1e6:.1f} MB in {time.time() - start:.0f}s")
 
 
 def open_csv_text(path):
@@ -148,7 +149,8 @@ def find_header(reader, max_rows=10):
                         metadata[k] = v.strip()
             return metadata, row
         seen.append(row)
-    raise ValueError("Couldn't find a header row with a 'description' column in the first rows.")
+    preview = " || ".join(",".join(r)[:120] for r in seen[:4])
+    raise ValueError(f"Couldn't find a header row with a 'description' column. First rows: {preview}")
 
 
 def main():
@@ -173,6 +175,11 @@ def main():
         download(source_url, path)
 
     downloaded_bytes = path.stat().st_size
+    with open(path, "rb") as f:
+        head = f.read(300)
+    if head.lstrip().lower().startswith((b"<!doctype", b"<html")):
+        snippet = head.decode("utf-8", errors="replace").replace("\n", " ")[:200]
+        raise ValueError(f"Got a web page ({downloaded_bytes} bytes) instead of a price file. Starts with: {snippet}")
     text, inner_name, inner_size = open_csv_text(path)
     reader = csv.reader(text)
     metadata, header = find_header(reader)
@@ -230,9 +237,9 @@ def main():
     with open(OUT_DIR / f"{args.hospital}_profile.json", "w", encoding="utf-8") as f:
         json.dump(profile, f, indent=2)
 
-    print(f"Format: {file_format}, {len(header_clean)} columns")
-    print(f"Scanned {total_rows:,} rows, kept {matched_rows:,}")
-    print(f"Found {len(found)} of {len(wanted)} procedures. Missing: {profile['procedures_missing'] or 'none'}")
+    print(f"::notice::Format: {file_format}, {len(header_clean)} columns")
+    print(f"::notice::Scanned {total_rows:,} rows, kept {matched_rows:,}")
+    print(f"::notice::Found {len(found)} of {len(wanted)} procedures. Missing: {profile['procedures_missing'] or 'none'}")
 
 
 if __name__ == "__main__":
