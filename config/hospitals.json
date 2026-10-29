@@ -4,8 +4,17 @@
     "name": "Massachusetts General Hospital",
     "location_name": "Massachusetts General Hospital",
     "system": "Mass General Brigham",
-    "source_page": "https://www.massgeneral.org/notices/billing/cms-required-hospital-charge-data",
-    "hpt_txt": "https://www.massgeneral.org/cms-hpt.txt",
-    "mrf_url": "https://www.massgeneralbrigham.org/content/dam/mgb-global/en/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip"
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip"
+  },
+  {
+    "id": "bwh",
+    "name": "Brigham and Women's Hospital",
+    "location_name": "Brigham and Women's Hospital",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip"
   }
 ]

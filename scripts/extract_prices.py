@@ -66,7 +66,10 @@ def resolve_mrf_url(hospital):
     if txt_url:
         try:
             current = {}
-            for line in fetch_text(txt_url).splitlines():
+            text = fetch_text(txt_url)
+            if "location-name" not in text.lower():
+                raise ValueError("response isn't a cms-hpt.txt file (the site may have redirected to a web page)")
+            for line in text.splitlines():
                 key, _, value = line.partition(":")
                 key, value = key.strip().lower(), value.strip()
                 if key == "location-name":
