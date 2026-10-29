@@ -33,6 +33,7 @@ from shapely.geometry import box, mapping, shape
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data/geo"
 GEOCODER = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
+NOMINATIM = "https://nominatim.openstreetmap.org/search"   # fallback only; light use per its usage policy
 TOWNS_URL = "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_25_cousub_500k.zip"
 BBOX = (-71.36, 42.12, -70.82, 42.57)   # lon/lat box around the 18 hospitals, with margin
 SIMPLIFY = 0.0012                        # degrees (about 100 m); keeps the file small
@@ -56,6 +57,39 @@ def clean_street(street):
     return re.sub(r"^(\d+)\s*&\s*\d+\s+", r"\1 ", street)
 
 
+SUFFIX = {"STREET": "ST", "AVENUE": "AVE", "ROAD": "RD", "PLACE": "PL", "DRIVE": "DR", "BOULEVARD": "BLVD", "LANE": "LN"}
+
+
+def street_key(street):
+    """Street name without the house number, with suffixes abbreviated: '41 MALL ROAD' -> 'MALL RD'."""
+    words = re.sub(r"[^A-Z0-9 ]", " ", street.upper()).split()
+    words = [SUFFIX.get(w, w) for w in words if not w.isdigit()]
+    return " ".join(words)
+
+
+def census(address, street):
+    """Census Geocoder matches whose street name equals the one asked for (it can fuzzy-match a different street)."""
+    q = urllib.parse.urlencode({"address": address, "benchmark": "Public_AR_Current", "format": "json"})
+    matches = json.loads(get(f"{GEOCODER}?{q}")).get("result", {}).get("addressMatches", [])
+    want = street_key(street)
+    good = [m for m in matches if street_key(m["matchedAddress"].split(",")[0]) == want]
+    for m in matches:
+        if m not in good:
+            print(f"::warning::Rejected Census match '{m['matchedAddress']}' for '{address}' (different street)")
+    return good
+
+
+def nominatim(street, city, zipcode):
+    q = urllib.parse.urlencode({"street": street, "city": city, "state": "MA", "postalcode": zipcode, "country": "USA", "format": "json", "limit": 3})
+    res = json.loads(get(f"{NOMINATIM}?{q}"))
+    want = street_key(street)
+    for m in res:
+        name = m.get("display_name", "").upper()
+        if street_key(name.split(",")[1] if name.split(",")[0].strip().isdigit() else name.split(",")[0]) == want or want in street_key(name):
+            return m
+    return None
+
+
 def geocode_hospitals():
     hospitals = json.loads((ROOT / "config/hospitals.json").read_text())
     by_ccn = {h["ccn"]: h for h in hospitals}
@@ -71,18 +105,19 @@ def geocode_hospitals():
             raise SystemExit(f"::error::No CMS address for {h['id']} (CCN {ccn})")
         street = clean_street(r["Address"])
         address = f"{street}, {r['City/Town']}, {r['State']} {r['ZIP Code']}"
-        q = urllib.parse.urlencode({"address": address, "benchmark": "Public_AR_Current", "format": "json"})
-        res = json.loads(get(f"{GEOCODER}?{q}"))
-        matches = res.get("result", {}).get("addressMatches", [])
-        if not matches:   # retry with street + ZIP only
-            q = urllib.parse.urlencode({"address": f"{street}, {r['ZIP Code']}", "benchmark": "Public_AR_Current", "format": "json"})
-            matches = json.loads(get(f"{GEOCODER}?{q}")).get("result", {}).get("addressMatches", [])
-        if not matches:
-            raise SystemExit(f"::error::Census Geocoder found no match for {h['id']}: {address}")
-        m = matches[0]
-        out[h["id"]] = {"lat": round(m["coordinates"]["y"], 5), "lon": round(m["coordinates"]["x"], 5),
-                        "cms_address": f"{r['Address']}, {r['City/Town']}", "matched_address": m["matchedAddress"]}
-        print(f"::notice::{h['id']}: {address} -> {m['matchedAddress']} ({out[h['id']]['lat']}, {out[h['id']]['lon']})")
+        matches = census(address, street) or census(f"{street}, {r['ZIP Code']}", street)
+        if matches:
+            m = matches[0]
+            lat, lon, matched, src = m["coordinates"]["y"], m["coordinates"]["x"], m["matchedAddress"], "US Census Geocoder"
+        else:
+            time.sleep(1.1)
+            m = nominatim(street, r["City/Town"], r["ZIP Code"])
+            if not m:
+                raise SystemExit(f"::error::No geocoder found {address} on the right street")
+            lat, lon, matched, src = float(m["lat"]), float(m["lon"]), m["display_name"], "OpenStreetMap Nominatim"
+        out[h["id"]] = {"lat": round(lat, 5), "lon": round(lon, 5), "cms_address": f"{r['Address']}, {r['City/Town']}",
+                        "matched_address": matched, "geocoder": src}
+        print(f"::notice::{h['id']}: {address} -> {matched} [{src}] ({out[h['id']]['lat']}, {out[h['id']]['lon']})")
         time.sleep(0.5)
     return out
 
@@ -119,7 +154,7 @@ def main():
     (OUT / "source.json").write_text(json.dumps({
         "fetched_on": time.strftime("%Y-%m-%d", time.gmtime()),
         "hospital_addresses": "CMS Hospital General Information (data/quality), matched by CMS Certification Number",
-        "geocoder": GEOCODER + " (benchmark Public_AR_Current)",
+        "geocoder": GEOCODER + " (benchmark Public_AR_Current); a match is accepted only if its street name equals the CMS address's. Fallback: " + NOMINATIM,
         "towns": TOWNS_URL, "bbox": BBOX, "simplify_degrees": SIMPLIFY,
         "note": "Cambridge Health Alliance's file covers three campuses; the map shows the CMS-listed main address (Cambridge Hospital).",
     }, indent=1))
