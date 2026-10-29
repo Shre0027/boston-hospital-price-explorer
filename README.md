@@ -17,7 +17,7 @@ This project turns those public files into something a normal person can use.
 Massachusetts General Hospital · Brigham and Women's · Boston Medical Center · Beth Israel Deaconess Medical Center · Tufts Medical Center
 
 ## Status
-🚧 In progress: data collection setup
+🚧 In progress: first hospital (MGH) extracted; adding the other four
 
 ## Data source
 Hospital machine-readable files published under the CMS Hospital Price Transparency rule (45 CFR Part 180).
