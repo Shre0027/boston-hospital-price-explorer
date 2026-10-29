@@ -53,7 +53,7 @@ def main():
     z = zipfile.ZipFile(io.BytesIO(get(TABLE2_URL)))
     names = z.namelist()
     print("::notice::Files in zip: " + "; ".join(names))
-    t2 = [n for n in names if re.search(r"table\s*_?2\b|tbl\s*2|table2", n, re.I) and not n.startswith("__MACOSX")]
+    t2 = [n for n in names if re.search(r"tables?\s*_?2\.txt$", n, re.I)] or [n for n in names if re.search(r"tables?\s*_?2\b", n, re.I) and not n.startswith("__MACOSX")]
     if not t2:
         raise SystemExit("::error::No Table 2 file found in the zip")
     found, header = {}, None
