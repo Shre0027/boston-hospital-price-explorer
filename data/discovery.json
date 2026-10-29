@@ -1,76 +1,168 @@
 {
-  "checked_at": "2026-10-29T05:57:17Z",
+  "checked_at": "2026-10-29T13:32:02Z",
   "results": [
     {
-      "site": "bmc.org",
-      "url": "https://www.bmc.org/cms-hpt.txt",
+      "site": "massgeneralbrigham.org",
+      "url": "https://www.massgeneralbrigham.org/cms-hpt.txt",
       "status": 200,
-      "final_url": "https://www.bmchealthsystem.org/cms-hpt.txt",
+      "final_url": "https://www.massgeneralbrigham.org/cms-hpt.txt",
       "locations": [
         {
-          "location-name": "Boston Medical Center",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Brigham and Women\u2019s Faulkner Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042768256_Brigham-and-Womens-Faulkner-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
         },
         {
-          "location-name": "Boston Medical Center South",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473728_BostonMedicalCenterSouth_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Brigham and Women\u2019s Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
         },
         {
-          "location-name": "Boston Medical Center Brighton",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Cooley Dickinson Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/222617175_Cooley-Dickinson-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Martha's Vineyard Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042104691_Marthas-Vineyard-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Massachusetts Eye and Ear",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042103591_Massachusetts-Eye-and-Ear_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Massachusetts General Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "McLean Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042697981_McLean-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Nantucket Cottage Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042103823_Nantucket-Cottage-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Newton Wellesley Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042103611_Newton-Wellesley-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Salem Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/043399616_Salem-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Spaulding Rehabilitation Hospital Boston",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/042551124_Spaulding-Rehabilitation-Hospital-Boston_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Spaulding Rehabilitation Hospital Continuing Medical Care Cambridge",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/270273715_Spaulding-Hospital-Continuing-Medical-Care-Cambridge_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Spaulding Rehabilitation Hospital Cape Cod",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/043071419_Spaulding-Rehabilitation-Hospital-Cape-Cod_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
+        },
+        {
+          "location-name": "Wentworth Douglass Hospital",
+          "source-page-url": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+          "mrf-url": "https://www.massgeneralbrigham.org/price-transparency/020260334_Wentworth-Douglass-Hospital_StandardCharges.zip",
+          "contact-name": "MRF Team",
+          "contact-email": "mrfteam@mgb.org"
         }
       ]
     },
     {
-      "site": "bmchealthsystem.org",
-      "url": "https://www.bmchealthsystem.org/cms-hpt.txt",
+      "site": "challiance.org",
+      "url": "https://www.challiance.org/cms-hpt.txt",
       "status": 200,
-      "final_url": "https://www.bmchealthsystem.org/cms-hpt.txt",
+      "final_url": "https://www.challiance.org/cms-hpt.txt",
       "locations": [
         {
-          "location-name": "Boston Medical Center",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Cambridge Health Alliance",
+          "source-page-url": "https://challiance.org/patients-visitors/prices",
+          "mrf-url": "https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv",
+          "contact-name": "CHA Customer Service",
+          "contact-email": "webmaster@challiance.org"
         },
         {
-          "location-name": "Boston Medical Center South",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473728_BostonMedicalCenterSouth_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Somerville Hospital",
+          "source-page-url": "https://challiance.org/patients-visitors/prices",
+          "mrf-url": "https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv",
+          "contact-name": "CHA Customer Service",
+          "contact-email": "webmaster@challiance.org"
         },
         {
-          "location-name": "Boston Medical Center Brighton",
-          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
-          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip",
-          "contact-name": "Christopher Abate",
-          "contact-email": "Christopher.Abate@bmc.org"
+          "location-name": "Whidden Hospital",
+          "source-page-url": "https://challiance.org/patients-visitors/prices",
+          "mrf-url": "https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv",
+          "contact-name": "CHA Customer Service",
+          "contact-email": "webmaster@challiance.org"
         }
       ]
     },
     {
-      "site": "bidmc.org",
-      "url": "https://www.bidmc.org/cms-hpt.txt",
+      "site": "southshorehealth.org",
+      "url": "https://www.southshorehealth.org/cms-hpt.txt",
       "status": 200,
-      "final_url": "https://bidmc.org/cms-hpt.txt",
+      "final_url": "https://www.southshorehealth.org/cms-hpt.txt",
       "locations": [
         {
-          "location-name": "Beth Israel Deaconess Medical Center",
-          "source-page-url": "https://bidmc.org/patients-visitors/billing-financial-services/price-transparency",
-          "mrf-url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json",
-          "contact-name": "BILH Pricing Transparency Office",
-          "contact-email": "BILH-PricingTransparency@bilh.org"
+          "location-name": "South Shore Hospital",
+          "source-page-url": "https://www.southshorehealth.org/patient-resources/billing-insurance/pricing-information",
+          "mrf-url": "https://zencloud-southshorehealth.s3.us-east-1.amazonaws.com/www.southshorehealth.org/assets/2026-03/042769210_south-shore-hospital_standardcharges.json",
+          "contact-name": "Chris Contre",
+          "contact-email": "ccontre@southshorehealth.org"
+        }
+      ]
+    },
+    {
+      "site": "emersonhealth.org",
+      "url": "https://www.emersonhealth.org/cms-hpt.txt",
+      "status": 200,
+      "final_url": "https://www.emersonhealth.org/cms-hpt.txt",
+      "locations": [
+        {
+          "location-name": "Emerson Hospital",
+          "source-page-url": "https://emersonhealth.org/patients-visitors/insurance-financial/standard-charges-and-price-transparency/",
+          "mrf-url": "https://emersonhealth.org/wp-content/uploads/2026/05/042103565_EmersonHospital_standardcharges.csv",
+          "contact-name": "Scott Kosowicz",
+          "contact-email": "skosowicz@emersonhosp.org"
         }
       ]
     },
@@ -181,24 +273,33 @@
       ]
     },
     {
-      "site": "tuftsmedicalcenter.org",
-      "url": "https://www.tuftsmedicalcenter.org/cms-hpt.txt",
-      "problem": "HTTPError: HTTP Error 403: Forbidden"
-    },
-    {
-      "site": "tuftsmedicalcenter.org",
-      "url": "https://tuftsmedicalcenter.org/cms-hpt.txt",
-      "problem": "HTTPError: HTTP Error 403: Forbidden"
-    },
-    {
-      "site": "tuftsmedicine.org",
-      "url": "https://www.tuftsmedicine.org/cms-hpt.txt",
-      "problem": "HTTPError: HTTP Error 403: Forbidden"
-    },
-    {
-      "site": "tuftsmedicine.org",
-      "url": "https://tuftsmedicine.org/cms-hpt.txt",
-      "problem": "HTTPError: HTTP Error 403: Forbidden"
+      "site": "bmc.org",
+      "url": "https://www.bmc.org/cms-hpt.txt",
+      "status": 200,
+      "final_url": "https://www.bmchealthsystem.org/cms-hpt.txt",
+      "locations": [
+        {
+          "location-name": "Boston Medical Center",
+          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
+          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
+          "contact-name": "Christopher Abate",
+          "contact-email": "Christopher.Abate@bmc.org"
+        },
+        {
+          "location-name": "Boston Medical Center South",
+          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
+          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473728_BostonMedicalCenterSouth_standardcharges.csv.zip",
+          "contact-name": "Christopher Abate",
+          "contact-email": "Christopher.Abate@bmc.org"
+        },
+        {
+          "location-name": "Boston Medical Center Brighton",
+          "source-page-url": "https://www.bmchealthsystem.org/pricing-and-estimates",
+          "mrf-url": "https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip",
+          "contact-name": "Christopher Abate",
+          "contact-email": "Christopher.Abate@bmc.org"
+        }
+      ]
     }
   ]
 }
