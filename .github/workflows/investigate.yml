@@ -1,0 +1,38 @@
+name: Investigate billing codes
+
+# Run by hand: scan hospitals' full price files for related billing codes
+# (see scripts/find_codes.py) and save what was found to data/investigations/.
+on:
+  workflow_dispatch:
+    inputs:
+      hospitals:
+        description: "Hospital ids, space-separated"
+        required: true
+        default: "mgh bwh bmc bidmc"
+
+permissions:
+  contents: write
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ijson
+      - name: Scan each hospital
+        run: |
+          for h in ${{ inputs.hospitals }}; do
+            python scripts/find_codes.py --hospital "$h" || echo "::warning::$h failed"
+          done
+      - name: Save results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/investigations
+          git commit -m "Update billing-code investigation" || echo "Nothing changed"
+          git pull --rebase
+          git push
