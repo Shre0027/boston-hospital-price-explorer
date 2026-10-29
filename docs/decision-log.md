@@ -269,3 +269,11 @@ A running record of the key decisions in this project: what was decided, why, an
 **Why:** portfolio reviewers look for the insight first, explained in plain English, then how it was reached. Patients still get every tool.
 
 **Kept honest:** every finding is computed from the same data as the charts, so the wording updates with each monthly refresh instead of going stale. Checked: the numbers match the SQL results, each button opens the right view, the plain-English search still passes 30/30, and the layout works on a phone and in dark mode. The page is about 25% shorter.
+
+---
+
+## 2026-10-29: Purposeful motion and a hero chart
+
+**Decision:** add an animated hero chart beside the headline (cash price for the same brain MRI: $449 vs $3,858, 8.6×). Finding numbers count up, sections fade in on scroll, comparison bars grow, and the price-vs-rating dots slide out from the "typical" line. A small site icon too. No photos: hospital photos online are copyrighted, and stock images would make the page look templated. A chart of a real finding says more.
+
+**Rules kept:** motion only shows data, nothing decorative. The hero uses a different finding from the first card, so nothing repeats. Visitors who turn on "reduce motion" see the finished page with no animation. All values are computed from the data. Tested: every section ends up visible after scrolling, the final numbers are correct, the plain-English search still passes 30/30, the estimator checks still pass, and there's no horizontal scroll on a phone.
