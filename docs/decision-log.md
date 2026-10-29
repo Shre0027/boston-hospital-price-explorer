@@ -69,6 +69,34 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Four hospitals extracted; what the files reveal
+
+| Hospital | File type | Last updated | Rows in file | Matching rows | Insurers listed | Procedures found |
+|---|---|---|---|---|---|---|
+| MGH | zipped CSV | 2026-03-27 | 159,489 | 535 | 30 | 14 of 18 |
+| Brigham and Women's | zipped CSV | 2026-03-27 | 109,293 | 507 | 30 | 14 of 18 |
+| BMC | zipped CSV | 2026-03-13 | 1,329,567 | 1,610 | 77 | 16 of 18 |
+| BIDMC | JSON | 2026-04-01 | 90,199* | 96 | 6 | 18 of 18 |
+| Tufts Medical Center | — | — | — | — | — | not accessible |
+
+*For JSON files, "rows" means rows after flattening (service × setting × insurer plan).
+
+**Findings to verify:**
+- Both Mass General Brigham hospitals have no price under the chosen codes for cataract surgery, knee arthroscopy, gallbladder removal or ECG. BMC lists cataract surgery and knee arthroscopy, so the codes are valid; the gap is in what MGB publishes under them.
+- BIDMC's file lists only 6 insurers (no Aetna, UnitedHealthcare or Tufts Health Plan). Either the file is incomplete or those prices are recorded in a form not yet handled. Needs checking before drawing conclusions.
+- Tufts Medical Center's `cms-hpt.txt` returned HTTP 403 (Forbidden) to automated requests on every address tried. CMS requires these files to be accessible without barriers. Not worked around; next step is to check whether a person using a normal browser can reach it.
+
+**Early example (knee MRI, CPT 73721, insurer-negotiated price):** Harvard Pilgrim's rate is $230.56 at MGH and $673.24 at BIDMC.
+
+**Added along the way:**
+- A discovery workflow that reads each hospital system's `cms-hpt.txt` and saves every location and file link to `data/discovery.json`.
+- JSON support (BIDMC and the rest of Beth Israel Lahey Health publish JSON). JSON rows are flattened into the same column layout as the CSV files, checked against CMS's sample data: the JSON and CSV versions of the same sample produce identical rows.
+- Name matching that ignores apostrophe style (`Women’s` vs `Women's`).
+
+**Mistake and fix:** Deleting local test output also deleted committed results, and the next commit removed the MGH and Brigham files from the repo. They were restored from git history, and test runs now write to a separate folder (`PRICES_OUT_DIR`) so this can't happen again.
+
+---
+
 ## 2026-10-29: Run data collection on GitHub Actions
 
 **Decision:** Download and filter the large price files on GitHub Actions.
