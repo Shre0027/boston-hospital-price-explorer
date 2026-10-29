@@ -323,3 +323,11 @@ A running record of the key decisions in this project: what was decided, why, an
 - **Less template chrome:** no all-caps labels, fewer boxes and shadows. A progress bar shows the step out of 8, because the story really is a sequence. The dashboard uses the same font and palette, so the two pages read as one product.
 
 **Checked:** desktop, phone, dark mode and reduced motion (receipts and numbers appear in their final state). There's no horizontal scroll, every step activates the right chart, the dashboard search passes 30/30, the estimator checks pass, and the numbers are unchanged.
+
+---
+
+## 2026-10-29: Link preview image
+
+**Decision:** add a 1200×630 preview image (`site/og.png`) and Open Graph tags to both pages, so a link shared on LinkedIn, Slack or in email shows the two-receipt card ($449 vs $3,858, 8.6×) instead of a bare URL.
+
+**Known limitation:** unlike the pages, the image and its title have the numbers written in by hand (social sites can't run the page's code). The source is `scripts/og_card.html`. If a monthly refresh changes the brain MRI cash prices, the image needs re-rendering. The pages themselves always show current numbers.
