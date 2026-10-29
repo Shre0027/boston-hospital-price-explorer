@@ -1,0 +1,48 @@
+{
+  "hospital": "mgh",
+  "families": {
+    "ECG": {
+      "note": "93000 = complete (with doctor's interpretation); 93005 = tracing only (hospital part); 93010 = interpretation only",
+      "codes_found": {
+        "93005 (CPT)": {
+          "rows": 42,
+          "example_description": "Ekg Routine Tracing Only"
+        },
+        "93010 (CPT)": {
+          "rows": 2,
+          "example_description": "12 Lead Ecg Interpretation and Report Only"
+        }
+      }
+    },
+    "Cataract surgery": {
+      "note": "66984 = standard cataract removal with lens implant",
+      "codes_found": {}
+    },
+    "Knee arthroscopy": {
+      "note": "29880/29881 = meniscectomy (both/one side)",
+      "codes_found": {
+        "29888 (CPT)": {
+          "rows": 8,
+          "example_description": "Arthrosc Aid Rpr Cruciate Lig Ant"
+        }
+      }
+    },
+    "Gallbladder removal": {
+      "note": "47562-47564 = laparoscopic (outpatient CPT); 417-419 = laparoscopic cholecystectomy inpatient stay (MS-DRG)",
+      "codes_found": {
+        "418 (MS-DRG)": {
+          "rows": 7,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. With Cc"
+        },
+        "417 (MS-DRG)": {
+          "rows": 6,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. With McC"
+        },
+        "419 (MS-DRG)": {
+          "rows": 3,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. Without Cc/McC"
+        }
+      }
+    }
+  }
+}

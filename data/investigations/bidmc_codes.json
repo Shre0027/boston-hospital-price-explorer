@@ -1,0 +1,145 @@
+{
+  "hospital": "bidmc",
+  "families": {
+    "ECG": {
+      "note": "93000 = complete (with doctor's interpretation); 93005 = tracing only (hospital part); 93010 = interpretation only",
+      "codes_found": {
+        "93005 (HCPCS)": {
+          "rows": 5,
+          "example_description": "HC ROUTINE ECG TRACING WO INTER AND RPT"
+        },
+        "93000 (HCPCS)": {
+          "rows": 4,
+          "example_description": "HC ECG ROUTINE ECG W/LEAST 12 LDS W/I&R"
+        },
+        "93010 (HCPCS)": {
+          "rows": 2,
+          "example_description": "Electrocardiogram report"
+        }
+      }
+    },
+    "Cataract surgery": {
+      "note": "66984 = standard cataract removal with lens implant",
+      "codes_found": {
+        "66982 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Cataract surgery complex"
+        },
+        "66983 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Cataract surg w/iol 1 stage"
+        },
+        "66984 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Cataract surg w/iol 1 stage"
+        },
+        "66987 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Xcapsl ctrc rmvl cplx w/ecp"
+        },
+        "66988 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Xcapsl ctrc rmvl w/ecp"
+        },
+        "66989 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Xcpsl ctrc rmvl cplx insj 1+"
+        },
+        "66991 (HCPCS)": {
+          "rows": 3,
+          "example_description": "Xcapsl ctrc rmvl insj 1+"
+        }
+      }
+    },
+    "Knee arthroscopy": {
+      "note": "29880/29881 = meniscectomy (both/one side)",
+      "codes_found": {
+        "29881 (HCPCS)": {
+          "rows": 6,
+          "example_description": "HC KNEE SCOPE,MED/LAT MENISECTOMY"
+        },
+        "29870 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy dx"
+        },
+        "29871 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/drainage"
+        },
+        "29873 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29874 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29875 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29876 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29877 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29879 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29880 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29882 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        },
+        "29888 (HCPCS)": {
+          "rows": 5,
+          "example_description": "Knee arthroscopy/surgery"
+        }
+      }
+    },
+    "Gallbladder removal": {
+      "note": "47562-47564 = laparoscopic (outpatient CPT); 417-419 = laparoscopic cholecystectomy inpatient stay (MS-DRG)",
+      "codes_found": {
+        "417 (MS-DRG)": {
+          "rows": 28,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. With Mcc"
+        },
+        "418 (MS-DRG)": {
+          "rows": 28,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. With Cc"
+        },
+        "419 (MS-DRG)": {
+          "rows": 28,
+          "example_description": "Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc"
+        },
+        "47562 (HCPCS)": {
+          "rows": 4,
+          "example_description": "Laparoscopic cholecystectomy"
+        },
+        "47563 (HCPCS)": {
+          "rows": 4,
+          "example_description": "Laparo cholecystectomy/graph"
+        },
+        "47564 (HCPCS)": {
+          "rows": 4,
+          "example_description": "Laparo cholecystectomy/explr"
+        },
+        "47600 (HCPCS)": {
+          "rows": 2,
+          "example_description": "Removal of gallbladder"
+        },
+        "47605 (HCPCS)": {
+          "rows": 2,
+          "example_description": "Removal of gallbladder"
+        }
+      }
+    }
+  }
+}

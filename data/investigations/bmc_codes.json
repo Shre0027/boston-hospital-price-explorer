@@ -1,0 +1,64 @@
+{
+  "hospital": "bmc",
+  "families": {
+    "ECG": {
+      "note": "93000 = complete (with doctor's interpretation); 93005 = tracing only (hospital part); 93010 = interpretation only",
+      "codes_found": {
+        "93005 (CPT)": {
+          "rows": 148,
+          "example_description": "HC Ecg Routine Ecg W/Least 12 Lds Trcg Only W/O I&R"
+        }
+      }
+    },
+    "Cataract surgery": {
+      "note": "66984 = standard cataract removal with lens implant",
+      "codes_found": {
+        "66982 (CPT)": {
+          "rows": 76,
+          "example_description": "HC Remv Cataract Extracap,Insert Lens,Comp"
+        },
+        "66984 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Remv Cataract Extracap, Insert Lens"
+        },
+        "66989 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Xcpsl Ctrc Rmvl Cplx Insj 1+"
+        },
+        "66991 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Xcapsl Ctrc Rmvl Insj 1+"
+        }
+      }
+    },
+    "Knee arthroscopy": {
+      "note": "29880/29881 = meniscectomy (both/one side)",
+      "codes_found": {
+        "29877 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Knee Scope, Shave Articular Cart"
+        },
+        "29875 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Knee Scope, Part Synovect"
+        },
+        "29888 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Knee Scope,Aid Ant Cruciate Repair"
+        },
+        "29881 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Knee Scope Single Meniscectomy"
+        },
+        "29882 (CPT)": {
+          "rows": 59,
+          "example_description": "HC Knee Scope,Med or Lat Menis Repair"
+        }
+      }
+    },
+    "Gallbladder removal": {
+      "note": "47562-47564 = laparoscopic (outpatient CPT); 417-419 = laparoscopic cholecystectomy inpatient stay (MS-DRG)",
+      "codes_found": {}
+    }
+  }
+}
