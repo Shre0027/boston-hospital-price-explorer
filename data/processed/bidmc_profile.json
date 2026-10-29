@@ -1,6 +1,7 @@
 {
   "hospital_id": "bidmc",
   "source_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json",
+  "collected": "downloaded automatically",
   "downloaded_file": "042103881_beth-israel-deaconess-medical-center_standardcharges.json",
   "downloaded_mb": 28.1,
   "file_type": "json",
@@ -73,5 +74,5 @@
     "standard_charge|methodology",
     "additional_generic_notes"
   ],
-  "extracted_at": "2026-10-29T05:59:17Z"
+  "extracted_at": "2026-10-29T06:26:28Z"
 }

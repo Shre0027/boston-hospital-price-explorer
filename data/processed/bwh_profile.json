@@ -1,10 +1,12 @@
 {
   "hospital_id": "bwh",
   "source_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
+  "collected": "downloaded automatically",
   "downloaded_file": "042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
   "downloaded_mb": 2.9,
-  "csv_inside": "042312909_Brigham-and-Womens-Hospital_StandardCharges.csv",
-  "csv_mb": 46.1,
+  "file_type": "csv",
+  "data_file": "042312909_Brigham-and-Womens-Hospital_StandardCharges.csv",
+  "data_file_mb": 46.1,
   "hospital_metadata": {
     "hospital_name": "Brigham and Women's Hospital",
     "last_updated_on": "2026-03-27",
@@ -81,5 +83,5 @@
     "standard_charge|methodology",
     "additional_generic_notes"
   ],
-  "extracted_at": "2026-10-29T05:56:43Z"
+  "extracted_at": "2026-10-29T06:25:56Z"
 }

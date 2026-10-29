@@ -1,10 +1,12 @@
 {
   "hospital_id": "bmc",
   "source_url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
+  "collected": "downloaded automatically",
   "downloaded_file": "043314093_BostonMedicalCenter_standardcharges.csv.zip",
   "downloaded_mb": 43.0,
-  "csv_inside": "043314093_BostonMedicalCenter_standardcharges.csv",
-  "csv_mb": 483.0,
+  "file_type": "csv",
+  "data_file": "043314093_BostonMedicalCenter_standardcharges.csv",
+  "data_file_mb": 483.0,
   "hospital_metadata": {
     "hospital_name": "Boston Medical Center",
     "last_updated_on": "03/13/2026",
@@ -79,5 +81,5 @@
     "standard_charge|max",
     "additional_generic_notes"
   ],
-  "extracted_at": "2026-10-29T05:58:08Z"
+  "extracted_at": "2026-10-29T06:26:03Z"
 }
