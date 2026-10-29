@@ -1,16 +1,16 @@
 insurer,procedure,hospitals,lowest_hospital,lowest_price,highest_hospital,highest_price,times_more
 UnitedHealthcare,Comprehensive metabolic panel,4,Boston Medical Center,10.0,Brigham and Women's Hospital,140.0,14.7
-UnitedHealthcare,Complete blood count (CBC),4,Boston Medical Center,7.0,Brigham and Women's Hospital,98.0,14.1
+UnitedHealthcare,Complete blood count (CBC),4,Boston Medical Center,7.0,Brigham and Women's Hospital / Massachusetts General Hospital,98.0,14.1
 UnitedHealthcare,Cholesterol (lipid) panel,4,Boston Medical Center,12.0,Massachusetts General Hospital,130.0,10.8
-Blue Cross Blue Shield,Cholesterol (lipid) panel,5,Tufts Medical Center,11.0,Massachusetts General Hospital,87.0,8.2
-Cigna,Comprehensive metabolic panel,5,Boston Medical Center,20.0,Massachusetts General Hospital,129.0,6.3
-Cigna,Complete blood count (CBC),5,Boston Medical Center,15.0,Massachusetts General Hospital,90.0,6.1
+Blue Cross Blue Shield,Cholesterol (lipid) panel,5,Tufts Medical Center,11.0,Brigham and Women's Hospital / Massachusetts General Hospital,87.0,8.2
+Cigna,Comprehensive metabolic panel,5,Boston Medical Center,20.0,Brigham and Women's Hospital / Massachusetts General Hospital,129.0,6.3
+Cigna,Complete blood count (CBC),5,Boston Medical Center,15.0,Brigham and Women's Hospital / Massachusetts General Hospital,90.0,6.1
 Aetna,Complete blood count (CBC),4,Tufts Medical Center,17.0,Massachusetts General Hospital,93.0,5.4
 UnitedHealthcare,Screening mammogram,4,Boston Medical Center,109.0,Tufts Medical Center,582.0,5.4
 Aetna,Comprehensive metabolic panel,4,Tufts Medical Center,25.0,Massachusetts General Hospital,133.0,5.3
 Cigna,MRI lower back (no contrast),3,Massachusetts General Hospital,673.0,Boston Medical Center,3429.0,5.1
-Cigna,Cholesterol (lipid) panel,5,Boston Medical Center,26.0,Massachusetts General Hospital,120.0,4.7
-Blue Cross Blue Shield,Comprehensive metabolic panel,5,Boston Medical Center,21.0,Brigham and Women's Hospital,93.0,4.5
-Blue Cross Blue Shield,Complete blood count (CBC),5,Boston Medical Center,15.0,Brigham and Women's Hospital,65.0,4.2
+Cigna,Cholesterol (lipid) panel,5,Boston Medical Center,26.0,Brigham and Women's Hospital / Massachusetts General Hospital,120.0,4.7
+Blue Cross Blue Shield,Comprehensive metabolic panel,5,Boston Medical Center,21.0,Brigham and Women's Hospital / Massachusetts General Hospital,93.0,4.5
+Blue Cross Blue Shield,Complete blood count (CBC),5,Boston Medical Center,15.0,Brigham and Women's Hospital / Massachusetts General Hospital,65.0,4.2
 Cigna,MRI brain (no contrast),3,Tufts Medical Center,1019.0,Boston Medical Center,3902.0,3.8
-Aetna,Cholesterol (lipid) panel,4,Tufts Medical Center,32.0,Massachusetts General Hospital,116.0,3.6
+Aetna,Cholesterol (lipid) panel,4,Tufts Medical Center,32.0,Brigham and Women's Hospital / Massachusetts General Hospital,116.0,3.6

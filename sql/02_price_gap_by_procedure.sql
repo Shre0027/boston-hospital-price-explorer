@@ -7,8 +7,8 @@ WITH ranked AS (
         procedure,
         hospital,
         median_price,
-        ROW_NUMBER() OVER (PARTITION BY cpt ORDER BY median_price ASC)  AS rank_low,
-        ROW_NUMBER() OVER (PARTITION BY cpt ORDER BY median_price DESC) AS rank_high,
+        ROW_NUMBER() OVER (PARTITION BY cpt ORDER BY median_price ASC, hospital)  AS rank_low,   -- ties broken by name so results repeat
+        ROW_NUMBER() OVER (PARTITION BY cpt ORDER BY median_price DESC, hospital) AS rank_high,
         COUNT(*)     OVER (PARTITION BY cpt)                            AS hospitals_listing
     FROM typical_commercial
 )
@@ -26,4 +26,4 @@ JOIN ranked hi
  AND lo.rank_low = 1
  AND hi.rank_high = 1
 WHERE lo.hospitals_listing >= 3          -- only compare when at least 3 hospitals list a price
-ORDER BY times_more DESC;
+ORDER BY times_more DESC, procedure;

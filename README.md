@@ -19,7 +19,7 @@ This project turns those public files into something a normal person can use.
 Massachusetts General Hospital · Brigham and Women's · Boston Medical Center · Beth Israel Deaconess Medical Center · Tufts Medical Center
 
 ## Status
-✅ Phase 1 live: 5 hospitals, 18 procedures, 6,590 published prices, interactive dashboard.
+✅ Phase 1 live: 5 hospitals, 18 procedures, 7,000+ published prices, interactive dashboard.
 
 Includes a plain-English price search ("knee MRI with Blue Cross") and refreshes automatically every month. Next: more Greater Boston hospitals.
 

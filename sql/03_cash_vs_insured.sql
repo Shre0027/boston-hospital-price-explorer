@@ -13,5 +13,5 @@ JOIN typical_commercial t
   ON c.hospital_id = t.hospital_id
  AND c.cpt = t.cpt
 WHERE t.median_price > 0
-ORDER BY cash_times_insurer DESC
+ORDER BY cash_times_insurer DESC, c.hospital, c.procedure
 LIMIT 15;

@@ -43,8 +43,8 @@ Query: [`sql/02_price_gap_by_procedure.sql`](../sql/02_price_gap_by_procedure.sq
 | Screening mammogram | 5 | Tufts Medical Center | 204 | Massachusetts General Hospital | 472 | 2.3 |
 | Colonoscopy (diagnostic) | 5 | Tufts Medical Center | 905 | Massachusetts General Hospital | 1,975 | 2.2 |
 | Abdominal ultrasound (complete) | 5 | Beth Israel Deaconess Medical Center | 199 | Massachusetts General Hospital | 423 | 2.1 |
-| MRI knee (no contrast) | 5 | Tufts Medical Center | 571 | Massachusetts General Hospital | 1,046 | 1.8 |
 | CT abdomen and pelvis (with contrast) | 5 | Tufts Medical Center | 755 | Boston Medical Center | 1,360 | 1.8 |
+| MRI knee (no contrast) | 5 | Tufts Medical Center | 571 | Massachusetts General Hospital | 1,046 | 1.8 |
 
 ## 03. Cash vs insured
 
@@ -83,20 +83,20 @@ Query: [`sql/04_same_insurer_different_hospitals.sql`](../sql/04_same_insurer_di
 | insurer | procedure | hospitals | lowest_hospital | lowest_price | highest_hospital | highest_price | times_more |
 |---|---|---|---|---|---|---|---|
 | UnitedHealthcare | Comprehensive metabolic panel | 4 | Boston Medical Center | 10 | Brigham and Women's Hospital | 140 | 14.7 |
-| UnitedHealthcare | Complete blood count (CBC) | 4 | Boston Medical Center | 7 | Brigham and Women's Hospital | 98 | 14.1 |
+| UnitedHealthcare | Complete blood count (CBC) | 4 | Boston Medical Center | 7 | Brigham and Women's Hospital / Massachusetts General Hospital | 98 | 14.1 |
 | UnitedHealthcare | Cholesterol (lipid) panel | 4 | Boston Medical Center | 12 | Massachusetts General Hospital | 130 | 10.8 |
-| Blue Cross Blue Shield | Cholesterol (lipid) panel | 5 | Tufts Medical Center | 11 | Massachusetts General Hospital | 87 | 8.2 |
-| Cigna | Comprehensive metabolic panel | 5 | Boston Medical Center | 20 | Massachusetts General Hospital | 129 | 6.3 |
-| Cigna | Complete blood count (CBC) | 5 | Boston Medical Center | 15 | Massachusetts General Hospital | 90 | 6.1 |
+| Blue Cross Blue Shield | Cholesterol (lipid) panel | 5 | Tufts Medical Center | 11 | Brigham and Women's Hospital / Massachusetts General Hospital | 87 | 8.2 |
+| Cigna | Comprehensive metabolic panel | 5 | Boston Medical Center | 20 | Brigham and Women's Hospital / Massachusetts General Hospital | 129 | 6.3 |
+| Cigna | Complete blood count (CBC) | 5 | Boston Medical Center | 15 | Brigham and Women's Hospital / Massachusetts General Hospital | 90 | 6.1 |
 | Aetna | Complete blood count (CBC) | 4 | Tufts Medical Center | 17 | Massachusetts General Hospital | 93 | 5.4 |
 | UnitedHealthcare | Screening mammogram | 4 | Boston Medical Center | 109 | Tufts Medical Center | 582 | 5.4 |
 | Aetna | Comprehensive metabolic panel | 4 | Tufts Medical Center | 25 | Massachusetts General Hospital | 133 | 5.3 |
 | Cigna | MRI lower back (no contrast) | 3 | Massachusetts General Hospital | 673 | Boston Medical Center | 3,429 | 5.1 |
-| Cigna | Cholesterol (lipid) panel | 5 | Boston Medical Center | 26 | Massachusetts General Hospital | 120 | 4.7 |
-| Blue Cross Blue Shield | Comprehensive metabolic panel | 5 | Boston Medical Center | 21 | Brigham and Women's Hospital | 93 | 4.5 |
-| Blue Cross Blue Shield | Complete blood count (CBC) | 5 | Boston Medical Center | 15 | Brigham and Women's Hospital | 65 | 4.2 |
+| Cigna | Cholesterol (lipid) panel | 5 | Boston Medical Center | 26 | Brigham and Women's Hospital / Massachusetts General Hospital | 120 | 4.7 |
+| Blue Cross Blue Shield | Comprehensive metabolic panel | 5 | Boston Medical Center | 21 | Brigham and Women's Hospital / Massachusetts General Hospital | 93 | 4.5 |
+| Blue Cross Blue Shield | Complete blood count (CBC) | 5 | Boston Medical Center | 15 | Brigham and Women's Hospital / Massachusetts General Hospital | 65 | 4.2 |
 | Cigna | MRI brain (no contrast) | 3 | Tufts Medical Center | 1,019 | Boston Medical Center | 3,902 | 3.8 |
-| Aetna | Cholesterol (lipid) panel | 4 | Tufts Medical Center | 32 | Massachusetts General Hospital | 116 | 3.6 |
+| Aetna | Cholesterol (lipid) panel | 4 | Tufts Medical Center | 32 | Brigham and Women's Hospital / Massachusetts General Hospital | 116 | 3.6 |
 
 ## 05. Overall hospital ranking
 

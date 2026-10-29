@@ -162,6 +162,31 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Why procedures were "missing", and two code corrections
+
+**Question:** MGH, Brigham and Tufts showed no price for 4 of 18 procedures. Missing data, or the wrong codes?
+
+**Investigation:** `scripts/find_codes.py` (run on GitHub via `investigate.yml`, and locally on Tufts' file) scanned every hospital's full file for related codes. Results are saved in `data/investigations/`.
+
+| Procedure | What the full files showed | Decision |
+|---|---|---|
+| ECG | All 5 hospitals list **93005** (tracing only, the hospital's part); only BIDMC lists 93000 (which includes the doctor's interpretation, usually billed separately) | **Corrected to 93005.** The original code was a poor choice for hospital facility prices |
+| Gallbladder removal | MGH, Brigham, Tufts and BIDMC list it as an **inpatient stay** (MS-DRG 417–419); only BIDMC also lists the outpatient CPT code | **Switched to MS-DRG 419** (laparoscopic, no complications) |
+| Knee arthroscopy (meniscus) | Only BMC and BIDMC list it; MGH and Brigham list only an ACL-repair arthroscopy code; Tufts lists none | Kept; "not listed" is the honest result |
+| Cataract surgery | Not listed at MGH or Brigham at all; Tufts lists only the complex version (66982) | Kept. Likely explanation: eye surgery in Mass General Brigham is done at Mass Eye and Ear, which publishes its own file (not yet verified) |
+
+**Safeguard added:** a DRG code like "419" could collide with other code types in the same file (e.g. a revenue code). `config/procedures.json` can now require a code type, and the extractor only matches when the type agrees. Tested: a revenue-code "419" row was ignored; "MS-DRG" and "MS_DRG" rows were matched.
+
+**Results:** ECG is now comparable at all 5 hospitals (typical commercial: Tufts MC $92 to MGH $234). Gallbladder-stay cash price: Tufts MC $24,980, MGH $57,008, Brigham $62,606; commercial prices only at Tufts MC and BIDMC, because **MGH lists this stay for Medicare plans only** and BMC doesn't list the code. Procedures found: MGH, Brigham and Tufts MC 16 of 18; BMC 17; BIDMC 18.
+
+**Two more corrections caught while re-checking:**
+- **"BIDMC lists only 6 insurers" was too broad.** After adding the inpatient stay, 15 insurer names appear, but Aetna, UnitedHealthcare and Tufts Health Plan appear only for that stay. Reworded: only 6 insurers for the outpatient procedures compared.
+- **SQL results weren't repeatable.** MGH and Brigham often have identical prices, and on a tie the queries picked one arbitrarily, so two runs gave different "most expensive hospital" answers. Added explicit tie-breakers and now list every hospital at a tied price (e.g. "Brigham and Women's / MGH"). Verified: four consecutive runs produced identical output.
+
+**Updated headline numbers:** Tufts MC is cheapest for 11 of 15 comparable procedures; MGH and Brigham are typically 2.8× and 2.4× the cheapest (median). The case study was updated to match.
+
+---
+
 ## 2026-10-29: SQL analysis layer, and a hypothesis that was only half right
 
 **Decision:** Eight documented SQL queries in `sql/`, run with DuckDB directly on `prices_clean.csv` (`scripts/run_sql.py`). DuckDB was chosen over a database server because it runs standard SQL on the CSV with nothing to install or host, so anyone can re-run the whole analysis with one command. Results are saved to `analysis/results/` and summarized in `analysis/README.md`; the monthly refresh re-runs them. Numbers were cross-checked against the Python analysis (e.g. MGH brain MRI median $1,614).

@@ -9,4 +9,4 @@ SELECT
     COUNT(*)                                               AS price_rows
 FROM prices
 GROUP BY ALL
-ORDER BY hospital, price_rows DESC;
+ORDER BY hospital, price_rows DESC, price_basis, flag;

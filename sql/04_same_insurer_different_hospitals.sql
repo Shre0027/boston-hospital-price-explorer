@@ -17,10 +17,16 @@ spread AS (
         COUNT(*)                     AS hospitals,
         MIN(price)                   AS lowest,
         MAX(price)                   AS highest,
-        ARG_MIN(hospital, price)     AS lowest_hospital,
-        ARG_MAX(hospital, price)     AS highest_hospital
-    FROM per_hospital
-    GROUP BY ALL
+        -- Several hospitals can tie (MGH and Brigham share one price list), so list every hospital at the low/high price
+        STRING_AGG(hospital, ' / ' ORDER BY hospital) FILTER (WHERE price = lowest_price_in_group)  AS lowest_hospital,
+        STRING_AGG(hospital, ' / ' ORDER BY hospital) FILTER (WHERE price = highest_price_in_group) AS highest_hospital
+    FROM (
+        SELECT *,
+               MIN(price) OVER (PARTITION BY insurer, procedure) AS lowest_price_in_group,
+               MAX(price) OVER (PARTITION BY insurer, procedure) AS highest_price_in_group
+        FROM per_hospital
+    )
+    GROUP BY insurer, procedure
     HAVING COUNT(*) >= 3
 )
 SELECT
@@ -33,5 +39,5 @@ SELECT
     ROUND(highest)                    AS highest_price,
     ROUND(highest / lowest, 1)        AS times_more
 FROM spread
-ORDER BY times_more DESC
+ORDER BY times_more DESC, insurer, procedure
 LIMIT 15;

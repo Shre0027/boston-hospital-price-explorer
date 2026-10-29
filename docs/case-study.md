@@ -4,11 +4,11 @@
 
 ## Summary
 
-Since 2021, every US hospital has had to publish its prices in a machine-readable file. I collected these files from five Boston hospitals, standardized 6,590 published prices for 18 common procedures, and asked two questions: **do prices differ enough to matter, and can a patient actually use this data?**
+Since 2021, every US hospital has had to publish its prices in a machine-readable file. I collected these files from five Boston hospitals, standardized 7,218 published prices for 18 common procedures, and asked two questions: **do prices differ enough to matter, and can a patient actually use this data?**
 
 - **Prices differ a lot.** For patients with commercial insurance, the same blood test costs about **9× more** at the most expensive hospital than the cheapest, and a brain MRI about **2.8× more**.
-- **The pattern is consistent, and it's explainable.** Tufts Medical Center is the cheapest for 10 of 14 comparable procedures; MGH and Brigham are typically **2.3–2.9×** the cheapest. What insurers pay tracks two things together: how high a hospital's sticker prices are, and whether insurer contracts are tied to those sticker prices.
-- **"Transparency" is uneven in practice.** One hospital blocked automated access to its file, one hospital's official link was broken, one file listed only 6 insurers, and at one hospital 39% of price rows couldn't be compared reliably.
+- **The pattern is consistent, and it's explainable.** Tufts Medical Center is the cheapest for 11 of 15 comparable procedures; MGH and Brigham are typically **2.4–2.8×** the cheapest. What insurers pay tracks two things together: how high a hospital's sticker prices are, and whether insurer contracts are tied to those sticker prices.
+- **"Transparency" is uneven in practice.** One hospital blocked automated access to its file, one hospital's official link was broken, one file listed only 6 insurers, and at one hospital 38% of price rows couldn't be compared reliably.
 
 ## 1. The problem
 
@@ -26,8 +26,8 @@ Patients usually learn what a hospital service costs only when the bill arrives.
 ## 3. Scope and approach
 
 - **Hospitals (5):** Massachusetts General Hospital, Brigham and Women's, Boston Medical Center, Beth Israel Deaconess Medical Center, Tufts Medical Center.
-- **Procedures (18):** common services patients can plan ahead for (imaging, labs, colonoscopy, ER and office visits, a few surgeries), matched by **billing code (CPT)**, because each hospital names services differently.
-- **Pipeline:** find each file through the hospital's official `cms-hpt.txt`; download and filter it (CSV, zipped CSV or JSON); standardize 282 different insurer names into recognizable brands and markets; choose one fair comparison price per row; analyze with SQL; publish a dashboard. It refreshes automatically every month.
+- **Procedures (18):** common services patients can plan ahead for (imaging, labs, colonoscopy, ER and office visits, a few surgeries), matched by **billing code**, because each hospital names services differently. Codes were chosen to match how hospitals actually bill: e.g. the hospital's part of an ECG (CPT 93005), and gallbladder removal as an inpatient stay (MS-DRG 419), which is how most of these hospitals list it.
+- **Pipeline:** find each file through the hospital's official `cms-hpt.txt`; download and filter it (CSV, zipped CSV or JSON); standardize 314 different insurer names into recognizable brands and markets; choose one fair comparison price per row; analyze with SQL; publish a dashboard. It refreshes automatically every month.
 - **Fair comparison rules:** commercial insurance only; when a rate comes from a formula, use the hospital-reported median amount actually paid; set aside rows where the listed figure may not be the real payment (and say how many).
 
 **Definitions used below:** *sticker price* = the hospital's gross charge; *cash price* = its listed price for patients paying without insurance; *typical commercial price* = median across the commercial plans a hospital lists.
@@ -45,17 +45,17 @@ Typical commercial price, cheapest vs most expensive hospital ([query 02](../ana
 | MRI brain (no contrast) | Tufts MC, $571 | MGH, $1,614 | 2.8× |
 | Colonoscopy (diagnostic) | Tufts MC, $905 | MGH, $1,975 | 2.2× |
 
-The biggest relative gaps are in routine lab tests; the biggest dollar gaps are in imaging and procedures.
+The biggest relative gaps are in routine lab tests; the biggest dollar gaps are in imaging and hospital stays. The cash price for a laparoscopic gallbladder-removal stay is **$24,980** at Tufts MC versus **$57,008** at MGH and **$62,606** at Brigham.
 
 ### Finding 2: It's a consistent pattern, not a few outliers
 
-Across the 14 procedures listed by at least four hospitals ([query 05](../analysis/README.md#05-overall-hospital-ranking)), Tufts Medical Center was the cheapest for **10 of 14**. Using the median (so a few extreme lab gaps don't dominate), BIDMC and BMC were about **1.4×** the cheapest hospital, Brigham **2.3×** and MGH **2.9×**.
+Across the 15 procedures listed by at least four hospitals ([query 05](../analysis/README.md#05-overall-hospital-ranking)), Tufts Medical Center was the cheapest for **11 of 15**. Using the median (so a few extreme lab gaps don't dominate), BMC and BIDMC were about **1.4×** the cheapest hospital, Brigham **2.4×** and MGH **2.8×**.
 
 ### Finding 3: The same insurer pays very different prices at different hospitals
 
 ([query 04](../analysis/README.md#04-same-insurer-different-hospitals))
-- UnitedHealthcare: complete blood count **$7 at BMC vs $98 at Brigham** (14×).
-- Blue Cross Blue Shield: cholesterol panel **$11 at Tufts MC vs $87 at MGH** (8×).
+- UnitedHealthcare: complete blood count **$7 at BMC vs $98 at MGH and Brigham** (14×).
+- Blue Cross Blue Shield: cholesterol panel **$11 at Tufts MC vs $87 at MGH and Brigham** (8×).
 - It doesn't always favor the same hospital: Cigna pays **$673** for a lower-back MRI at MGH but **$3,429** at BMC (5×).
 
 These costs feed into the premiums that employers and employees pay.
@@ -63,8 +63,8 @@ These costs feed into the premiums that employers and employees pay.
 ### Finding 4: Price tracks sticker-price level combined with contract type (a hypothesis that was only half right)
 
 I expected insurer contracts paid as a **percent of the hospital's billed charges** to be more expensive than fixed **fee schedules**. Comparing within the same hospital ([query 07](../analysis/README.md#07-contract-type-effect)):
-- At **BMC**, percent-of-charges contracts cost a median **2.7×** more than fee schedules (14 of 15 procedures).
-- At **Tufts MC**, they were **cheaper** (0.64×, for 13 of 14 procedures).
+- At **BMC**, percent-of-charges contracts cost a median **2.5×** more than fee schedules (14 of 16 procedures).
+- At **Tufts MC**, they were **cheaper** (0.64×, for 14 of 15 procedures).
 
 The difference made sense once I compared sticker prices ([query 08](../analysis/README.md#08-sticker-price-levels)): Tufts has the **lowest** sticker prices of the five, so a percentage of them is cheap. BMC has the **highest** sticker prices but mostly fee-schedule contracts, so insurers pay comparatively little. MGH and Brigham have high sticker prices **and** tie contracts to them, and they are the most expensive.
 
@@ -80,9 +80,10 @@ The difference made sense once I compared sticker prices ([query 08](../analysis
 |---|---|
 | MGH | The old official link list redirected to a web page, and the file link it listed returned "not found"; the current list lives on the Mass General Brigham site |
 | Tufts MC | The link list and the price file both **blocked automated downloads** (HTTP 403); a person could download it in a browser |
-| BIDMC | The file lists only **6 insurers** (no Aetna, UnitedHealthcare or Tufts Health Plan) |
-| BMC | **39%** of matched rows couldn't be compared reliably (formula-based rates with no amount actually paid, or rates above the sticker price) |
-| MGH, Brigham, Tufts MC | No price under the standard codes for 4 of the 18 procedures (cataract surgery, knee arthroscopy, gallbladder removal, ECG) |
+| BIDMC | For outpatient procedures the file lists only **6 insurers**; Aetna, UnitedHealthcare and Tufts Health Plan appear only for the inpatient gallbladder stay |
+| BMC | **38%** of matched rows couldn't be compared reliably (formula-based rates with no amount actually paid, or rates above the sticker price) |
+| MGH, Brigham | No price under standard codes for cataract surgery or knee arthroscopy (eye surgery in this system is likely done at Mass Eye and Ear, which has its own file); the gallbladder stay is priced for Medicare plans only |
+| Tufts MC | Only the complex cataract-surgery code is listed, and no knee arthroscopy |
 
 ## 5. Recommendations
 
@@ -110,6 +111,6 @@ The difference made sense once I compared sticker prices ([query 08](../analysis
 ## 7. Next steps
 
 1. Add about 15 more Greater Boston hospitals (most already discovered through their link lists).
-2. Investigate why four procedures don't appear under standard codes at three hospitals.
+2. Add Mass Eye and Ear to confirm where Mass General Brigham prices cataract surgery.
 3. Estimate out-of-pocket cost for common plan types (deductible and coinsurance) to make prices more meaningful for patients.
 4. Share findings with a Massachusetts health-policy audience for feedback.
