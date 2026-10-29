@@ -162,6 +162,16 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Automatic monthly refresh
+
+**Decision:** `.github/workflows/refresh.yml` runs on the 1st of every month (and on demand). It re-downloads MGH, Brigham, BMC and BIDMC, rebuilds the combined table and the dashboard, saves the results, and republishes the site (by calling `pages.yml`). Tufts Medical Center is skipped because it blocks automated downloads; its hand-downloaded data stays in place.
+
+**Safety fix found while planning this:** the extract script used to write results as it went, so a download that failed halfway could overwrite good data with a partial file. It now writes to temporary files and swaps them in only after a successful run, and refuses to save a run that matched zero procedures. Tested: a broken file left the old results untouched; a good file replaced them. In the refresh workflow, one hospital failing doesn't stop the others.
+
+**Tested end to end:** a manual run downloaded all four hospitals, rebuilt and republished successfully. Prices were unchanged (the hospitals' files hadn't changed), only the extraction timestamps updated, and Tufts' rows were kept. The dashboard now shows when prices were last refreshed and when the access findings were checked.
+
+---
+
 ## 2026-10-29: Run data collection on GitHub Actions
 
 **Decision:** Download and filter the large price files on GitHub Actions.

@@ -21,7 +21,7 @@ Massachusetts General Hospital · Brigham and Women's · Boston Medical Center �
 ## Status
 ✅ Phase 1 live: 5 hospitals, 18 procedures, 6,590 published prices, interactive dashboard.
 
-Includes a plain-English price search ("knee MRI with Blue Cross"). Next: scheduled refresh, more Greater Boston hospitals.
+Includes a plain-English price search ("knee MRI with Blue Cross") and refreshes automatically every month. Next: more Greater Boston hospitals.
 
 ## Data source
 Hospital machine-readable files published under the CMS Hospital Price Transparency rule (45 CFR Part 180).
@@ -36,5 +36,5 @@ Hospital machine-readable files published under the CMS Hospital Price Transpare
 | Combine | `scripts/combine.py` | Standardizes insurer names, numbers and markets; picks a fair comparison price; flags rows that can't be compared |
 | Publish | `scripts/build_site.py` | Builds the dashboard in `site/`, published with GitHub Pages |
 
-Downloads run on GitHub Actions (`.github/workflows/`). Every decision, finding and correction is in the [decision log](docs/decision-log.md).
+Downloads run on GitHub Actions (`.github/workflows/`), with an automatic monthly refresh (`refresh.yml`) that re-downloads, rebuilds and republishes. Every decision, finding and correction is in the [decision log](docs/decision-log.md).
 
