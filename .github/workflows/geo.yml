@@ -1,0 +1,29 @@
+name: Fetch map data
+
+# Run by hand: geocode hospital addresses (US Census Geocoder) and download town boundaries
+# (US Census cartographic boundary file) for the story's map (scripts/fetch_geo.py).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyshp shapely
+      - run: python scripts/fetch_geo.py
+      - name: Save results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/geo
+          git commit -m "Update map data" || echo "Nothing changed"
+          git pull --rebase
+          git push
