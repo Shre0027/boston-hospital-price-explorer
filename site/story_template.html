@@ -5,172 +5,199 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Boston Hospital Price Explorer</title>
 <meta name="description" content="The same brain MRI can cost 8.6× more depending on the Boston hospital. A scroll-through story built from 18 hospitals' official price files, next to CMS quality ratings.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%232a78d6%27/%3E%3Crect x=%277%27 y=%2718%27 width=%275%27 height=%277%27 rx=%271%27 fill=%27%23fff%27/%3E%3Crect x=%2714%27 y=%2712%27 width=%275%27 height=%2713%27 rx=%271%27 fill=%27%23fff%27/%3E%3Crect x=%2721%27 y=%277%27 width=%275%27 height=%2718%27 rx=%271%27 fill=%27%23fff%27/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23142230%27/%3E%3Cpath d=%27M5 18h5l2-6 3 11 3-15 2 10h7%27 fill=%27none%27 stroke=%27%233bbfb2%27 stroke-width=%272.4%27 stroke-linejoin=%27round%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo-var.woff2") format("woff2");
+  font-weight: 100 900; font-stretch: 62% 125%; font-display: swap;
+}
+/* Clinical palette. Teal ("scrub") = cheaper than typical; raspberry ("charge") = more expensive. */
 :root {
   color-scheme: light;
-  --page: #f6f5f2; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e3e1db;
-  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
-  --accent: #2a78d6; --accent-text: #1c5cab; --muted-dot: #b7d3f6; --rail: #e3e1db;
-  --critical: #d03b3b; --warning: #c98a00; --good: #0ca30c;
-  --c0: #2a78d6; --c1: #12a594; --c2: #8a5cd6; --c3: #e07b24;
-  --radius: 14px;
+  --paper: #f2f6f8; --surface: #ffffff; --ink: #142230; --ink-2: #485968; --muted: #7a8a97; --rule: #d6dfe6;
+  --scrub: #0d7f76; --charge: #c0284a; --mid: #a3b1bc; --hl: #ffe45c; --hl-ink: #8a6d00;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
-    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
-    --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
-    --critical: #e66767; --warning: #f0b43c;
-    --c0: #5598e7; --c1: #2fc4b0; --c2: #a786ec; --c3: #f09a4c;
+    --paper: #0c141b; --surface: #131e27; --ink: #e6edf2; --ink-2: #b3c1cc; --muted: #7f909d; --rule: #24323e;
+    --scrub: #3bbfb2; --charge: #f2678a; --mid: #566878; --hl: #e9d25a; --hl-ink: #e9d25a;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
-  --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
-  --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
-  --critical: #e66767; --warning: #f0b43c;
-  --c0: #5598e7; --c1: #2fc4b0; --c2: #a786ec; --c3: #f09a4c;
+  --paper: #0c141b; --surface: #131e27; --ink: #e6edf2; --ink-2: #b3c1cc; --muted: #7f909d; --rule: #24323e;
+  --scrub: #3bbfb2; --charge: #f2678a; --mid: #566878; --hl: #e9d25a; --hl-ink: #e9d25a;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--page); color: var(--text-primary); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-a { color: var(--accent-text); }
-.topbar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 16px; background: color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid transparent; transition: border-color .3s; }
-.topbar.scrolled { border-bottom-color: var(--border); }
-.brand { font-size: 13px; font-weight: 650; color: var(--accent-text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.skip { font-size: 13px; font-weight: 600; text-decoration: none; background: var(--accent); color: #fff; padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 "Archivo", -apple-system, "Segoe UI", Roboto, sans-serif; font-stretch: 100%; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--scrub); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 16px; }
+.num { font-variant-numeric: tabular-nums; }
 
-/* Opening */
-.intro-bg { position: relative; overflow: hidden; }
+.topbar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 20px; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; transition: border-color .3s; }
+.topbar.scrolled { border-bottom-color: var(--rule); }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; font-stretch: 112%; text-decoration: none; white-space: nowrap; }
+.brand svg { flex: none; }
+.dash { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--paper); background: var(--ink); padding: 8px 14px; border-radius: 6px; white-space: nowrap; }
+
+/* ---------- Opening: two receipts for the same scan ---------- */
+.hero-bg { position: relative; overflow: hidden; }
 #cloud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.intro, .cloud-cap { position: relative; }
-.cloud-cap { margin: 0 auto; padding-bottom: 22px; font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 6px 14px; }
-.cloud-cap i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
-.intro h1, .intro .lead, .intro .big, .intro .small, .intro .kicker { text-shadow: 0 0 18px var(--page), 0 0 6px var(--page); }
-.intro { min-height: calc(100svh - 44px); display: flex; flex-direction: column; justify-content: center; padding: 80px 0 40px; }
-.intro .kicker { font-size: 14px; font-weight: 600; color: var(--accent-text); margin: 0 0 14px; }
-.intro h1 { font-size: clamp(34px, 6.5vw, 68px); line-height: 1.05; margin: 0; font-weight: 750; letter-spacing: -.02em; max-width: 15ch; }
-.intro .lead { font-size: clamp(19px, 2.6vw, 26px); color: var(--text-secondary); margin: 22px 0 0; max-width: 32ch; line-height: 1.35; }
-.big { font-size: clamp(88px, 20vw, 200px); font-weight: 800; line-height: .95; letter-spacing: -.04em; color: var(--accent); margin: 10px 0 0; font-variant-numeric: tabular-nums; }
-.intro .small { font-size: 15px; color: var(--text-muted); margin: 18px 0 0; max-width: 52ch; }
-.cue { margin-top: 40px; font-size: 13px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 8px; }
-.cue span { display: inline-block; animation: bob 1.6s ease-in-out infinite; }
-@keyframes bob { 50% { transform: translateY(5px); } }
+.hero { position: relative; max-width: 1160px; margin: 0 auto; min-height: calc(100svh - 40px); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 40px; align-items: center; padding: 96px 16px 220px; }
+.hero h1 { font-size: clamp(38px, 6vw, 72px); line-height: 1.02; font-weight: 760; font-stretch: 92%; letter-spacing: -.025em; margin: 0; max-width: 12ch; }
+.hero .lead { font-size: clamp(18px, 2.1vw, 22px); color: var(--ink-2); margin: 26px 0 0; max-width: 30ch; line-height: 1.4; }
+.times { display: block; font-size: clamp(96px, 15vw, 188px); line-height: .9; font-weight: 860; font-stretch: 125%; letter-spacing: -.035em; color: var(--charge); margin: 6px 0 0; }
+.hero .src { font-size: 14px; color: var(--muted); margin: 22px 0 0; max-width: 46ch; }
+.receipts { position: relative; height: 430px; }
+.receipt { --r-ink: #142230; --r-muted: #6f7f8c; --r-rule: #cfd9e1; --r-scrub: #0d7f76; --r-charge: #c0284a; position: absolute; width: min(330px, 86%); background: #fdfefe; color: var(--r-ink); padding: 22px 22px 34px; font-size: 13px; line-height: 1.45;
+  filter: drop-shadow(0 18px 28px rgba(15, 30, 45, .14));
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x;
+          mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x;
+  transition: transform 1s cubic-bezier(.2,.8,.2,1), opacity .6s; }
+.receipt.back { right: 0; top: 0; transform: rotate(4deg) translate(0, 10px); opacity: 0; }
+.receipt.back.in { opacity: 1; transform: rotate(4deg) translate(-6px, -6px); }
+.receipt.front { left: 0; top: 70px; transform: rotate(-2.5deg); }
+.receipt .rh { font-weight: 750; font-stretch: 108%; font-size: 15px; margin: 0; }
+.receipt .rs { color: var(--r-muted); margin: 0 0 12px; }
+.receipt hr { border: 0; border-top: 1.5px dashed var(--r-rule); margin: 12px 0; }
+.receipt .line { display: grid; grid-template-columns: 56px 1fr; gap: 8px; }
+.receipt .code { color: var(--r-muted); font-variant-numeric: tabular-nums; }
+.receipt .desc { font-stretch: 85%; letter-spacing: .01em; min-height: 2.9em; }
+.receipt .tot { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.receipt .tot span { color: var(--r-muted); }
+.receipt .amt { font-size: 34px; font-weight: 820; font-stretch: 118%; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+.receipt.front .amt { color: var(--r-scrub); }
+.receipt.back .amt { color: var(--r-charge); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .receipt { filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .5)); } }
+.receipt .stamp { position: absolute; right: 16px; bottom: 26px; font-size: 11px; font-weight: 700; font-stretch: 112%; color: var(--muted); border: 1.5px solid var(--rule); border-radius: 4px; padding: 2px 6px; transform: rotate(-6deg); }
+.cloud-cap { position: absolute; left: 0; right: 0; bottom: 18px; font-size: 13px; color: var(--muted); }
 
-/* Scrolly */
-.scrolly { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; }
-.steps { padding: 20vh 0 30vh; grid-column: 1; grid-row: 1; }
-.stage { grid-column: 2; grid-row: 1; }
+/* ---------- Story ---------- */
+.scrolly { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 56px; }
+.stage { grid-column: 2; grid-row: 1; position: sticky; top: 64px; height: calc(100vh - 80px); display: flex; align-items: center; }
+.steps { grid-column: 1; grid-row: 1; padding: 18vh 0 30vh; }
 .step { min-height: 88vh; display: flex; align-items: center; }
-.step .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: 0 10px 30px rgba(0,0,0,.05); opacity: .35; transition: opacity .4s; }
-.step.active .card { opacity: 1; }
-.step .n { font-size: 12px; font-weight: 650; letter-spacing: .06em; color: var(--accent-text); margin: 0 0 6px; }
-.step h2 { font-size: 24px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -.01em; }
-.step p { margin: 0 0 10px; color: var(--text-secondary); font-size: 17px; }
+.step .txt { border-left: 3px solid var(--rule); padding: 4px 0 4px 22px; transition: border-color .4s, opacity .4s; opacity: .4; }
+.step.active .txt { border-left-color: var(--ink); opacity: 1; }
+.step h2 { font-size: 27px; line-height: 1.15; margin: 0 0 12px; font-weight: 740; font-stretch: 96%; letter-spacing: -.015em; }
+.step p { margin: 0 0 12px; color: var(--ink-2); max-width: 40ch; }
 .step p:last-child { margin-bottom: 0; }
-.step b { color: var(--text-primary); }
-.stage { position: sticky; top: 64px; height: calc(100vh - 80px); display: flex; align-items: center; }
-.chart { --row: 26px; --lab: 128px; --rm: 92px; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 14px; }
-.chart-t { font-size: 17px; font-weight: 650; margin: 0; line-height: 1.3; }
-.chart-s { font-size: 13px; color: var(--text-muted); margin: 2px 0 12px; min-height: 1.3em; }
+.step b { color: var(--ink); font-weight: 700; }
+.chart { width: 100%; margin: 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px 14px; --row: 26px; --lab: 128px; --rm: 92px; }
+.prog { display: flex; gap: 4px; margin: 0 0 12px; }
+.prog i { flex: 1; height: 3px; background: var(--rule); border-radius: 2px; transition: background .4s; }
+.prog i.on { background: var(--ink); }
+.chart-t { font-size: 17px; font-weight: 700; margin: 0; line-height: 1.3; }
+.chart-s { font-size: 13px; color: var(--muted); margin: 2px 0 12px; min-height: 1.3em; }
 .plot { position: relative; height: calc(var(--row) * 18); }
 .row { position: absolute; left: 0; right: 0; height: var(--row); transition: transform .8s cubic-bezier(.2,.8,.2,1), opacity .5s; display: flex; align-items: center; }
-.row .lab { width: var(--lab); flex: none; font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; transition: color .4s, font-weight .4s; }
-.row.em .lab { color: var(--text-primary); font-weight: 650; }
+.row .lab { width: var(--lab); flex: none; font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
+.row.em .lab { color: var(--ink); font-weight: 700; }
 .track { position: relative; flex: 1; height: 100%; margin-right: var(--rm); }
-.track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--rail); }
-.stem { position: absolute; left: 0; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--muted-dot); width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1), background .4s, opacity .4s; }
-.dot { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--accent); left: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), background .4s, transform .4s, opacity .4s; }
-.ghost { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; border: 2px solid var(--text-muted); left: 0; opacity: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s; }
-.val { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; color: var(--text-muted); font-variant-numeric: tabular-nums; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s, color .4s; padding-left: 12px; }
-.row.em .val { color: var(--text-primary); font-weight: 650; }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--rule); }
+.stem { position: absolute; left: 0; top: 50%; height: 2px; margin-top: -1px; background: var(--mid); opacity: .55; width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1), opacity .4s; }
+.dot { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--mid); left: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), background .5s, transform .4s, opacity .4s, box-shadow .4s; }
+.ghost { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; border: 2px solid var(--muted); left: 0; opacity: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s; }
+.val { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s, color .4s; padding-left: 12px; }
+.row.em .val { color: var(--ink); font-weight: 700; }
 .row.em .dot { transform: scale(1.35); }
-.row.mute .dot { background: var(--muted-dot); }
-.row.crit .dot { background: var(--critical); transform: scale(1.35); }
-.row.crit .val, .row.crit .lab { color: var(--critical); font-weight: 650; }
-.row.warn .dot { background: var(--warning); transform: scale(1.35); }
-.row.warn .val, .row.warn .lab { color: var(--warning); font-weight: 650; }
+.row.ring .dot { box-shadow: 0 0 0 2.5px var(--surface), 0 0 0 4px var(--ink); }
+.row.faint { opacity: .45; }
+.row.crit .lab, .row.crit .val { color: var(--charge); font-weight: 700; }
+.row.warn .lab, .row.warn .val { color: var(--hl-ink); font-weight: 700; }
 .row.none { opacity: .35; }
 .row.none .dot { opacity: 0; }
-.ref { position: absolute; top: -4px; bottom: 0; border-left: 1.5px dashed var(--text-muted); opacity: 0; transition: opacity .4s, left .8s; pointer-events: none; }
-.axis { position: relative; height: 22px; margin: 6px var(--rm) 0 var(--lab); font-size: 11px; color: var(--text-muted); }
-.axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; transition: left .6s, opacity .4s; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--text-secondary); margin: 8px 0 0; min-height: 18px; }
+.ref { position: absolute; top: -4px; bottom: 0; border-left: 1.5px dashed var(--muted); opacity: 0; transition: opacity .4s, left .8s; pointer-events: none; }
+.axis { position: relative; height: 22px; margin: 6px var(--rm) 0 var(--lab); font-size: 11px; color: var(--muted); }
+.axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 12px; color: var(--ink-2); margin: 8px 0 0; min-height: 18px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-.legend .hollow { background: none; border: 2px solid var(--text-muted); }
+.legend .hollow { background: none; border: 2px solid var(--muted); }
+.legend .ramp { display: inline-block; width: 96px; height: 8px; border-radius: 4px; vertical-align: 0; margin: 0 6px; background: linear-gradient(90deg, var(--scrub), var(--mid), var(--charge)); }
 
-/* Finale */
-.finale { padding: 12vh 0 8vh; }
-.finale h2 { font-size: clamp(30px, 4.5vw, 46px); line-height: 1.1; margin: 0 0 8px; letter-spacing: -.02em; }
-.finale .sub { color: var(--text-secondary); font-size: 18px; margin: 0 0 28px; max-width: 60ch; }
-.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
-.num { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-.num b { display: block; font-size: 36px; line-height: 1.05; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.num span { font-size: 14px; color: var(--text-secondary); }
-.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 28px 0 0; }
-.pipe .p { background: var(--surface-2); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; }
-.pipe .arr { color: var(--text-muted); }
-.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 32px 0 0; }
-.btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 10px; font-weight: 650; font-size: 16px; text-decoration: none; }
-.btn.pri { background: var(--accent); color: #fff; }
-.btn.sec { border: 1px solid var(--border); color: var(--text-primary); background: var(--surface); }
-.by { margin: 28px 0 0; font-size: 15px; color: var(--text-secondary); }
-footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); }
-.fade { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
-.fade.in { opacity: 1; transform: none; }
+/* ---------- Finale ---------- */
+.finale { padding: 14vh 16px 8vh; }
+.finale h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.05; margin: 0 0 10px; font-weight: 760; font-stretch: 92%; letter-spacing: -.025em; }
+.finale .sub { color: var(--ink-2); font-size: 19px; margin: 0 0 36px; max-width: 52ch; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; margin: 0; padding: 0; list-style: none; }
+.facts li { border-top: 2px solid var(--ink); padding-top: 12px; }
+.facts b { display: block; font-size: clamp(34px, 4vw, 48px); line-height: 1; font-weight: 820; font-stretch: 120%; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.facts span { display: block; margin-top: 8px; font-size: 15px; color: var(--ink-2); max-width: 28ch; }
+.pipe { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 44px 0 0; padding: 0; list-style: none; counter-reset: s; }
+.pipe li { counter-increment: s; font-size: 15px; font-weight: 600; display: flex; align-items: baseline; gap: 8px; }
+.pipe li::before { content: counter(s); font-size: 12px; font-weight: 700; color: var(--paper); background: var(--scrub); width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 40px 0 0; }
+.btn { display: inline-flex; align-items: center; min-height: 50px; padding: 0 22px; border-radius: 6px; font-weight: 650; font-size: 16px; text-decoration: none; }
+.btn.pri { background: var(--ink); color: var(--paper); }
+.btn.sec { border: 1.5px solid var(--ink); }
+.by { margin: 32px 0 0; font-size: 15px; color: var(--ink-2); max-width: 70ch; }
+footer { padding: 24px 16px 48px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); }
 
 @media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 84px 16px 190px; min-height: 0; }
+  .receipts { height: 440px; }
+  .receipt.back { right: 0; }
+  .brand { overflow: hidden; text-overflow: ellipsis; min-width: 0; font-size: 13px; }
+  .dash { padding: 7px 11px; font-size: 13px; }
+  .dash .long { display: none; }
+  .receipt { width: min(270px, 78%); padding: 16px 16px 28px; font-size: 12px; }
+  .receipt .amt { font-size: 28px; }
+  .receipt.front { top: 222px; }
   .scrolly { display: block; }
-  .stage { top: 50px; height: auto; z-index: 2; padding: 6px 0 0; background: var(--page); }
-  .chart { padding: 12px 12px 8px; }
+  .stage { top: 50px; height: auto; z-index: 2; padding: 6px 0 0; background: var(--paper); }
+  .chart { padding: 12px 12px 8px; --row: 16px; --lab: 84px; --rm: 74px; }
   .chart-t { font-size: 15px; }
   .chart-s { font-size: 12px; margin-bottom: 8px; }
-  .chart { --row: 16px; --lab: 84px; --rm: 74px; }
   .row .lab { font-size: 11px; }
   .val { font-size: 10.5px; padding-left: 9px; }
   .axis { margin-top: 4px; font-size: 10px; height: 16px; }
   .dot, .ghost { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; }
-  .legend { font-size: 11px; gap: 10px; margin-top: 4px; }
+  .legend { font-size: 11px; gap: 6px 10px; margin-top: 4px; }
   .steps { padding: 4vh 0 20vh; position: relative; z-index: 3; }
   .step { min-height: 80vh; align-items: flex-end; padding-bottom: 1vh; }
-  .step .card { opacity: 1; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
-  .step h2 { font-size: 20px; }
+  .step .txt { opacity: 1; background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--ink); padding: 14px 16px; border-radius: 0 6px 6px 0; }
+  .step h2 { font-size: 21px; }
   .step p { font-size: 15.5px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .row, .stem, .dot, .ghost, .val, .ref, .axis span, .step .card, .fade { transition: none; }
-  .fade { opacity: 1; transform: none; }
-  .cue span { animation: none; }
+  .row, .stem, .dot, .ghost, .val, .ref, .step .txt, .receipt, .prog i { transition: none; }
 }
 </style>
 </head>
 <body>
 <nav class="topbar" id="topbar">
-  <a class="brand" href="#top">Boston Hospital Price Explorer</a>
-  <a class="skip" href="explore.html">Skip to the dashboard →</a>
+  <a class="brand" href="#top"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="currentColor"/><path d="M5 18h5l2-6 3 11 3-15 2 10h7" fill="none" stroke="var(--scrub)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>Boston Hospital Price Explorer</a>
+  <a class="dash" href="explore.html">Open the <span class="long">full </span>dashboard</a>
 </nav>
 
-<div class="intro-bg"><canvas id="cloud" aria-hidden="true"></canvas>
-<header class="intro wrap" id="top">
-  <p class="kicker">A data story · <span id="nh"></span> Greater Boston hospitals</p>
-  <h1>You need a brain MRI in Boston.</h1>
-  <p class="lead">Where you go can change the price by</p>
-  <p class="big" id="bigx" aria-live="polite"></p>
-  <p class="small" id="introsmall"></p>
-  <p class="cue" aria-hidden="true"><span>↓</span> Scroll to see what I found</p>
-</header>
-<p class="cloud-cap wrap" id="cloudcap"></p>
+<div class="hero-bg" id="top">
+  <canvas id="cloud" aria-hidden="true"></canvas>
+  <header class="hero">
+    <div>
+      <h1>You need a brain MRI in Boston.</h1>
+      <p class="lead">Pay cash, and depending on the hospital, the same scan costs up to <span class="times num" id="bigx"></span></p>
+      <p class="src" id="src"></p>
+    </div>
+    <div class="receipts" aria-label="Two hospital receipts for the same brain MRI">
+      <article class="receipt back" id="rback"></article>
+      <article class="receipt front" id="rfront"></article>
+    </div>
+  </header>
+  <p class="cloud-cap wrap" id="cloudcap"></p>
 </div>
 
 <main>
   <div class="wrap scrolly">
     <div class="stage">
-      <figure class="chart" aria-label="Chart that changes with each step of the story" style="margin:0">
+      <figure class="chart" aria-label="Chart that changes with each step of the story">
+        <div class="prog" id="prog" aria-hidden="true"></div>
         <p class="chart-t" id="ct"></p>
         <p class="chart-s" id="cs"></p>
         <div class="plot" id="plot"></div>
@@ -182,18 +209,18 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </div>
 
   <section class="finale wrap" id="finale">
-    <h2 class="fade">How I built it</h2>
-    <p class="sub fade">Hospitals publish these prices in files built for machines, not people. Here's what it took to turn them into this story.</p>
-    <div class="nums" id="nums"></div>
-    <div class="pipe fade" aria-label="Pipeline">
-      <span class="p">Find each file</span><span class="arr">→</span><span class="p">Download &amp; filter</span><span class="arr">→</span><span class="p">Standardize &amp; check</span><span class="arr">→</span><span class="p">Analyze in SQL</span><span class="arr">→</span><span class="p">Publish &amp; refresh monthly</span>
-    </div>
-    <div class="ctas fade">
-      <a class="btn pri" href="explore.html">Explore the data yourself →</a>
+    <h2>How I built it</h2>
+    <p class="sub">Hospitals publish these prices in files built for machines, not people. This is what it took to turn them into the story above.</p>
+    <ul class="facts" id="facts"></ul>
+    <ol class="pipe" aria-label="How the data flows">
+      <li>Find each hospital's file</li><li>Download and filter</li><li>Standardize and check</li><li>Analyze in SQL</li><li>Publish, refresh monthly</li>
+    </ol>
+    <div class="ctas">
+      <a class="btn pri" href="explore.html">Explore the data yourself</a>
       <a class="btn sec" href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/case-study.md">Read the case study</a>
       <a class="btn sec" href="https://github.com/Shre0027/boston-hospital-price-explorer">See the code</a>
     </div>
-    <p class="by fade">Built by <b>Shreyas Tayde</b>. Every number on this page is computed from the hospitals' own price files (CMS Hospital Price Transparency rule, 45 CFR Part 180) and CMS star ratings. Every decision and correction is in the <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>. <span id="asof"></span></p>
+    <p class="by">Built by <b>Shreyas Tayde</b>. Every number on this page is computed from the hospitals' own price files (CMS Hospital Price Transparency rule, 45 CFR Part 180) and CMS star ratings; every decision and correction is in the <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>. <span id="asof"></span></p>
   </section>
 </main>
 
@@ -210,8 +237,10 @@ const MRI = "70551";
 const procName = (cpt) => DATA.procedures.find(p => p.cpt === cpt).name;
 const cash = (cpt, id) => DATA.prices[cpt][id].cash;
 const comm = (cpt, id) => (DATA.prices[cpt][id].commercial || {}).median ?? null;
+const ins = (cpt, id, name) => ((DATA.prices[cpt][id].insurers || {})[name] || {}).median ?? null;
 const median = (a) => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const names = (rows) => rows.map(r => r.h.short).join(" and ");
+const esc = (t) => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function extremes(getter) {
   const rows = H.map(h => ({ h, v: getter(h.id) })).filter(r => r.v != null).sort((a, b) => a.v - b.v);
   const lo = rows[0], hiV = rows[rows.length - 1].v;
@@ -240,7 +269,6 @@ const problemOf = (h) => {
 };
 F.prob = H.filter(problemOf);
 F.odd = H.filter(h => h.notes.some(n => /impossible/i.test(n)));
-const ins = (cpt, id, name) => ((DATA.prices[cpt][id].insurers || {})[name] || {}).median ?? null;
 const CBC = "85025", CMP = "80053", UHC = "UnitedHealthcare";
 F.same = extremes(id => ins(CBC, id, UHC));
 F.cvi = H.map(h => { const c = cash(CMP, h.id), i = comm(CMP, h.id); return c != null && i != null ? { h, c, i, r: c / i } : null; }).filter(Boolean).sort((a, b) => b.r - a.r);
@@ -249,56 +277,48 @@ const countOf = (label) => F.prob.filter(h => problemOf(h) === label).length;
 // ---------- The story: each step sets the chart ----------
 const STEPS = [
   {
-    kicker: "PAYING CASH",
     title: "Same scan, very different bill",
     text: `Paying without insurance, a brain MRI is <b>${money(F.cash.lo.v)}</b> at ${F.cash.lo.h.name}. At ${names(F.cash.his)} it's <b>${money(F.cash.hi.v)}</b>.`,
     text2: `That's <b>${times(F.cash.r)}</b> as much for the same scan, a few miles apart.`,
     chart: () => moneyChart(`${procName(MRI)}: cash price`, "Each dot is one hospital's listed cash price", id => cash(MRI, id), [F.cash.lo.h.id, ...F.cash.his.map(r => r.h.id)]),
   },
   {
-    kicker: "WITH INSURANCE",
     title: "Insurance lowers the price, not the gap",
     text: `With commercial insurance, the typical price ranges from <b>${money(F.comm.lo.v)}</b> at ${F.comm.lo.h.name} to <b>${money(F.comm.hi.v)}</b> at ${names(F.comm.his)}: still <b>${times(F.comm.r)}</b>.`,
     text2: "And that money comes back to you through premiums, deductibles and coinsurance.",
     chart: () => moneyChart(`${procName(MRI)}: commercial insurance`, `Typical price across each hospital's commercial plans (at least ${DATA.min_plans} plan prices)`, id => comm(MRI, id), [F.comm.lo.h.id, ...F.comm.his.map(r => r.h.id)]),
   },
   F.same.rows.length >= 3 && {
-    kicker: "SAME INSURER",
     title: "Even with the same insurance card",
     text: `${UHC} pays <b>${money(F.same.lo.v)}</b> for a blood count at ${F.same.lo.h.name} and <b>${money(F.same.hi.v)}</b> at ${names(F.same.his)}: <b>${F.same.r.toFixed(0)}×</b>.`,
     text2: "Same insurer, same test. The price depends on the contract each hospital negotiated, and those costs flow into everyone's premiums.",
     chart: () => moneyChart(`${procName(CBC)}: ${UHC}`, `Median across ${UHC}'s commercial plans at each hospital`, id => ins(CBC, id, UHC), [F.same.lo.h.id, ...F.same.his.map(r => r.h.id)]),
   },
   F.cvi.length >= 3 && {
-    kicker: "NO INSURANCE",
     title: "Uninsured patients can pay far more",
     text: `For a ${procName(CMP).toLowerCase()}, ${F.cvi[0].h.name} lists <b>${money(F.cvi[0].c)}</b> cash. Insurers typically pay <b>${money(F.cvi[0].i)}</b>. Paying cash costs <b>${F.cvi[0].r.toFixed(0)}×</b> as much.`,
     text2: `${F.cvi[1].h.name} is close behind: ${money(F.cvi[1].c)} cash vs ${money(F.cvi[1].i)} (${F.cvi[1].r.toFixed(0)}×). If you're paying yourself, ask about the price and financial assistance before you book.`,
     chart: () => cashVsChart(),
   },
   {
-    kicker: "EVERY PROCEDURE",
     title: F.top.length === 2 ? "Two hospitals stand apart" : "The pattern holds across procedures",
     text: `It's not just one scan. Across all ${DATA.procedures.length} procedures, ${F.top.map(h => h.short).join(" and ")} ${F.top.length > 1 ? "are" : "is"} about <b>${F.top.length ? times(Math.max(...F.top.map(h => h.price_index))) : ""}</b> the typical Boston price.`,
     text2: F.sysRest.length ? `${topSys}'s other hospitals? About <b>${median(F.sysRest.map(h => h.price_index)).toFixed(1)}×</b>. Same system, very different prices.` : "",
-    chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), () => ""),
+    chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), false),
   },
   {
-    kicker: "QUALITY",
     title: "Is the expensive care better?",
     text: `Not reliably. <b>${F.fiveBelow.length} of the ${F.five.length}</b> hospitals with a 5-star CMS rating are priced <b>below</b> typical: ${F.fiveBelow.map(h => `${h.short} (${h.price_index.toFixed(2)}×)`).join(" and ")}.`,
     text2: `Price and rating move together only loosely (rank correlation ${DATA.rank_correlation.toFixed(2)}, where 1 would mean price always rises with rating).`,
-    chart: () => indexChart("Overall price level, colored by CMS star rating", "Highlighted: hospitals with a 5-star CMS rating", F.five.map(h => h.id), () => "", true),
+    chart: () => indexChart("Overall price level, with CMS star ratings", "Ringed: hospitals with a 5-star CMS rating", F.five.map(h => h.id), true),
   },
   {
-    kicker: "WHAT YOU'D PAY",
     title: "But what would you actually pay?",
     text: `Say you have <b>${money(DED)}</b> of deductible left and <b>${COINS}%</b> coinsurance. Your share of that MRI runs from <b>${money(F.share.lo.v)}</b> to <b>${money(F.share.hi.v)}</b>.`,
     text2: `The hospitals' gap was ${money(F.comm.hi.v - F.comm.lo.v)}. Yours is <b>${money(F.share.hi.v - F.share.lo.v)}</b>: smaller, but still real money for one scan.`,
     chart: () => shareChart(),
   },
   {
-    kicker: "THE DATA ITSELF",
     title: "“Public” isn't the same as usable",
     text: `This almost couldn't be built. <b>${F.prob.length} of ${H.length}</b> price files couldn't be read the standard way: ${[["blocked downloads", "blocked automated downloads"], ["outdated link list", "had an out-of-date official link list"], ["broke a JSON parser", "broke a standard JSON parser"]].filter(([k]) => countOf(k)).map(([k, t]) => `${countOf(k)} ${t}`).join(", ")}.`,
     text2: F.odd.length ? `And ${F.odd.map(h => h.short).join(", ")} listed impossible prices, like <b>$0.03</b> for a blood test. Those were set aside, not hidden.` : "",
@@ -306,29 +326,39 @@ const STEPS = [
   },
 ].filter(Boolean);
 
-// ---------- Chart engine: 18 rows that slide and re-sort ----------
+// ---------- Chart engine: 18 rows that slide, re-sort and recolor ----------
+// Color encodes price relative to typical: teal below, grey at typical, raspberry above.
+function tone(r) {
+  if (r == null || !isFinite(r)) return "var(--mid)";
+  const t = Math.max(-1, Math.min(1, Math.log2(r)));
+  const p = Math.round(Math.abs(t) * 100);
+  return `color-mix(in oklab, ${t < 0 ? "var(--scrub)" : "var(--charge)"} ${p}%, var(--mid))`;
+}
 let rows = {};
 function buildPlot() {
   $("plot").innerHTML = H.map(h => `<div class="row" id="r-${h.id}"><div class="lab">${h.short}</div><div class="track"><div class="stem"></div><div class="ghost"></div><div class="dot"></div><span class="val"></span></div></div>`).join("") +
     `<div class="ref" id="ref"></div>`;
   H.forEach(h => { const el = $("r-" + h.id); rows[h.id] = { el, stem: el.querySelector(".stem"), dot: el.querySelector(".dot"), ghost: el.querySelector(".ghost"), val: el.querySelector(".val") }; });
+  $("prog").innerHTML = STEPS.map(() => "<i></i>").join("");
 }
-function niceMax(v) { const step = v > 3000 ? 1000 : v > 1200 ? 500 : v > 400 ? 200 : 100; return Math.ceil(v * 1.05 / step) * step; }
-function moneyTicks(max) { const step = max > 3000 ? 1000 : max > 1200 ? 500 : max > 400 ? 200 : 100; const t = []; for (let v = 0; v <= max + 1; v += step) t.push(v); return t; }
+function stepOf(v) { return v > 3000 ? 1000 : v > 1200 ? 500 : v > 400 ? 200 : v > 150 ? 50 : 25; }
+function niceMax(v) { const s = stepOf(v); return Math.ceil(v * 1.05 / s) * s; }
+function moneyTicks(max) { const s = stepOf(max), t = []; for (let v = 0; v <= max + 1; v += s) t.push(v); return t.map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]); }
 const LO = 0.5, HI = 2.2, L = Math.log;
 const ipos = (x) => Math.max(0, Math.min(100, (L(x) - L(LO)) / (L(HI) - L(LO)) * 100));
+const RAMP = `<span>Below typical<span class="ramp"></span>Above typical</span>`;
 
-// spec: { title, sub, items: [{id, x (0–100) or null, label, cls, ghostX}], stems: bool, ref: x|null, ticks: [[x, label]], legend: html }
 function render(spec) {
   $("ct").textContent = spec.title; $("cs").textContent = spec.sub;
   const order = [...spec.items].sort((a, b) => (a.x == null) - (b.x == null) || (a.x ?? 0) - (b.x ?? 0) || a.id.localeCompare(b.id));
-  const rowH = parseFloat(getComputedStyle($("plot")).getPropertyValue("--row")) || 26; // inherited from .chart
+  const rowH = parseFloat(getComputedStyle($("plot")).getPropertyValue("--row")) || 26;
   order.forEach((it, i) => {
     const r = rows[it.id];
     r.el.style.transform = `translateY(${i * rowH}px)`;
     r.el.className = "row " + (it.x == null ? "none " : "") + (it.cls || "");
     const x = it.x ?? 0;
     r.dot.style.left = x + "%";
+    r.dot.style.background = it.color || tone(it.r);
     r.stem.style.width = spec.stems && it.x != null ? x + "%" : "0";
     r.val.style.left = Math.max(x, it.ghostX ?? 0) + "%";
     r.val.textContent = it.label;
@@ -338,132 +368,154 @@ function render(spec) {
   const ref = $("ref");
   if (spec.ref != null) { ref.style.opacity = .8; ref.style.left = `calc(var(--lab) + (100% - var(--lab) - var(--rm)) * ${spec.ref / 100})`; } else ref.style.opacity = 0;
   $("axis").innerHTML = spec.ticks.map(([x, t]) => `<span style="left:${x}%">${t}</span>`).join("");
-  $("legend").innerHTML = spec.legend || "";
+  $("legend").innerHTML = spec.legend ?? RAMP;
 }
 function moneyChart(title, sub, get, em) {
-  const vals = H.map(h => get(h.id)).filter(v => v != null), max = niceMax(Math.max(...vals));
-  return render({ title, sub, stems: true, ref: null,
-    items: H.map(h => { const v = get(h.id); return { id: h.id, x: v == null ? null : v / max * 100, label: v == null ? "not listed" : money(v), cls: em.includes(h.id) ? "em" : "" }; }),
-    ticks: moneyTicks(max).map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]) });
+  const vals = H.map(h => get(h.id)).filter(v => v != null), max = niceMax(Math.max(...vals)), typ = median(vals);
+  return render({ title, sub, stems: true, ref: null, ticks: moneyTicks(max),
+    items: H.map(h => { const v = get(h.id); return { id: h.id, x: v == null ? null : v / max * 100, r: v == null ? null : v / typ, label: v == null ? "not listed" : money(v), cls: em.includes(h.id) ? "em" : "" }; }) });
 }
 const idxTicks = [[ipos(.5), "0.5×"], [ipos(.75), "0.75×"], [ipos(1), "1× typical"], [ipos(1.5), "1.5×"], [ipos(2), "2×"]];
-function indexChart(title, sub, em, extra, byStars) {
-  return render({ title, sub, stems: false, ref: ipos(1),
-    items: H.map(h => ({ id: h.id, x: h.price_index == null ? null : ipos(h.price_index),
-      label: h.price_index == null ? "too little data" : h.price_index.toFixed(2) + "×" + (byStars ? (h.stars ? "  " + "★".repeat(h.stars) : "  no rating") : ""),
-      cls: em.includes(h.id) ? "em" : (byStars ? "mute" : "") })),
-    ticks: idxTicks,
-    legend: byStars ? `<span><i style="background:var(--accent)"></i>5-star CMS rating</span><span><i style="background:var(--muted-dot)"></i>1–4 stars or not rated</span>` : "" });
+function indexChart(title, sub, em, byStars) {
+  return render({ title, sub, stems: false, ref: ipos(1), ticks: idxTicks,
+    items: H.map(h => ({ id: h.id, x: h.price_index == null ? null : ipos(h.price_index), r: h.price_index,
+      label: h.price_index == null ? "too little data" : h.price_index.toFixed(2) + "×" + (byStars ? (h.stars ? "  " + "★".repeat(h.stars) : "  not rated") : ""),
+      cls: em.includes(h.id) ? (byStars ? "em ring" : "em") : (byStars ? "faint" : "") })),
+    legend: byStars ? `${RAMP}<span><i class="hollow" style="border-color:var(--ink)"></i>5-star CMS rating</span>` : RAMP });
 }
 function shareChart() {
-  const vals = H.map(h => comm(MRI, h.id)).filter(v => v != null), max = niceMax(Math.max(...vals));
+  const vals = H.map(h => comm(MRI, h.id)).filter(v => v != null), max = niceMax(Math.max(...vals)), typ = median(vals.map(share));
   const em = [F.share.lo.h.id, ...F.share.his.map(r => r.h.id)];
-  return render({ title: `${procName(MRI)}: your estimated share`, sub: `$${DED} of deductible left, ${COINS}% coinsurance, at each hospital's typical commercial price`, stems: true, ref: null,
+  return render({ title: `${procName(MRI)}: your estimated share`, sub: `$${DED} of deductible left, ${COINS}% coinsurance, at each hospital's typical commercial price`, stems: true, ref: null, ticks: moneyTicks(max),
     items: H.map(h => { const c = comm(MRI, h.id); return c == null ? { id: h.id, x: null, label: "not listed" } :
-      { id: h.id, x: share(c) / max * 100, ghostX: c / max * 100, label: `you ≈ ${money(share(c))}`, cls: em.includes(h.id) ? "em" : "" }; }),
-    ticks: moneyTicks(max).map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]),
-    legend: `<span><i style="background:var(--accent)"></i>Your estimated share</span><span><i class="hollow"></i>Price paid to the hospital</span>` });
+      { id: h.id, x: share(c) / max * 100, ghostX: c / max * 100, r: share(c) / typ, label: `you ≈ ${money(share(c))}`, cls: em.includes(h.id) ? "em" : "" }; }),
+    legend: `<span><i style="background:var(--ink)"></i>Your estimated share</span><span><i class="hollow"></i>Price paid to the hospital</span>` });
 }
 function cashVsChart() {
   const max = niceMax(Math.max(...F.cvi.map(x => x.c))), byId = Object.fromEntries(F.cvi.map(x => [x.h.id, x]));
-  return render({ title: `${procName(CMP)}: cash vs insurance`, sub: "Cash price vs the typical price insurers pay, at the same hospital", stems: true, ref: null,
+  return render({ title: `${procName(CMP)}: cash vs insurance`, sub: "Cash price vs the typical price insurers pay, at the same hospital", stems: true, ref: null, ticks: moneyTicks(max),
     items: H.map(h => { const x = byId[h.id]; return !x ? { id: h.id, x: null, label: "not comparable" } :
-      { id: h.id, x: x.c / max * 100, ghostX: x.i / max * 100, label: `${x.r >= 9.95 ? x.r.toFixed(0) : x.r.toFixed(1)}×`, cls: x === F.cvi[0] || x === F.cvi[1] ? "em" : "" }; }),
-    ticks: moneyTicks(max).map(v => [v / max * 100, "$" + v]),
-    legend: `<span><i style="background:var(--accent)"></i>Cash price</span><span><i class="hollow"></i>What insurers typically pay</span><span>Label: how many times more cash costs</span>` });
+      { id: h.id, x: x.c / max * 100, ghostX: x.i / max * 100, r: x.r, label: `${x.r >= 9.95 ? x.r.toFixed(0) : x.r.toFixed(1)}×`, cls: x === F.cvi[0] || x === F.cvi[1] ? "em" : "" }; }),
+    legend: `<span><i style="background:var(--charge)"></i>Cash price</span><span><i class="hollow"></i>What insurers typically pay</span><span>Label: cash as a multiple of the insurer price</span>` });
 }
 function problemChart() {
-  return render({ title: "Whose price files were hard to use", sub: "Same price-level chart; highlighted rows had a file problem", stems: false, ref: ipos(1),
+  return render({ title: "Whose price files were hard to use", sub: "Same price-level chart; highlighted rows had a file problem", stems: false, ref: ipos(1), ticks: idxTicks,
     items: H.map(h => { const p = problemOf(h), odd = F.odd.includes(h);
-      return { id: h.id, x: h.price_index == null ? null : ipos(h.price_index), label: p || (odd ? "impossible prices" : h.price_index == null ? "too little data" : ""), cls: p ? "crit" : odd ? "warn" : "mute" }; }),
-    ticks: idxTicks,
-    legend: `<span><i style="background:var(--critical)"></i>File couldn't be read the standard way</span>${F.odd.length ? `<span><i style="background:var(--warning)"></i>Impossible prices listed</span>` : ""}` });
+      return { id: h.id, x: h.price_index == null ? null : ipos(h.price_index), label: p || (odd ? "impossible prices" : h.price_index == null ? "too little data" : ""),
+        color: p ? "var(--charge)" : odd ? "var(--hl-ink)" : "var(--mid)", cls: p ? "crit em" : odd ? "warn em" : "faint" }; }),
+    legend: `<span><i style="background:var(--charge)"></i>File couldn't be read the standard way</span>${F.odd.length ? `<span><i style="background:var(--hl-ink)"></i>Impossible prices listed</span>` : ""}` });
 }
 
-// ---------- Steps, scrolling and count-ups ----------
-$("steps").innerHTML = STEPS.map((s, i) => `<div class="step" data-i="${i}"><div class="card"><p class="n">${i + 1} · ${s.kicker}</p><h2>${s.title}</h2><p>${s.text}</p>${s.text2 ? `<p>${s.text2}</p>` : ""}</div></div>`).join("");
+// ---------- Steps ----------
+$("steps").innerHTML = STEPS.map((s, i) => `<div class="step" data-i="${i}"><div class="txt"><h2>${s.title}</h2><p>${s.text}</p>${s.text2 ? `<p>${s.text2}</p>` : ""}</div></div>`).join("");
 let current = -1;
-function go(i) { if (i === current) return; current = i; STEPS[i].chart(); document.querySelectorAll(".step").forEach(s => s.classList.toggle("active", +s.dataset.i === i)); }
+function go(i) {
+  if (i === current) return; current = i; STEPS[i].chart();
+  document.querySelectorAll(".step").forEach(s => s.classList.toggle("active", +s.dataset.i === i));
+  document.querySelectorAll("#prog i").forEach((b, k) => b.classList.toggle("on", k <= i));
+}
+
+// ---------- Opening: the receipts ----------
+function receiptHTML(h, v, label) {
+  const d = (DATA.receipt && DATA.receipt.desc[h.id]) || procName(MRI);
+  return `<p class="rh">${esc(h.name)}</p><p class="rs">Itemized statement, self-pay</p><hr>
+    <div class="line"><span class="code">CPT ${MRI}</span><span class="desc">${esc(d)}</span></div><hr>
+    <div class="tot"><span>${label}</span><span class="amt">${money(v)}</span></div>`;
+}
+function playReceipts() {
+  const seq = F.cash.rows.slice().reverse();   // most expensive to cheapest
+  const hi = F.cash.his.find(r => r.h.id === "mgh") || F.cash.his[0], lo = F.cash.lo;
+  $("rback").innerHTML = receiptHTML(hi.h, hi.v, "Cash price");
+  const front = $("rfront");
+  const show = (r) => { front.innerHTML = receiptHTML(r.h, r.v, "Cash price"); };
+  if (CALM) { show(lo); $("rback").classList.add("in"); return; }
+  let k = 0;
+  show(seq[0]);
+  const tick = () => {
+    k++;
+    if (k < seq.length) { show(seq[k]); setTimeout(tick, 70 + k * 9); }
+    else setTimeout(() => $("rback").classList.add("in"), 150);
+  };
+  setTimeout(tick, 600);
+}
 
 function countUp(el, text, ms = 1100) {
   const m = text.match(/^(\$?)([\d.,]+)(.*)$/);
   if (CALM || !m) { el.textContent = text; return; }
   const target = parseFloat(m[2].replace(/,/g, "")), dec = (m[2].split(".")[1] || "").length, t0 = performance.now();
-  const tick = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+  const step = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3);
     el.textContent = m[1] + (target * e).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + m[3];
-    if (k < 1) requestAnimationFrame(tick); };
-  requestAnimationFrame(tick);
+    if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
 }
 
+// ---------- Background: one dot per published price, cheapest (teal) to most expensive (raspberry) ----------
+function cloud() {
+  const cv = $("cloud"), ctx = cv.getContext("2d"), dots = DATA.dots || [];
+  if (!dots.length) return;
+  $("cloudcap").textContent = `Behind this page: all ${dots.length.toLocaleString("en-US")} published dollar prices in this project, placed from cheapest to most expensive.`;
+  let css, cols, tickCol;
+  const hex = (s) => { s = s.trim().replace("#", ""); return [0, 2, 4].map(i => parseInt(s.slice(i, i + 2), 16)); };
+  const readColors = () => { css = getComputedStyle(document.documentElement); cols = ["--scrub", "--mid", "--charge"].map(v => hex(css.getPropertyValue(v))); tickCol = css.getPropertyValue("--muted").trim(); };
+  const mix = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  const colorAt = (u) => { const c = u < .5 ? mix(cols[0], cols[1], u * 2) : mix(cols[1], cols[2], (u - .5) * 2); return `rgb(${c[0]},${c[1]},${c[2]})`; };
+  readColors();
+  let W, Ht, T = [], S = [], seed = 7, geo;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const qs = dots.map(d => Math.floor(d / 10)), qmin = Math.min(...qs), qmax = Math.max(...qs);
+  function layout() {
+    const dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; Ht = cv.clientHeight;
+    cv.width = W * dpr; cv.height = Ht * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pad = Math.max(16, (W - 1160) / 2 + 16), band = Math.min(150, W * 0.22), cy = Ht - band / 2 - ($("cloudcap").offsetHeight + 52);
+    seed = 7;
+    T = qs.map(q => { const j = (rnd() + rnd() + rnd() - 1.5) / 1.5; return [pad + q / 999 * (W - 2 * pad), cy + j * band / 2, (q - qmin) / (qmax - qmin)]; });
+    S = T.map(() => [rnd() * W, rnd() * Ht * .7]);
+    geo = { pad, cy, band };
+  }
+  function frame(k) {
+    ctx.clearRect(0, 0, W, Ht);
+    ctx.globalAlpha = 0.55;
+    for (let i = 0; i < T.length; i++) {
+      const t = T[i], e = Math.min(1, Math.max(0, (k - (i % 97) / 97 * 0.35) / 0.65)), f = 1 - Math.pow(1 - e, 3);
+      ctx.fillStyle = colorAt(t[2]);
+      ctx.fillRect(S[i][0] + (t[0] - S[i][0]) * f - 1, S[i][1] + (t[1] - S[i][1]) * f - 1, 2, 2);
+    }
+    ctx.globalAlpha = Math.min(1, k); ctx.fillStyle = tickCol; ctx.font = "12px Archivo, -apple-system, sans-serif"; ctx.textAlign = "center";
+    [[1, "$1"], [10, "$10"], [100, "$100"], [1000, "$1k"], [10000, "$10k"], [100000, "$100k"]].forEach(([v, l]) => {
+      ctx.fillText(l, geo.pad + (Math.log10(v) + 2) / 7 * (W - 2 * geo.pad), geo.cy + geo.band / 2 + 22);
+    });
+    ctx.globalAlpha = 1;
+  }
+  layout();
+  if (CALM) frame(1); else { const t0 = performance.now(), dur = 2600; const step = (t) => { const k = Math.min(1, (t - t0) / dur); frame(k); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+  addEventListener("resize", () => { layout(); frame(1); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { readColors(); frame(1); });
+}
+
+// ---------- Finale ----------
 const maxRows = Math.max(...H.map(h => h.rows_in_file));
-const NUMS = [
+const FACTS = [
   [String(H.length), "official hospital price files collected"],
   [(maxRows / 1e6).toFixed(1) + "M", "rows in the largest single file"],
   [DATA.total_prices.toLocaleString("en-US"), "published prices standardized"],
   [String(DATA.insurer_names), "different insurer names mapped to brands a patient knows"],
-  [String(DATA.sql_queries), "documented SQL queries behind every finding"],
+  [String(DATA.sql_queries), "documented SQL queries behind the findings"],
   ["0", "mismatches when 180 random rows were traced back to the source files"],
 ];
-$("nums").innerHTML = NUMS.map(([n, t]) => `<div class="num fade"><b data-n="${n}">${n}</b><span>${t}</span></div>`).join("");
+$("facts").innerHTML = FACTS.map(([n, t]) => `<li><b data-n="${n}">${n}</b><span>${t}</span></li>`).join("");
 
-$("nh").textContent = H.length;
-$("introsmall").textContent = `Same scan. Same city. ${money(F.cash.lo.v)} at ${F.cash.lo.h.name}, ${money(F.cash.hi.v)} at ${names(F.cash.his)}, paying cash. Every number here comes from the hospitals' own official price files.`;
+// ---------- Start ----------
+$("src").textContent = `${money(F.cash.lo.v)} at ${F.cash.lo.h.name}, ${money(F.cash.hi.v)} at ${names(F.cash.his)}. From the official price files of ${H.length} Greater Boston hospitals.`;
 $("asof").textContent = `Prices refreshed ${DATA.built_on}; updated automatically every month.`;
-buildPlot(); go(0);
+buildPlot(); go(0); cloud(); playReceipts();
 setTimeout(() => countUp($("bigx"), times(F.cash.r), 1400), CALM ? 0 : 300);
-
-// ---------- Background: one dot per published price ----------
-function cloud() {
-  const cv = $("cloud"), ctx = cv.getContext("2d"), dots = DATA.dots || [];
-  if (!dots.length) return;
-  let css = getComputedStyle(document.documentElement), col = [0, 1, 2, 3].map(i => css.getPropertyValue("--c" + i).trim());
-  const cats = DATA.dot_categories; let tick = css.getPropertyValue("--text-muted").trim();
-  $("cloudcap").innerHTML = `<span>Behind this page: every one of the ${dots.length.toLocaleString("en-US")} published dollar prices in this project, placed by price.</span>` +
-    cats.map((c, i) => `<span><i style="background:${col[i]}"></i>${c === "Imaging" ? c : c + "s"}</span>`).join("");
-  let W, Ht, dpr, T = [], S = [], seed = 7;
-  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  function layout() {
-    dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; Ht = cv.clientHeight;
-    cv.width = W * dpr; cv.height = Ht * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const pad = Math.max(16, (W - 1120) / 2 + 16), band = Math.min(Ht * 0.3, W * 0.22, 240), cy = Ht - band / 2 - ($("cloudcap").offsetHeight + 44);
-    seed = 7; T = dots.map(d => { const q = Math.floor(d / 10), c = d % 10, j = (rnd() + rnd() + rnd() - 1.5) / 1.5;
-      return [pad + q / 999 * (W - 2 * pad), cy + j * band / 2, c]; });
-    S = T.map(() => [rnd() * W, rnd() * Ht]);
-    return { pad, cy, band };
-  }
-  function frame(k, geo) {
-    ctx.clearRect(0, 0, W, Ht);
-    ctx.globalAlpha = 0.5;
-    for (let i = 0; i < T.length; i++) {
-      const t = T[i], e = Math.min(1, Math.max(0, (k - (i % 97) / 97 * 0.35) / 0.65)), f = 1 - Math.pow(1 - e, 3);
-      ctx.fillStyle = col[t[2]];
-      ctx.fillRect(S[i][0] + (t[0] - S[i][0]) * f - 1, S[i][1] + (t[1] - S[i][1]) * f - 1, 2, 2);
-    }
-    ctx.globalAlpha = Math.min(1, k) * 0.9; ctx.fillStyle = tick; ctx.font = "11px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center";
-    [[1, "$1"], [10, "$10"], [100, "$100"], [1000, "$1k"], [10000, "$10k"], [100000, "$100k"]].forEach(([v, l]) => {
-      const x = geo.pad + (Math.log10(v) + 2) / 7 * (W - 2 * geo.pad); ctx.fillText(l, x, geo.cy + geo.band / 2 + 18);
-    });
-    ctx.globalAlpha = 1;
-  }
-  let geo = layout();
-  if (CALM) { frame(1, geo); } else {
-    const t0 = performance.now(), dur = 2600;
-    const step = (t) => { const k = Math.min(1, (t - t0) / dur); frame(k, geo); if (k < 1) requestAnimationFrame(step); };
-    requestAnimationFrame(step);
-  }
-  addEventListener("resize", () => { geo = layout(); frame(1, geo); });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { css = getComputedStyle(document.documentElement); col = [0, 1, 2, 3].map(i => css.getPropertyValue("--c" + i).trim()); tick = css.getPropertyValue("--text-muted").trim(); frame(1, geo); });
-}
-cloud();
-
 addEventListener("scroll", () => $("topbar").classList.toggle("scrolled", scrollY > 20), { passive: true });
 if ("IntersectionObserver" in window) {
   const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) go(+e.target.dataset.i); }), { rootMargin: "-45% 0px -45% 0px" });
   document.querySelectorAll(".step").forEach(s => so.observe(s));
-  const fo = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add("in"); fo.unobserve(e.target);
-    const b = e.target.querySelector("b[data-n]"); if (b) countUp(b, b.dataset.n); }), { threshold: .15 });
-  document.querySelectorAll(".fade").forEach(el => fo.observe(el));
-} else document.querySelectorAll(".fade").forEach(el => el.classList.add("in"));
+  const fo = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; fo.unobserve(e.target); e.target.querySelectorAll("b[data-n]").forEach(b => countUp(b, b.dataset.n)); }), { threshold: .2 });
+  fo.observe($("facts"));
+}
 addEventListener("resize", () => { const i = current; current = -1; go(i < 0 ? 0 : i); });
 </script>
 </body>

@@ -309,3 +309,17 @@ A running record of the key decisions in this project: what was decided, why, an
 - *Cash vs insured:* a metabolic panel at New England Baptist is $414 cash vs $16 typically paid by insurers (26×); BIDMC is $658 vs $26.
 
 **Why these examples and not the single largest gap:** the largest same-insurer gap in query 04 involves Mass Eye and Ear's lab prices. A specialty eye hospital is an outlier for routine labs, so it would make a misleading headline. The story uses the same examples as the case study, computed from the data. Rows with no comparable price are shown as such, not dropped. One honest detail stays visible: at BMC Brighton, cash is cheaper than insurance (0.7×).
+
+---
+
+## 2026-10-29: A visual identity for the story
+
+**Problem:** the pages were clean but generic, built from a default palette, system fonts and the same rounded cards as many template sites.
+
+**Decision:** design from the subject itself, the hospital bill.
+- **Opening:** two receipts for the same brain MRI, using each hospital's own line-item wording from its price file ("MRI Brain W/O Cont" at MGH; "HC Chg MRI Brain Brain Stem W/O Contrast Material" at BMC Brighton). On load, the front receipt flips through all 18 hospitals' cash prices and stops at the cheapest; the MGH receipt ($3,858) sits behind it.
+- **Color with a meaning:** teal (scrubs) = below the typical price, grey = typical, raspberry = above. Every dot in the story chart is colored by its price relative to typical, and the background price cloud runs from teal to raspberry. Receipts stay white in dark mode, like paper.
+- **Type:** Archivo, self-hosted (SIL Open Font License, in `site/fonts/`). It can be set very wide, which suits bill totals and the big 8.6×.
+- **Less template chrome:** no all-caps labels, fewer boxes and shadows. A progress bar shows the step out of 8, because the story really is a sequence. The dashboard uses the same font and palette, so the two pages read as one product.
+
+**Checked:** desktop, phone, dark mode and reduced motion (receipts and numbers appear in their final state). There's no horizontal scroll, every step activates the right chart, the dashboard search passes 30/30, the estimator checks pass, and the numbers are unchanged.

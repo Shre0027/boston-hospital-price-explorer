@@ -79,6 +79,9 @@ def main():
     cats = sorted({p["category"] for p in procedures})
     cat_of = {p["cpt"]: cats.index(p["category"]) for p in procedures}
     dots = []
+    # Each hospital's own line-item wording for the story's receipt (brain MRI)
+    receipt_cpt = "70551"
+    receipt_desc = {}
 
     with open(ROOT / "data/combined/prices_clean.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
@@ -86,6 +89,8 @@ def main():
             rows_total[hid] += 1
             if r["payer_raw"]:
                 insurer_names.add(r["payer_raw"])
+            if r["cpt"] == receipt_cpt and r["hospital_description"]:
+                receipt_desc.setdefault(hid, r["hospital_description"])
             v = next((float(r[k]) for k in ("comparison_price", "cash_price", "gross_charge") if r[k]), None)
             if v and v > 0 and r["cpt"] in cat_of:
                 q = round((math.log10(v) + 2) / 7 * 999)        # $0.01 → 0, $100,000 → 999
@@ -186,6 +191,7 @@ def main():
         "total_prices": sum(rows_total.values()),
         "insurer_names": len(insurer_names),
         "dots": dots,
+        "receipt": {"cpt": receipt_cpt, "desc": receipt_desc},
         "dot_categories": cats,
         "sql_queries": len([q for q in (ROOT / "sql").glob("[0-9][0-9]_*.sql") if not q.name.startswith("00_")]),
     }
