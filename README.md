@@ -2,7 +2,7 @@
 
 **What will this actually cost me?**
 
-👉 **[Open the live dashboard](https://shre0027.github.io/boston-hospital-price-explorer/)** · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md)
+👉 **[Open the live dashboard](https://shre0027.github.io/boston-hospital-price-explorer/)** · [Case study](docs/case-study.md) · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md)
 
 Since 2021, US hospitals have been legally required to publish their prices. But they publish them in huge, messy files that patients can't realistically use. The same MRI can cost very different amounts depending on the hospital and the insurer, and patients usually find out only when the bill arrives.
 
