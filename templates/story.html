@@ -25,7 +25,7 @@
 /* Clinical palette. Teal ("scrub") = cheaper than typical; raspberry ("charge") = more expensive. */
 :root {
   color-scheme: light;
-  --paper: #f2f6f8; --surface: #ffffff; --ink: #142230; --ink-2: #485968; --muted: #7a8a97; --rule: #d6dfe6;
+  --paper: #f2f6f8; --surface: #ffffff; --ink: #142230; --ink-2: #485968; --muted: #5d6d7a; --rule: #d6dfe6;
   --scrub: #0d7f76; --charge: #c0284a; --mid: #a3b1bc; --hl: #ffe45c; --hl-ink: #8a6d00;
 }
 @media (prefers-color-scheme: dark) {
@@ -63,7 +63,7 @@ a { color: inherit; text-underline-offset: 3px; }
 .times { display: block; font-size: clamp(96px, 15vw, 188px); line-height: .9; font-weight: 860; font-stretch: 125%; letter-spacing: -.035em; color: var(--charge); margin: 6px 0 0; }
 .hero .src { font-size: 14px; color: var(--muted); margin: 22px 0 0; max-width: 46ch; }
 .receipts { position: relative; height: 430px; }
-.receipt { --r-ink: #142230; --r-muted: #6f7f8c; --r-rule: #cfd9e1; --r-scrub: #0d7f76; --r-charge: #c0284a; position: absolute; width: min(330px, 86%); background: #fdfefe; color: var(--r-ink); padding: 22px 22px 34px; font-size: 13px; line-height: 1.45;
+.receipt { --r-ink: #142230; --r-muted: #586774; --r-rule: #cfd9e1; --r-scrub: #0d7f76; --r-charge: #c0284a; position: absolute; width: min(330px, 86%); background: #fdfefe; color: var(--r-ink); padding: 22px 22px 34px; font-size: 13px; line-height: 1.45;
   filter: drop-shadow(0 18px 28px rgba(15, 30, 45, .14));
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x;
           mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x;
@@ -91,8 +91,8 @@ a { color: inherit; text-underline-offset: 3px; }
 .stage { grid-column: 2; grid-row: 1; position: sticky; top: 64px; height: calc(100vh - 80px); display: flex; align-items: center; }
 .steps { grid-column: 1; grid-row: 1; padding: 18vh 0 30vh; }
 .step { min-height: 88vh; display: flex; align-items: center; }
-.step .txt { border-left: 3px solid var(--rule); padding: 4px 0 4px 22px; transition: border-color .4s, opacity .4s; opacity: .4; }
-.step.active .txt { border-left-color: var(--ink); opacity: 1; }
+.step .txt { border-left: 3px solid var(--rule); padding: 4px 0 4px 22px; transition: border-color .4s; }
+.step.active .txt { border-left-color: var(--scrub); }
 .step h2 { font-size: 27px; line-height: 1.15; margin: 0 0 12px; font-weight: 740; font-stretch: 96%; letter-spacing: -.015em; }
 .step p { margin: 0 0 12px; color: var(--ink-2); max-width: 40ch; }
 .step p:last-child { margin-bottom: 0; }
@@ -169,7 +169,7 @@ footer { padding: 24px 16px 48px; font-size: 13px; color: var(--muted); border-t
   .legend { font-size: 11px; gap: 6px 10px; margin-top: 4px; }
   .steps { padding: 4vh 0 20vh; position: relative; z-index: 3; }
   .step { min-height: 80vh; align-items: flex-end; padding-bottom: 1vh; }
-  .step .txt { opacity: 1; background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--ink); padding: 14px 16px; border-radius: 0 6px 6px 0; }
+  .step .txt { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--ink); padding: 14px 16px; border-radius: 0 6px 6px 0; }
   .step h2 { font-size: 21px; }
   .step p { font-size: 15.5px; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 18px; }

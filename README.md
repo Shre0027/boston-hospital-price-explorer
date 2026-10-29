@@ -29,7 +29,7 @@ Full write-up: [case study](docs/case-study.md).
 - **Others:** Boston Medical Center · BMC Brighton · Tufts Medical Center · Cambridge Health Alliance · South Shore
 
 ## Status
-✅ Live: 18 hospitals, 18 procedures, 11,000+ published prices, CMS quality ratings, interactive dashboard with plain-English search. Refreshes automatically every month.
+✅ Live: 18 hospitals, 18 procedures, 11,000+ published prices and CMS quality ratings, presented as a scroll-driven data story plus an interactive dashboard (plain-English search, out-of-pocket estimate). Refreshes automatically every month.
 
 Includes a rough out-of-pocket estimate from your deductible and coinsurance.
 
@@ -60,7 +60,7 @@ flowchart LR
 | Combine | `scripts/combine.py` | Standardizes insurer names, numbers and markets; picks a fair comparison price; flags rows that can't be compared |
 | Quality | `scripts/fetch_quality.py` | Downloads CMS star ratings, matched to hospitals by CMS Certification Number |
 | Analyze (SQL) | `sql/*.sql`, `scripts/run_sql.py` | Ten documented SQL queries (CTEs, window functions, rank correlation) run with DuckDB; results in [`analysis/`](analysis/README.md) |
-| Publish | `scripts/build_site.py` | Builds the scroll-driven story (`site/index.html`) and the dashboard (`site/explore.html`), published with GitHub Pages |
+| Publish | `scripts/build_site.py` | Fills the page templates in `templates/` with the data to build the scroll-driven story (`site/index.html`) and the dashboard (`site/explore.html`), published with GitHub Pages |
 
 Downloads run on GitHub Actions (`.github/workflows/`), with an automatic monthly refresh (`refresh.yml`) that re-downloads, rebuilds and republishes. Every decision, finding and correction is in the [decision log](docs/decision-log.md).
 

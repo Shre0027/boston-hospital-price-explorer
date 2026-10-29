@@ -331,3 +331,16 @@ A running record of the key decisions in this project: what was decided, why, an
 **Decision:** add a 1200×630 preview image (`site/og.png`) and Open Graph tags to both pages, so a link shared on LinkedIn, Slack or in email shows the two-receipt card ($449 vs $3,858, 8.6×) instead of a bare URL.
 
 **Known limitation:** unlike the pages, the image and its title have the numbers written in by hand (social sites can't run the page's code). The source is `scripts/og_card.html`. If a monthly refresh changes the brain MRI cash prices, the image needs re-rendering. The pages themselves always show current numbers.
+
+---
+
+## 2026-10-29: Final quality audit
+
+Checked everything a reviewer could see before sharing the project widely.
+- **Links:** every link in the 6 Markdown docs and both pages, including in-page anchors and links to files on GitHub. All resolve.
+- **Numbers:** every figure in the README, case study and story checked against the SQL results (queries 02–10). All match.
+- **Stale statements fixed:** the interview prep still described an earlier five-hospital result ("BMC has the highest sticker prices", "Tufts has the lowest"). With 18 hospitals, MGH and Brigham have the highest (1.38×) and Tufts is below typical (0.89×). The README status line didn't mention the story or estimator.
+- **Unverified claim replaced:** the requirements doc said the Tufts file takes "about 20 seconds" with no record behind it. Measured now: 28.7 seconds and 21 MB peak memory for 1.7 GB / 5.9M rows, with the same row count as the saved results.
+- **Accessibility:** an automated WCAG 2 A/AA scan (axe-core) found low-contrast grey text, white text on mid-blue buttons and grid cells, and dimmed inactive story steps. Colors were adjusted and the dimming removed: 0 violations on both pages in light and dark mode.
+- **Tidy:** page templates moved from `site/` to `templates/`, so only finished pages are published (opening a template directly showed a broken page).
+- **Spelling:** docs, scripts and SQL spell-checked; no errors.

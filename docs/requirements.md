@@ -58,6 +58,11 @@
 - AC-7.3: A "typical" price needs at least 3 plan prices.
 - AC-7.4: Every method choice and correction is recorded in the decision log.
 
+**US-8: Understand the findings without exploring.** As a first-time visitor (including a reviewer with a few minutes), I want the main findings shown in order, so that I understand them before I use the tools.
+- AC-8.1: The front page walks through the findings in sequence, with one chart that updates at each step.
+- AC-8.2: Every number in the story is computed from the same data as the dashboard, so it updates with the monthly refresh.
+- AC-8.3: The dashboard is one click away from any point in the story.
+
 ## 4. Non-functional requirements
 
 | Id | Requirement | Measure |
@@ -71,6 +76,7 @@
 | NFR-7 Access | Usable on a phone and readable in dark mode | Checked at 390 px wide and in dark mode; no horizontal page scroll |
 | NFR-8 Respect for sites | Don't get around access controls | Blocked sites are not worked around; files are downloaded by hand instead, and the block is reported |
 | NFR-9 Privacy | No personal data | Only published prices and public ratings; the estimator runs in the browser and stores nothing |
+| NFR-10 Accessibility | Readable for people with low vision; usable without animation | No WCAG 2 A/AA violations in an automated scan (axe-core), light and dark mode; reduced-motion setting shows final values |
 
 ## 5. Out of scope
 
@@ -83,17 +89,19 @@
 
 | Requirement | Where it's met | How it was checked | Status |
 |---|---|---|---|
-| US-1 | Dashboard "Compare one procedure" (`site/template.html`) | Browser checks at desktop and phone width | Done |
-| US-2 | Plain-English search (`site/template.html`) | 30 test questions, 30 understood; one answer matched an independent calculation | Done |
-| US-3 | Out-of-pocket estimator (`site/template.html`) | Worked examples checked by hand; invalid inputs tested | Done |
+| US-1 | Dashboard "Look up a price" (`templates/dashboard.html`) | Browser checks at desktop and phone width | Done |
+| US-2 | Plain-English search (`templates/dashboard.html`) | 30 test questions, 30 understood; one answer matched an independent calculation | Done |
+| US-3 | Out-of-pocket estimator (`templates/dashboard.html`) | Worked examples checked by hand; invalid inputs tested | Done |
 | US-4 | "Do higher-rated hospitals cost more?" section; `sql/09`, `sql/10` | Dashboard index matches SQL for all 17 indexed hospitals; correlation matches an independent Python calculation | Done |
-| US-5 | "Every procedure at a glance" grid | Browser checks; system filter and row selection | Done |
+| US-5 | "Every procedure at a glance" grid (collapsed by default) | Browser checks; system filter and row selection | Done |
 | US-6 | File-usability table; `config/data_access.json` | Each finding recorded with evidence in the decision log | Done |
 | US-7 | `scripts/combine.py`, `sql/00_setup.sql` | Mapping of every insurer name reviewed by hand; flagged rows counted per hospital (`sql/06`) | Done |
+| US-8 | Scroll-driven story (`templates/story.html`, published as `site/index.html`) | Every step tested on desktop and phone; story numbers checked against SQL results | Done |
+| NFR-10 | Both pages | axe-core scan: 0 violations in light and dark mode (after raising text and button contrast) | Done |
 | NFR-1 | `scripts/combine.py` | 180 random rows across 18 hospitals traced to source, 0 mismatches | Done |
 | NFR-2 | `scripts/run_sql.py` | Four consecutive runs, identical output | Done |
 | NFR-3 | `.github/workflows/refresh.yml` | Manual end-to-end run: all hospitals downloaded, rebuilt and republished | Done |
-| NFR-4 | `scripts/extract_prices.py` | Tufts Medical Center file (1.7 GB) processed in about 20 seconds | Done |
+| NFR-4 | `scripts/extract_prices.py` | Tufts Medical Center file (1.7 GB, 5.9M rows) processed in 28.7 seconds with 21 MB peak memory (measured 2026-10-29) | Done |
 | NFR-8 | Tufts Medicine handling in `config/hospitals.json` | Blocked file downloaded by hand; MelroseWakefield pending | Done |
 
 ## 7. Open issues

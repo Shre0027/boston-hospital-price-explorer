@@ -3,8 +3,8 @@ Build the dashboard website from the combined price table.
 
 Reads:  data/combined/prices_clean.csv, data/processed/*_profile.json, data/quality/*.csv,
         config/hospitals.json, config/procedures.json, config/data_access.json
-Writes: site/index.html    the scroll-driven story (site/story_template.html)
-        site/explore.html  the full dashboard (site/template.html)
+Writes: site/index.html    the scroll-driven story (from templates/story.html)
+        site/explore.html  the full dashboard (from templates/dashboard.html)
         Both get the same small summary of the data embedded, so each page works as a single
         file with no server.
 
@@ -197,8 +197,8 @@ def main():
     }
 
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
-    for src, out in (("story_template.html", "index.html"), ("template.html", "explore.html")):
-        template = (ROOT / "site" / src).read_text(encoding="utf-8")
+    for src, out in (("story.html", "index.html"), ("dashboard.html", "explore.html")):
+        template = (ROOT / "templates" / src).read_text(encoding="utf-8")
         assert "/*__DATA__*/null" in template, f"{src} has no data placeholder"
         html = template.replace("/*__DATA__*/null", payload)
         (ROOT / "site" / out).write_text(html, encoding="utf-8")
