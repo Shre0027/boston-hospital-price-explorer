@@ -65,6 +65,12 @@ def fetch_text(url):
         return body_stream(resp).read().decode("utf-8", errors="replace")
 
 
+def same_name(a, b):
+    """Compare hospital names ignoring case, spacing and punctuation like curly vs straight apostrophes."""
+    clean = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    return clean(a) == clean(b)
+
+
 def resolve_mrf_url(hospital):
     """
     CMS requires each hospital website to have a cms-hpt.txt file at its root listing
@@ -87,7 +93,7 @@ def resolve_mrf_url(hospital):
                     current = {"location-name": value}
                 elif key:
                     current[key] = value
-                if current.get("location-name", "").lower() == location.lower() and current.get("mrf-url"):
+                if same_name(current.get("location-name", ""), location) and current.get("mrf-url"):
                     print(f"Found current file link in {txt_url}")
                     return current["mrf-url"]
             print(f"::warning::'{location}' not found in {txt_url}; using the saved link instead")

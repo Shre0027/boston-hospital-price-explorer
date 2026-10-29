@@ -16,5 +16,23 @@
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip"
+  },
+  {
+    "id": "bmc",
+    "name": "Boston Medical Center",
+    "location_name": "Boston Medical Center",
+    "system": "BMC Health System",
+    "source_page": "https://www.bmchealthsystem.org/pricing-and-estimates",
+    "hpt_txt": "https://www.bmc.org/cms-hpt.txt",
+    "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip"
+  },
+  {
+    "id": "bidmc",
+    "name": "Beth Israel Deaconess Medical Center",
+    "location_name": "Beth Israel Deaconess Medical Center",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bidmc.org/patients-visitors/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bidmc.org/cms-hpt.txt",
+    "mrf_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json"
   }
 ]
