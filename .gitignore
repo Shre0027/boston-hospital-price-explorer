@@ -13,3 +13,8 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Medicare rate files: AMA CPT license, do not redistribute (see scripts/medicare_rates.py)
+data/medicare/raw/
+*Addendum-B*.zip
+*CLAB*.zip
