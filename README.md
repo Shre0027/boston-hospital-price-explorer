@@ -12,7 +12,7 @@ This project turns those public files into something a normal person can use.
 1. **Collects** official price files from 5 Boston hospitals
 2. **Cleans** them and keeps about 18 common procedures, matched by billing code (CPT)
 3. **Compares** prices across hospitals and insurers in a dashboard
-4. **Answers plain-English questions** with AI, such as "How much is a knee MRI with Blue Cross?"
+4. **Answers plain-English questions** (keyword-based search, answers only from the data), such as "How much is a knee MRI with Blue Cross?"
 5. **Checks data quality**: can patients actually use what each hospital published?
 
 ## Hospitals (Phase 1)
