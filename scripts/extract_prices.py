@@ -32,7 +32,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "data" / "raw"
-OUT_DIR = ROOT / "data" / "processed"
+# Set PRICES_OUT_DIR when testing so test results never overwrite or delete the real ones
+OUT_DIR = Path(os.environ["PRICES_OUT_DIR"]) if os.environ.get("PRICES_OUT_DIR") else ROOT / "data" / "processed"
 
 # Some price files have extremely long cells (legal text, notes)
 csv.field_size_limit(sys.maxsize)
