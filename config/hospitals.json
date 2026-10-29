@@ -8,7 +8,8 @@
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip",
     "short": "MGH",
-    "phase": 1
+    "phase": 1,
+    "ccn": "220071"
   },
   {
     "id": "bwh",
@@ -19,7 +20,8 @@
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
     "short": "Brigham",
-    "phase": 1
+    "phase": 1,
+    "ccn": "220110"
   },
   {
     "id": "bmc",
@@ -30,7 +32,8 @@
     "hpt_txt": "https://www.bmc.org/cms-hpt.txt",
     "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
     "short": "BMC",
-    "phase": 1
+    "phase": 1,
+    "ccn": "220031"
   },
   {
     "id": "bidmc",
@@ -41,7 +44,8 @@
     "hpt_txt": "https://www.bidmc.org/cms-hpt.txt",
     "mrf_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json",
     "short": "BIDMC",
-    "phase": 1
+    "phase": 1,
+    "ccn": "220086"
   },
   {
     "id": "tmc",
@@ -54,7 +58,8 @@
     "note": "cms-hpt.txt returned HTTP 403 to automated requests on 2026-10-29; mrf_url found manually on the source page",
     "short": "Tufts MC",
     "manual": true,
-    "phase": 1
+    "phase": 1,
+    "ccn": "220116"
   },
   {
     "id": "faulkner",
@@ -65,7 +70,8 @@
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042768256_Brigham-and-Womens-Faulkner-Hospital_StandardCharges.zip",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220119"
   },
   {
     "id": "nwh",
@@ -76,7 +82,8 @@
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042103611_Newton-Wellesley-Hospital_StandardCharges.zip",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220101"
   },
   {
     "id": "mee",
@@ -87,7 +94,8 @@
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042103591_Massachusetts-Eye-and-Ear_StandardCharges.zip",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220075"
   },
   {
     "id": "salem",
@@ -98,7 +106,8 @@
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
     "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/043399616_Salem-Hospital_StandardCharges.zip",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220035"
   },
   {
     "id": "mah",
@@ -109,7 +118,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://mountauburnhospital.org/042103606_mount-auburn-hospital_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220002"
   },
   {
     "id": "lahey",
@@ -120,7 +130,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://www.lahey.org/042704686_lahey-hospital-medical-center-burlington_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220171"
   },
   {
     "id": "nebh",
@@ -131,7 +142,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://nebh.org/042103612_new-england-baptist-hospital_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220088"
   },
   {
     "id": "bidmilton",
@@ -142,7 +154,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://bidmilton.org/042103604_beth-israel-deaconess-hospital-milton-inc_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220108"
   },
   {
     "id": "bidneedham",
@@ -153,7 +166,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://bidneedham.org/043229679_beth-israel-deaconess-hospital---needham_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220083"
   },
   {
     "id": "winchester",
@@ -164,7 +178,8 @@
     "source_page": "https://bilh.org/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
     "mrf_url": "https://winchesterhospital.org/042104434_winchester-hospital_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220105"
   },
   {
     "id": "bmcbrighton",
@@ -175,7 +190,8 @@
     "source_page": "https://www.bmchealthsystem.org/pricing-and-estimates",
     "hpt_txt": "https://www.bmc.org/cms-hpt.txt",
     "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220036"
   },
   {
     "id": "cha",
@@ -186,7 +202,8 @@
     "source_page": "https://www.challiance.org/",
     "hpt_txt": "https://www.challiance.org/cms-hpt.txt",
     "mrf_url": "https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220011"
   },
   {
     "id": "ssh",
@@ -197,6 +214,7 @@
     "source_page": "https://www.southshorehealth.org/",
     "hpt_txt": "https://www.southshorehealth.org/cms-hpt.txt",
     "mrf_url": "https://zencloud-southshorehealth.s3.us-east-1.amazonaws.com/www.southshorehealth.org/assets/2026-03/042769210_south-shore-hospital_standardcharges.json",
-    "phase": 2
+    "phase": 2,
+    "ccn": "220100"
   }
 ]

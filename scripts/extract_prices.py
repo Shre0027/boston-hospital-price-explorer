@@ -196,6 +196,14 @@ def csv_source(path):
     return metadata, [tidy(h) for h in header], reader, inner_name, inner_size
 
 
+def open_json(path):
+    """Open a JSON file for streaming, skipping a UTF-8 byte-order mark if the hospital's file has one."""
+    f = open(path, "rb")
+    if f.read(3) != b"\xef\xbb\xbf":
+        f.seek(0)
+    return f
+
+
 def json_items(path):
     """
     Yield each service in a CMS-format JSON file, one at a time.
@@ -203,7 +211,7 @@ def json_items(path):
     """
     try:
         import ijson
-        with open(path, "rb") as f:
+        with open_json(path) as f:
             yield from ijson.items(f, "standard_charge_information.item", use_float=True)
     except ImportError:
         with open(path, encoding="utf-8-sig") as f:
@@ -216,7 +224,7 @@ def json_metadata(path):
     try:
         import ijson
         meta = {}
-        with open(path, "rb") as f:
+        with open_json(path) as f:
             for prefix, event, value in ijson.parse(f):
                 if prefix == "standard_charge_information":
                     break
@@ -387,5 +395,6 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         # "::error::" makes GitHub show this message right on the run's summary page
-        print(f"::error::{type(e).__name__}: {e}")
+        # One line, so the whole message (including any parser context) shows on the run page
+        print(f"::error::{type(e).__name__}: " + " ".join(str(e).split())[:600])
         raise
