@@ -19,6 +19,7 @@ Usage:
 
 import argparse
 import csv
+import gzip
 import io
 import json
 import os
@@ -48,10 +49,20 @@ def load_json(path):
         return json.load(f)
 
 
+def body_stream(resp):
+    """
+    Some servers compress what they send (Content-Encoding: gzip), even for files that are
+    already zipped. Browsers undo this automatically; urllib does not, so we do it here.
+    """
+    if resp.headers.get("Content-Encoding", "").lower() == "gzip":
+        return gzip.GzipFile(fileobj=resp)
+    return resp
+
+
 def fetch_text(url):
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=60) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+        return body_stream(resp).read().decode("utf-8", errors="replace")
 
 
 def resolve_mrf_url(hospital):
@@ -91,9 +102,11 @@ def download(url, dest):
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     start = time.time()
     with urllib.request.urlopen(req, timeout=120) as resp, open(dest, "wb") as out:
-        print(f"::notice::Server answered {resp.status}, type '{resp.headers.get('Content-Type')}', final URL {resp.geturl()}")
+        encoding = resp.headers.get("Content-Encoding") or "none"
+        print(f"::notice::Server answered {resp.status}, type '{resp.headers.get('Content-Type')}', encoding '{encoding}'")
+        body = body_stream(resp)
         while True:
-            chunk = resp.read(1024 * 1024)
+            chunk = body.read(1024 * 1024)
             if not chunk:
                 break
             out.write(chunk)
