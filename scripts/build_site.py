@@ -22,6 +22,7 @@ Usage:
 
 import csv
 import json
+import math
 import statistics
 import time
 from collections import defaultdict
@@ -74,6 +75,10 @@ def main():
     rows_flagged = defaultdict(int)
     insurers_listed = defaultdict(set)
     insurer_names = set()
+    # Every published dollar price, for the story's background (log10 position 0–999, times 10, plus category)
+    cats = sorted({p["category"] for p in procedures})
+    cat_of = {p["cpt"]: cats.index(p["category"]) for p in procedures}
+    dots = []
 
     with open(ROOT / "data/combined/prices_clean.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
@@ -81,6 +86,10 @@ def main():
             rows_total[hid] += 1
             if r["payer_raw"]:
                 insurer_names.add(r["payer_raw"])
+            v = next((float(r[k]) for k in ("comparison_price", "cash_price", "gross_charge") if r[k]), None)
+            if v and v > 0 and r["cpt"] in cat_of:
+                q = round((math.log10(v) + 2) / 7 * 999)        # $0.01 → 0, $100,000 → 999
+                dots.append(max(0, min(999, q)) * 10 + cat_of[r["cpt"]])
             if r["flag"]:
                 rows_flagged[hid] += 1
             if r["market"] == "Commercial" and r["insurer"] not in ("", "Other") and r["cpt"] != "419":
@@ -176,6 +185,8 @@ def main():
         "min_plans": MIN_PLANS,
         "total_prices": sum(rows_total.values()),
         "insurer_names": len(insurer_names),
+        "dots": dots,
+        "dot_categories": cats,
         "sql_queries": len([q for q in (ROOT / "sql").glob("[0-9][0-9]_*.sql") if not q.name.startswith("00_")]),
     }
 

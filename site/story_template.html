@@ -13,6 +13,7 @@
   --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
   --accent: #2a78d6; --accent-text: #1c5cab; --muted-dot: #b7d3f6; --rail: #e3e1db;
   --critical: #d03b3b; --warning: #c98a00; --good: #0ca30c;
+  --c0: #2a78d6; --c1: #12a594; --c2: #8a5cd6; --c3: #e07b24;
   --radius: 14px;
 }
 @media (prefers-color-scheme: dark) {
@@ -22,6 +23,7 @@
     --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
     --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
     --critical: #e66767; --warning: #f0b43c;
+    --c0: #5598e7; --c1: #2fc4b0; --c2: #a786ec; --c3: #f09a4c;
   }
 }
 :root[data-theme="dark"] {
@@ -30,6 +32,7 @@
   --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
   --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
   --critical: #e66767; --warning: #f0b43c;
+  --c0: #5598e7; --c1: #2fc4b0; --c2: #a786ec; --c3: #f09a4c;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -42,7 +45,13 @@ a { color: var(--accent-text); }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
 
 /* Opening */
-.intro { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 80px 0 40px; }
+.intro-bg { position: relative; overflow: hidden; }
+#cloud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.intro, .cloud-cap { position: relative; }
+.cloud-cap { margin: 0 auto; padding-bottom: 22px; font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.cloud-cap i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+.intro h1, .intro .lead, .intro .big, .intro .small, .intro .kicker { text-shadow: 0 0 18px var(--page), 0 0 6px var(--page); }
+.intro { min-height: calc(100svh - 44px); display: flex; flex-direction: column; justify-content: center; padding: 80px 0 40px; }
 .intro .kicker { font-size: 14px; font-weight: 600; color: var(--accent-text); margin: 0 0 14px; }
 .intro h1 { font-size: clamp(34px, 6.5vw, 68px); line-height: 1.05; margin: 0; font-weight: 750; letter-spacing: -.02em; max-width: 15ch; }
 .intro .lead { font-size: clamp(19px, 2.6vw, 26px); color: var(--text-secondary); margin: 22px 0 0; max-width: 32ch; line-height: 1.35; }
@@ -146,6 +155,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   <a class="skip" href="explore.html">Skip to the dashboard →</a>
 </nav>
 
+<div class="intro-bg"><canvas id="cloud" aria-hidden="true"></canvas>
 <header class="intro wrap" id="top">
   <p class="kicker">A data story · <span id="nh"></span> Greater Boston hospitals</p>
   <h1>You need a brain MRI in Boston.</h1>
@@ -154,6 +164,8 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   <p class="small" id="introsmall"></p>
   <p class="cue" aria-hidden="true"><span>↓</span> Scroll to see what I found</p>
 </header>
+<p class="cloud-cap wrap" id="cloudcap"></p>
+</div>
 
 <main>
   <div class="wrap scrolly">
@@ -228,53 +240,71 @@ const problemOf = (h) => {
 };
 F.prob = H.filter(problemOf);
 F.odd = H.filter(h => h.notes.some(n => /impossible/i.test(n)));
+const ins = (cpt, id, name) => ((DATA.prices[cpt][id].insurers || {})[name] || {}).median ?? null;
+const CBC = "85025", CMP = "80053", UHC = "UnitedHealthcare";
+F.same = extremes(id => ins(CBC, id, UHC));
+F.cvi = H.map(h => { const c = cash(CMP, h.id), i = comm(CMP, h.id); return c != null && i != null ? { h, c, i, r: c / i } : null; }).filter(Boolean).sort((a, b) => b.r - a.r);
 const countOf = (label) => F.prob.filter(h => problemOf(h) === label).length;
 
 // ---------- The story: each step sets the chart ----------
 const STEPS = [
   {
-    kicker: "1 · PAYING CASH",
+    kicker: "PAYING CASH",
     title: "Same scan, very different bill",
     text: `Paying without insurance, a brain MRI is <b>${money(F.cash.lo.v)}</b> at ${F.cash.lo.h.name}. At ${names(F.cash.his)} it's <b>${money(F.cash.hi.v)}</b>.`,
     text2: `That's <b>${times(F.cash.r)}</b> as much for the same scan, a few miles apart.`,
     chart: () => moneyChart(`${procName(MRI)}: cash price`, "Each dot is one hospital's listed cash price", id => cash(MRI, id), [F.cash.lo.h.id, ...F.cash.his.map(r => r.h.id)]),
   },
   {
-    kicker: "2 · WITH INSURANCE",
+    kicker: "WITH INSURANCE",
     title: "Insurance lowers the price, not the gap",
     text: `With commercial insurance, the typical price ranges from <b>${money(F.comm.lo.v)}</b> at ${F.comm.lo.h.name} to <b>${money(F.comm.hi.v)}</b> at ${names(F.comm.his)}: still <b>${times(F.comm.r)}</b>.`,
     text2: "And that money comes back to you through premiums, deductibles and coinsurance.",
     chart: () => moneyChart(`${procName(MRI)}: commercial insurance`, `Typical price across each hospital's commercial plans (at least ${DATA.min_plans} plan prices)`, id => comm(MRI, id), [F.comm.lo.h.id, ...F.comm.his.map(r => r.h.id)]),
   },
+  F.same.rows.length >= 3 && {
+    kicker: "SAME INSURER",
+    title: "Even with the same insurance card",
+    text: `${UHC} pays <b>${money(F.same.lo.v)}</b> for a blood count at ${F.same.lo.h.name} and <b>${money(F.same.hi.v)}</b> at ${names(F.same.his)}: <b>${F.same.r.toFixed(0)}×</b>.`,
+    text2: "Same insurer, same test. The price depends on the contract each hospital negotiated, and those costs flow into everyone's premiums.",
+    chart: () => moneyChart(`${procName(CBC)}: ${UHC}`, `Median across ${UHC}'s commercial plans at each hospital`, id => ins(CBC, id, UHC), [F.same.lo.h.id, ...F.same.his.map(r => r.h.id)]),
+  },
+  F.cvi.length >= 3 && {
+    kicker: "NO INSURANCE",
+    title: "Uninsured patients can pay far more",
+    text: `For a ${procName(CMP).toLowerCase()}, ${F.cvi[0].h.name} lists <b>${money(F.cvi[0].c)}</b> cash. Insurers typically pay <b>${money(F.cvi[0].i)}</b>. Paying cash costs <b>${F.cvi[0].r.toFixed(0)}×</b> as much.`,
+    text2: `${F.cvi[1].h.name} is close behind: ${money(F.cvi[1].c)} cash vs ${money(F.cvi[1].i)} (${F.cvi[1].r.toFixed(0)}×). If you're paying yourself, ask about the price and financial assistance before you book.`,
+    chart: () => cashVsChart(),
+  },
   {
-    kicker: "3 · EVERY PROCEDURE",
+    kicker: "EVERY PROCEDURE",
     title: F.top.length === 2 ? "Two hospitals stand apart" : "The pattern holds across procedures",
     text: `It's not just one scan. Across all ${DATA.procedures.length} procedures, ${F.top.map(h => h.short).join(" and ")} ${F.top.length > 1 ? "are" : "is"} about <b>${F.top.length ? times(Math.max(...F.top.map(h => h.price_index))) : ""}</b> the typical Boston price.`,
     text2: F.sysRest.length ? `${topSys}'s other hospitals? About <b>${median(F.sysRest.map(h => h.price_index)).toFixed(1)}×</b>. Same system, very different prices.` : "",
     chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), () => ""),
   },
   {
-    kicker: "4 · QUALITY",
+    kicker: "QUALITY",
     title: "Is the expensive care better?",
     text: `Not reliably. <b>${F.fiveBelow.length} of the ${F.five.length}</b> hospitals with a 5-star CMS rating are priced <b>below</b> typical: ${F.fiveBelow.map(h => `${h.short} (${h.price_index.toFixed(2)}×)`).join(" and ")}.`,
     text2: `Price and rating move together only loosely (rank correlation ${DATA.rank_correlation.toFixed(2)}, where 1 would mean price always rises with rating).`,
     chart: () => indexChart("Overall price level, colored by CMS star rating", "Highlighted: hospitals with a 5-star CMS rating", F.five.map(h => h.id), () => "", true),
   },
   {
-    kicker: "5 · WHAT YOU'D PAY",
+    kicker: "WHAT YOU'D PAY",
     title: "But what would you actually pay?",
     text: `Say you have <b>${money(DED)}</b> of deductible left and <b>${COINS}%</b> coinsurance. Your share of that MRI runs from <b>${money(F.share.lo.v)}</b> to <b>${money(F.share.hi.v)}</b>.`,
     text2: `The hospitals' gap was ${money(F.comm.hi.v - F.comm.lo.v)}. Yours is <b>${money(F.share.hi.v - F.share.lo.v)}</b>: smaller, but still real money for one scan.`,
     chart: () => shareChart(),
   },
   {
-    kicker: "6 · THE DATA ITSELF",
+    kicker: "THE DATA ITSELF",
     title: "“Public” isn't the same as usable",
     text: `This almost couldn't be built. <b>${F.prob.length} of ${H.length}</b> price files couldn't be read the standard way: ${[["blocked downloads", "blocked automated downloads"], ["outdated link list", "had an out-of-date official link list"], ["broke a JSON parser", "broke a standard JSON parser"]].filter(([k]) => countOf(k)).map(([k, t]) => `${countOf(k)} ${t}`).join(", ")}.`,
     text2: F.odd.length ? `And ${F.odd.map(h => h.short).join(", ")} listed impossible prices, like <b>$0.03</b> for a blood test. Those were set aside, not hidden.` : "",
     chart: () => problemChart(),
   },
-];
+].filter(Boolean);
 
 // ---------- Chart engine: 18 rows that slide and re-sort ----------
 let rows = {};
@@ -334,6 +364,14 @@ function shareChart() {
     ticks: moneyTicks(max).map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]),
     legend: `<span><i style="background:var(--accent)"></i>Your estimated share</span><span><i class="hollow"></i>Price paid to the hospital</span>` });
 }
+function cashVsChart() {
+  const max = niceMax(Math.max(...F.cvi.map(x => x.c))), byId = Object.fromEntries(F.cvi.map(x => [x.h.id, x]));
+  return render({ title: `${procName(CMP)}: cash vs insurance`, sub: "Cash price vs the typical price insurers pay, at the same hospital", stems: true, ref: null,
+    items: H.map(h => { const x = byId[h.id]; return !x ? { id: h.id, x: null, label: "not comparable" } :
+      { id: h.id, x: x.c / max * 100, ghostX: x.i / max * 100, label: `${x.r >= 9.95 ? x.r.toFixed(0) : x.r.toFixed(1)}×`, cls: x === F.cvi[0] || x === F.cvi[1] ? "em" : "" }; }),
+    ticks: moneyTicks(max).map(v => [v / max * 100, "$" + v]),
+    legend: `<span><i style="background:var(--accent)"></i>Cash price</span><span><i class="hollow"></i>What insurers typically pay</span><span>Label: how many times more cash costs</span>` });
+}
 function problemChart() {
   return render({ title: "Whose price files were hard to use", sub: "Same price-level chart; highlighted rows had a file problem", stems: false, ref: ipos(1),
     items: H.map(h => { const p = problemOf(h), odd = F.odd.includes(h);
@@ -343,7 +381,7 @@ function problemChart() {
 }
 
 // ---------- Steps, scrolling and count-ups ----------
-$("steps").innerHTML = STEPS.map((s, i) => `<div class="step" data-i="${i}"><div class="card"><p class="n">${s.kicker}</p><h2>${s.title}</h2><p>${s.text}</p>${s.text2 ? `<p>${s.text2}</p>` : ""}</div></div>`).join("");
+$("steps").innerHTML = STEPS.map((s, i) => `<div class="step" data-i="${i}"><div class="card"><p class="n">${i + 1} · ${s.kicker}</p><h2>${s.title}</h2><p>${s.text}</p>${s.text2 ? `<p>${s.text2}</p>` : ""}</div></div>`).join("");
 let current = -1;
 function go(i) { if (i === current) return; current = i; STEPS[i].chart(); document.querySelectorAll(".step").forEach(s => s.classList.toggle("active", +s.dataset.i === i)); }
 
@@ -373,6 +411,50 @@ $("introsmall").textContent = `Same scan. Same city. ${money(F.cash.lo.v)} at ${
 $("asof").textContent = `Prices refreshed ${DATA.built_on}; updated automatically every month.`;
 buildPlot(); go(0);
 setTimeout(() => countUp($("bigx"), times(F.cash.r), 1400), CALM ? 0 : 300);
+
+// ---------- Background: one dot per published price ----------
+function cloud() {
+  const cv = $("cloud"), ctx = cv.getContext("2d"), dots = DATA.dots || [];
+  if (!dots.length) return;
+  let css = getComputedStyle(document.documentElement), col = [0, 1, 2, 3].map(i => css.getPropertyValue("--c" + i).trim());
+  const cats = DATA.dot_categories; let tick = css.getPropertyValue("--text-muted").trim();
+  $("cloudcap").innerHTML = `<span>Behind this page: every one of the ${dots.length.toLocaleString("en-US")} published dollar prices in this project, placed by price.</span>` +
+    cats.map((c, i) => `<span><i style="background:${col[i]}"></i>${c === "Imaging" ? c : c + "s"}</span>`).join("");
+  let W, Ht, dpr, T = [], S = [], seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  function layout() {
+    dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; Ht = cv.clientHeight;
+    cv.width = W * dpr; cv.height = Ht * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pad = Math.max(16, (W - 1120) / 2 + 16), band = Math.min(Ht * 0.3, W * 0.22, 240), cy = Ht - band / 2 - ($("cloudcap").offsetHeight + 44);
+    seed = 7; T = dots.map(d => { const q = Math.floor(d / 10), c = d % 10, j = (rnd() + rnd() + rnd() - 1.5) / 1.5;
+      return [pad + q / 999 * (W - 2 * pad), cy + j * band / 2, c]; });
+    S = T.map(() => [rnd() * W, rnd() * Ht]);
+    return { pad, cy, band };
+  }
+  function frame(k, geo) {
+    ctx.clearRect(0, 0, W, Ht);
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < T.length; i++) {
+      const t = T[i], e = Math.min(1, Math.max(0, (k - (i % 97) / 97 * 0.35) / 0.65)), f = 1 - Math.pow(1 - e, 3);
+      ctx.fillStyle = col[t[2]];
+      ctx.fillRect(S[i][0] + (t[0] - S[i][0]) * f - 1, S[i][1] + (t[1] - S[i][1]) * f - 1, 2, 2);
+    }
+    ctx.globalAlpha = Math.min(1, k) * 0.9; ctx.fillStyle = tick; ctx.font = "11px -apple-system, Segoe UI, Roboto, sans-serif"; ctx.textAlign = "center";
+    [[1, "$1"], [10, "$10"], [100, "$100"], [1000, "$1k"], [10000, "$10k"], [100000, "$100k"]].forEach(([v, l]) => {
+      const x = geo.pad + (Math.log10(v) + 2) / 7 * (W - 2 * geo.pad); ctx.fillText(l, x, geo.cy + geo.band / 2 + 18);
+    });
+    ctx.globalAlpha = 1;
+  }
+  let geo = layout();
+  if (CALM) { frame(1, geo); } else {
+    const t0 = performance.now(), dur = 2600;
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur); frame(k, geo); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  addEventListener("resize", () => { geo = layout(); frame(1, geo); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { css = getComputedStyle(document.documentElement); col = [0, 1, 2, 3].map(i => css.getPropertyValue("--c" + i).trim()); tick = css.getPropertyValue("--text-muted").trim(); frame(1, geo); });
+}
+cloud();
 
 addEventListener("scroll", () => $("topbar").classList.toggle("scrolled", scrollY > 20), { passive: true });
 if ("IntersectionObserver" in window) {

@@ -297,3 +297,15 @@ A running record of the key decisions in this project: what was decided, why, an
 **Why:** a dashboard makes the reader find the story; a guided story shows it in order, then hands them the tool. Data journalism uses this format, so it shows communication as well as analysis.
 
 **Kept honest:** every sentence's numbers are computed from the same data, so the story updates with the monthly refresh. Checked against the SQL results: cash $449 vs $3,858 (8.6×), commercial $338 vs $1,614 (4.8×), MGH 1.88× and Brigham 1.89×, 2 of 7 five-star hospitals below typical, the patient's share $338 vs $723, and 7 of 18 files with problems. Tested on desktop and phone, in dark mode and with reduced motion (no animation, final values shown). Each step activates the right chart, and there's no horizontal scroll.
+
+---
+
+## 2026-10-29: Data background and two more story steps
+
+**Background:** the opening screen now sits on a cloud of 11,360 dots: every published dollar price in the project, placed on a log price scale ($1 to $100k) and colored by type (imaging, lab tests, procedures, visits). The dots drift into place on load. It's decoration that is also data: labs cluster at the cheap end and procedures at the expensive end. Rows with no dollar amount (105 of 11,465) aren't drawn, and the caption says so by count.
+
+**Two more steps** for findings that were in the case study but not in the story:
+- *Same insurer, different hospital:* UnitedHealthcare pays $7 for a blood count at BID Milton and $98 at MGH and Brigham (15×).
+- *Cash vs insured:* a metabolic panel at New England Baptist is $414 cash vs $16 typically paid by insurers (26×); BIDMC is $658 vs $26.
+
+**Why these examples and not the single largest gap:** the largest same-insurer gap in query 04 involves Mass Eye and Ear's lab prices. A specialty eye hospital is an outlier for routine labs, so it would make a misleading headline. The story uses the same examples as the case study, computed from the data. Rows with no comparable price are shown as such, not dropped. One honest detail stays visible: at BMC Brighton, cash is cheaper than insurance (0.7×).
