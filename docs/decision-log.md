@@ -344,3 +344,16 @@ Checked everything a reviewer could see before sharing the project widely.
 - **Accessibility:** an automated WCAG 2 A/AA scan (axe-core) found low-contrast grey text, white text on mid-blue buttons and grid cells, and dimmed inactive story steps. Colors were adjusted and the dimming removed: 0 violations on both pages in light and dark mode.
 - **Tidy:** page templates moved from `site/` to `templates/`, so only finished pages are published (opening a template directly showed a broken page).
 - **Spelling:** docs, scripts and SQL spell-checked; no errors.
+
+---
+
+## 2026-10-29: A map step in the story
+
+**Decision:** add a "A few miles apart" step: a map of Greater Boston with each hospital colored by its overall price level, plus a zoomed inset of central Boston, where seven hospitals sit within about 3 km of each other. The text is computed from the data: Brigham (1.89× typical) is 0.3 miles from New England Baptist (0.71×) and 1.6 miles from BMC (1.00×). The two receipts in the opening come from hospitals 4.1 miles apart.
+
+**Sources, not guesses:**
+- Hospital locations: each hospital's address from CMS Hospital General Information (matched by CMS Certification Number), geocoded by the US Census Bureau Geocoder.
+- Town boundaries: the US Census Bureau cartographic boundary file for Massachusetts towns (1:500k, clipped to the shoreline), simplified to about 100 m.
+- Fetched by `scripts/fetch_geo.py` on GitHub Actions (`geo.yml`), saved in `data/geo/`.
+
+**Caught while checking every result:** the Census Geocoder matched Lahey's "41 Mall Road, Burlington" to "41 **Mill** St", about 2 km away. The script now accepts a match only when the street name equals the requested one, and otherwise falls back to OpenStreetMap's geocoder, which found Lahey at 41 Burlington Mall Road. Cambridge Health Alliance's file covers three campuses; the map shows its CMS-listed main address (Cambridge Hospital).

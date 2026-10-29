@@ -62,6 +62,60 @@ def avg_ranks(values):
     return [(order.index(v) + 1 + order.index(v) + order.count(v)) / 2 for v in values]
 
 
+def build_map(hospitals):
+    """Project the Census town shapes and geocoded hospitals into SVG coordinates for the story's map.
+    Returns None if data/geo hasn't been fetched yet (scripts/fetch_geo.py)."""
+    tp, hp = ROOT / "data/geo/towns.json", ROOT / "data/geo/hospitals.json"
+    if not (tp.exists() and hp.exists()):
+        return None
+    towns, pts = json.loads(tp.read_text())["towns"], json.loads(hp.read_text())
+    lats = [pts[h["id"]]["lat"] for h in hospitals if h["id"] in pts]
+    lons = [pts[h["id"]]["lon"] for h in hospitals if h["id"] in pts]
+    pad = 0.035
+    lon0, lon1, lat0, lat1 = min(lons) - pad * 1.3, max(lons) + pad * 1.3, min(lats) - pad, max(lats) + pad
+    kx = math.cos(math.radians((lat0 + lat1) / 2))
+    W = 1000
+    scale = W / ((lon1 - lon0) * kx)
+    Hh = round((lat1 - lat0) * scale)
+    xy = lambda lon, lat: (round((lon - lon0) * kx * scale, 1), round((lat1 - lat) * scale, 1))
+
+    def ring_path(ring):
+        p = [xy(*c) for c in ring]
+        return "M" + "L".join(f"{x:g},{y:g}" for x, y in p) + "Z"
+
+    shapes, labels = [], []
+    for t in towns:
+        g = t["geometry"]
+        polys = [g["coordinates"]] if g["type"] == "Polygon" else g["coordinates"] if g["type"] == "MultiPolygon" else []
+        d = "".join(ring_path(r) for poly in polys for r in poly)
+        if d:
+            shapes.append({"n": t["name"], "d": d})
+    host_towns = {"Boston", "Cambridge", "Quincy", "Somerville", "Brookline"}   # hospital labels already name the other places
+    for t in towns:
+        if t["name"] in host_towns:
+            x, y = xy(*t["label_at"])
+            if 0 <= x <= W and 0 <= y <= Hh:
+                labels.append({"n": t["name"].replace(" Town", ""), "x": x, "y": y})
+    return {"w": W, "h": Hh, "towns": shapes, "labels": labels,
+            "hosp": {k: xy(v["lon"], v["lat"]) for k, v in pts.items()},
+            "km_per_unit": 1 / scale * 111.32}
+
+
+def distances(hospitals):
+    hp = ROOT / "data/geo/hospitals.json"
+    if not hp.exists():
+        return None
+    pts = json.loads(hp.read_text())
+    ids = [h["id"] for h in hospitals if h["id"] in pts]
+    return {a: {b: round(km_between(pts[a], pts[b]), 2) for b in ids if b != a} for a in ids}
+
+
+def km_between(a, b):
+    """Great-circle distance in km between two {lat, lon} points."""
+    la1, lo1, la2, lo2 = map(math.radians, (a["lat"], a["lon"], b["lat"], b["lon"]))
+    return 6371 * 2 * math.asin(math.sqrt(math.sin((la2 - la1) / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2))
+
+
 def main():
     hospitals = load("config/hospitals.json")
     procedures = load("config/procedures.json")
@@ -190,6 +244,8 @@ def main():
         "min_plans": MIN_PLANS,
         "total_prices": sum(rows_total.values()),
         "insurer_names": len(insurer_names),
+        "map": build_map(hospitals),
+        "distances_km": distances(hospitals),
         "dots": dots,
         "receipt": {"cpt": receipt_cpt, "desc": receipt_desc},
         "dot_categories": cats,

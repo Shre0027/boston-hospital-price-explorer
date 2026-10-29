@@ -129,6 +129,19 @@ a { color: inherit; text-underline-offset: 3px; }
 .legend .hollow { background: none; border: 2px solid var(--muted); }
 .legend .ramp { display: inline-block; width: 96px; height: 8px; border-radius: 4px; vertical-align: 0; margin: 0 6px; background: linear-gradient(90deg, var(--scrub), var(--mid), var(--charge)); }
 
+.map { display: none; width: 100%; height: calc(var(--row) * 18 + 28px); }
+@media (max-width: 860px) { .chart.mapmode .map { height: 50vh; } }
+.chart.mapmode .plot, .chart.mapmode .axis { display: none; }
+.chart.mapmode .map { display: block; }
+.map .town { fill: color-mix(in srgb, var(--ink) 6%, var(--surface)); stroke: var(--surface); stroke-width: 2; }
+.map .tl { font: 600 26px Archivo, sans-serif; fill: var(--muted); text-anchor: middle; letter-spacing: .02em; }
+.map .hd { stroke: var(--surface); stroke-width: 4; transition: r .6s, opacity .5s; }
+.map .hl { font: 600 27px Archivo, sans-serif; fill: var(--ink-2); paint-order: stroke; stroke: var(--surface); stroke-width: 7px; stroke-linejoin: round; }
+.map .hl.em { font-weight: 800; fill: var(--ink); }
+.map .scale line { stroke: var(--ink-2); stroke-width: 3; }
+.map .scale text { font: 600 24px Archivo, sans-serif; fill: var(--ink-2); }
+
+
 /* ---------- Finale ---------- */
 .finale { padding: 14vh 16px 8vh; }
 .finale h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.05; margin: 0 0 10px; font-weight: 760; font-stretch: 92%; letter-spacing: -.025em; }
@@ -211,6 +224,7 @@ footer { padding: 24px 16px 48px; font-size: 13px; color: var(--muted); border-t
         <p class="chart-s" id="cs"></p>
         <div class="plot" id="plot"></div>
         <div class="axis" id="axis"></div>
+        <svg class="map" id="map" role="img" aria-label="Map of Greater Boston showing each hospital, colored by price level"></svg>
         <div class="legend" id="legend"></div>
       </figure>
     </div>
@@ -281,6 +295,10 @@ F.odd = H.filter(h => h.notes.some(n => /impossible/i.test(n)));
 const CBC = "85025", CMP = "80053", UHC = "UnitedHealthcare";
 F.same = extremes(id => ins(CBC, id, UHC));
 F.cvi = H.map(h => { const c = cash(CMP, h.id), i = comm(CMP, h.id); return c != null && i != null ? { h, c, i, r: c / i } : null; }).filter(Boolean).sort((a, b) => b.r - a.r);
+const KM = DATA.distances_km, MAP = DATA.map;
+const miles = (km) => { const m = km / 1.609; return m < 1 ? `${(m).toFixed(1)} miles` : `${m.toFixed(m < 10 ? 1 : 0)} miles`; };
+F.topH = F.top.length ? F.top[F.top.length - 1] : null;
+F.nearCheap = F.topH && KM ? F.idx.filter(h => h.price_index <= 1.0 && KM[F.topH.id] && KM[F.topH.id][h.id] != null).sort((a, b) => KM[F.topH.id][a.id] - KM[F.topH.id][b.id]).slice(0, 2) : [];
 const countOf = (label) => F.prob.filter(h => problemOf(h) === label).length;
 
 // ---------- The story: each step sets the chart ----------
@@ -314,6 +332,12 @@ const STEPS = [
     text: `It's not just one scan. Across all ${DATA.procedures.length} procedures, ${F.top.map(h => h.short).join(" and ")} ${F.top.length > 1 ? "are" : "is"} about <b>${F.top.length ? times(Math.max(...F.top.map(h => h.price_index))) : ""}</b> the typical Boston price.`,
     text2: F.sysRest.length ? `${topSys}'s other hospitals? About <b>${median(F.sysRest.map(h => h.price_index)).toFixed(1)}×</b>. Same system, very different prices.` : "",
     chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), false),
+  },
+  MAP && F.nearCheap.length && {
+    title: "A few miles apart",
+    text: `Location doesn't explain it. ${F.topH.short}, at ${F.topH.price_index.toFixed(2)}× typical, is ${F.nearCheap.map(h => `<b>${miles(KM[F.topH.id][h.id])}</b> from ${h.name} (${h.price_index.toFixed(2)}×)`).join(" and ")}.`,
+    text2: KM && KM.mgh && KM.mgh[F.cash.lo.h.id] != null ? `The two receipts at the top of this page came from hospitals ${miles(KM.mgh[F.cash.lo.h.id])} apart.` : "",
+    chart: () => mapChart([F.topH.id, ...F.top.map(h => h.id), ...F.nearCheap.map(h => h.id)]),
   },
   {
     title: "Is the expensive care better?",
@@ -358,6 +382,7 @@ const ipos = (x) => Math.max(0, Math.min(100, (L(x) - L(LO)) / (L(HI) - L(LO)) *
 const RAMP = `<span>Below typical<span class="ramp"></span>Above typical</span>`;
 
 function render(spec) {
+  document.querySelector(".chart").classList.remove("mapmode");
   $("ct").textContent = spec.title; $("cs").textContent = spec.sub;
   const order = [...spec.items].sort((a, b) => (a.x == null) - (b.x == null) || (a.x ?? 0) - (b.x ?? 0) || a.id.localeCompare(b.id));
   const rowH = parseFloat(getComputedStyle($("plot")).getPropertyValue("--row")) || 26;
@@ -406,6 +431,59 @@ function cashVsChart() {
     items: H.map(h => { const x = byId[h.id]; return !x ? { id: h.id, x: null, label: "not comparable" } :
       { id: h.id, x: x.c / max * 100, ghostX: x.i / max * 100, r: x.r, label: `${x.r >= 9.95 ? x.r.toFixed(0) : x.r.toFixed(1)}×`, cls: x === F.cvi[0] || x === F.cvi[1] ? "em" : "" }; }),
     legend: `<span><i style="background:var(--charge)"></i>Cash price</span><span><i class="hollow"></i>What insurers typically pay</span><span>Label: cash as a multiple of the insurer price</span>` });
+}
+const CENTRAL = ["mgh", "mee", "tmc", "bmc", "bwh", "bidmc", "nebh"];   // within about 3 km: drawn again in a zoomed inset
+const SIDE = { bwh: "l", bidmc: "l", nebh: "l", mee: "l", mah: "l", bmcbrighton: "l", tmc: "l", nwh: "b" };
+const DY = { bidmc: -0.55, nebh: 0.55 };   // nudge stacked labels in the inset apart (in label heights)
+const MIDRING = ["mah", "cha", "bmcbrighton", "faulkner"];   // close to central Boston: labels dropped on small screens
+const NAME = { mgh: "MGH", mee: "Mass Eye and Ear" };
+function buildMap() {
+  const m = MAP, svg = $("map");
+  // Layout: the map on the left, the inset to its right, in one viewBox
+  const GAP = 60, IW = 740;
+  const pts = CENTRAL.filter(id => m.hosp[id]).map(id => m.hosp[id]);
+  const bx0 = Math.min(...pts.map(p => p[0])), bx1 = Math.max(...pts.map(p => p[0])), by0 = Math.min(...pts.map(p => p[1])), by1 = Math.max(...pts.map(p => p[1]));
+  const VW = m.w + GAP + IW, VH = m.h;
+  svg.setAttribute("viewBox", `0 0 ${VW} ${VH}`);
+  const box = svg.getBoundingClientRect(), sf = Math.min(box.width / VW, box.height / VH) || 0.35;   // screen px per map unit
+  const fs = 11.5 / sf, r = 5.5 / sf;                                                              // labels about 11.5 px on screen
+  const z = Math.max(2, (IW - 2 * (120 / sf)) / (bx1 - bx0 || 1));                                 // inset zoom, leaving room for labels on both sides
+  const IH = Math.min(VH - 160, (by1 - by0) * z + 2 * (40 / sf));
+  const IX = m.w + GAP, IY = Math.max(40, (VH - IH) / 2 - 40);
+  const ix = (x) => IX + IW / 2 + (x - (bx0 + bx1) / 2) * z, iy = (y) => IY + IH / 2 + (y - (by0 + by1) / 2) * z;
+  // the main map's frame around the inset area
+  const fx0 = (bx0 + bx1) / 2 - IW / 2 / z, fx1 = (bx0 + bx1) / 2 + IW / 2 / z, fy0 = (by0 + by1) / 2 - IH / 2 / z, fy1 = (by0 + by1) / 2 + IH / 2 / z;
+  const twoMi = 2 * 1.609 / m.km_per_unit;
+  const dotG = (h, x, y, rr, lab, inset) => { const side = SIDE[h.id] || "r";
+    const tx = side === "l" ? x - rr * 1.7 : side === "b" ? x - rr : x + rr * 1.7, ty = side === "b" ? y + rr + fs * 1.05 : y + fs * (.35 + (inset ? (DY[h.id] || 0) : 0));
+    return `<g class="hg" data-id="${h.id}"><circle class="hd" cx="${x}" cy="${y}" r="${rr}" style="stroke-width:${rr / 3.5}"><title>${esc(h.name)}${h.price_index != null ? `: ${h.price_index.toFixed(2)}× typical` : ""}</title></circle>` +
+      (lab ? `<text class="hl" x="${tx}" y="${ty}" text-anchor="${side === "l" ? "end" : "start"}" style="font-size:${fs}px;stroke-width:${fs / 3.5}px">${esc(lab)}</text>` : "") + "</g>"; };
+  const towns = m.towns.map(t => `<path class="town" d="${t.d}"><title>${esc(t.n)}</title></path>`).join("");
+  svg.innerHTML =
+    `<defs><clipPath id="mapclip"><rect x="0" y="0" width="${m.w}" height="${m.h}"/></clipPath></defs>` +
+    `<g clip-path="url(#mapclip)">${towns}</g>` +
+    m.labels.filter(l => sf >= 0.25 || l.n === "Boston").map(l => `<text class="tl" x="${l.x}" y="${l.y}" style="font-size:${fs * .95}px">${esc(l.n)}</text>`).join("") +
+    `<rect x="${fx0}" y="${fy0}" width="${fx1 - fx0}" height="${fy1 - fy0}" fill="none" stroke="var(--ink-2)" stroke-width="${1.5 / sf}" stroke-dasharray="${4 / sf} ${3 / sf}"/>` +
+    `<line x1="${fx1}" y1="${(fy0 + fy1) / 2}" x2="${IX}" y2="${IY + IH / 2}" stroke="var(--ink-2)" stroke-width="${1 / sf}" stroke-dasharray="${4 / sf} ${3 / sf}"/>` +
+    H.filter(h => m.hosp[h.id] && !CENTRAL.includes(h.id)).map(h => dotG(h, m.hosp[h.id][0], m.hosp[h.id][1], r, sf < 0.25 && MIDRING.includes(h.id) ? "" : h.short)).join("") +
+    H.filter(h => m.hosp[h.id] && CENTRAL.includes(h.id)).map(h => dotG(h, m.hosp[h.id][0], m.hosp[h.id][1], r * .75, "")).join("") +
+    `<rect x="${IX + 1 / sf}" y="${IY}" width="${IW - 2 / sf}" height="${IH}" fill="var(--surface)" stroke="var(--ink-2)" stroke-width="${1.5 / sf}"/>` +
+    `<svg x="${IX + 2 / sf}" y="${IY + 1 / sf}" width="${IW - 4 / sf}" height="${IH - 2 / sf}" viewBox="${fx0} ${fy0} ${fx1 - fx0} ${fy1 - fy0}" preserveAspectRatio="none"><g>${towns}</g></svg>` +
+    H.filter(h => m.hosp[h.id] && CENTRAL.includes(h.id)).map(h => dotG(h, ix(m.hosp[h.id][0]), iy(m.hosp[h.id][1]), r * 1.15, NAME[h.id] || h.short, true)).join("") +
+    `<text class="tl" x="${IX}" y="${IY + IH + fs * 1.6}" text-anchor="start" style="font-size:${fs}px">Central Boston, zoomed in</text>` +
+    `<g class="scale" transform="translate(30,${m.h - 30})"><line x1="0" y1="0" x2="${twoMi}" y2="0" style="stroke-width:${1.5 / sf}"/><text x="0" y="${-fs * .6}" text-anchor="start" style="font-size:${fs * .9}px">2 miles</text></g>`;
+}
+function mapChart(em) {
+  document.querySelector(".chart").classList.add("mapmode");
+  buildMap();
+  $("ct").textContent = "Where the hospitals are, colored by price level";
+  $("cs").textContent = "Overall commercial price level vs the typical Boston hospital";
+  document.querySelectorAll("#map .hg").forEach(g => {
+    const h = H.find(x => x.id === g.dataset.id), c = g.querySelector("circle"), t = g.querySelector("text");
+    c.style.fill = h.price_index == null ? "var(--mid)" : tone(h.price_index);
+    if (t) t.classList.toggle("em", em.includes(h.id));
+  });
+  $("legend").innerHTML = `${RAMP}<span>Grey: too little data for a price level</span>`;
 }
 function problemChart() {
   return render({ title: "Whose price files were hard to use", sub: "Same price-level chart; highlighted rows had a file problem", stems: false, ref: ipos(1), ticks: idxTicks,
