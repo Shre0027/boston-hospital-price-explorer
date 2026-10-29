@@ -312,11 +312,14 @@ def main():
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out_csv = OUT_DIR / f"{args.hospital}_prices.csv"
+    # Write to temporary files and swap them in only at the end, so a failed run
+    # never replaces good results with a half-written file
+    tmp_csv = out_csv.with_suffix(".csv.tmp")
     total_rows = 0
     matched_rows = 0
     found = {}
 
-    with open(out_csv, "w", newline="", encoding="utf-8") as f:
+    with open(tmp_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["matched_cpt"] + header_clean)
         for row in reader:
@@ -355,8 +358,14 @@ def main():
         "first_columns": header_clean[:30],
         "extracted_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
-    with open(OUT_DIR / f"{args.hospital}_profile.json", "w", encoding="utf-8") as f:
+    if matched_rows == 0:
+        tmp_csv.unlink(missing_ok=True)
+        raise ValueError(f"No matching procedures found in {total_rows:,} rows; keeping the previous results")
+    tmp_profile = OUT_DIR / f"{args.hospital}_profile.json.tmp"
+    with open(tmp_profile, "w", encoding="utf-8") as f:
         json.dump(profile, f, indent=2)
+    os.replace(tmp_csv, out_csv)
+    os.replace(tmp_profile, OUT_DIR / f"{args.hospital}_profile.json")
 
     print(f"::notice::Format: {profile['format']}, {len(header_clean)} columns")
     print(f"::notice::Scanned {total_rows:,} rows, kept {matched_rows:,}")

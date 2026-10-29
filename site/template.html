@@ -178,7 +178,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
 
   <section>
     <h2>How usable is each hospital's file?</h2>
-    <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them.</p>
+    <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them (checked <span id="accdate"></span>).</p>
     <div class="score" id="score"></div>
   </section>
 
@@ -332,7 +332,8 @@ function drawScore() {
     <div class="meta">${h.system} · file updated ${h.last_updated} · ${h.rows_in_file.toLocaleString("en-US")} rows · ${h.procedures_found} of ${DATA.procedures.length} procedures found</div>
     ${h.access.map(a => `<div class="check"><span class="ic ${a.status}" role="img" aria-label="${word[a.status]}">${icon[a.status]}</span><span>${a.label}<span class="detail">${a.detail}</span></span></div>`).join("")}
   </div>`).join("");
-  $("asof").textContent = `Files checked on ${DATA.built_on}.`;
+  $("accdate").textContent = DATA.access_checked_on;
+  $("asof").textContent = `Prices refreshed on ${DATA.built_on}; access findings checked on ${DATA.access_checked_on}. Refreshed automatically each month.`;
 }
 
 // ---------- Plain-English search ----------

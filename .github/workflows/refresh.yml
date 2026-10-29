@@ -1,0 +1,57 @@
+name: Monthly refresh
+
+# On the 1st of every month (and on demand): re-download each hospital's price file,
+# rebuild the combined table and the dashboard, save the results, and republish the site.
+# Tufts Medical Center is skipped because it blocks automated downloads (see docs/decision-log.md);
+# its hand-downloaded data stays in place.
+on:
+  schedule:
+    - cron: "17 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the streaming JSON reader
+        run: pip install ijson
+
+      - name: Re-download each hospital
+        # One hospital failing doesn't stop the others; its previous results are kept
+        run: |
+          failed=""
+          for h in mgh bwh bmc bidmc; do
+            echo "::group::$h"
+            python scripts/extract_prices.py --hospital "$h" || failed="$failed $h"
+            echo "::endgroup::"
+          done
+          if [ -n "$failed" ]; then echo "::warning::Kept previous results for:$failed"; fi
+
+      - name: Rebuild the combined table and the dashboard
+        run: |
+          python scripts/combine.py
+          python scripts/build_site.py
+
+      - name: Save the results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data site
+          git commit -m "Monthly refresh $(date -u +%Y-%m-%d)" || echo "Nothing changed"
+          git push
+
+  publish:
+    needs: refresh
+    uses: ./.github/workflows/pages.yml

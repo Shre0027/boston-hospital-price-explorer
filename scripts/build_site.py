@@ -20,6 +20,7 @@ Usage:
 import csv
 import json
 import statistics
+import time
 from collections import defaultdict
 from pathlib import Path
 
@@ -109,7 +110,8 @@ def main():
         })
 
     data = {
-        "built_on": access["checked_on"],
+        "built_on": time.strftime("%Y-%m-%d", time.gmtime()),
+        "access_checked_on": access["checked_on"],
         "hospitals": hospital_info,
         "procedures": procedures,
         "insurers": MENU_INSURERS,
