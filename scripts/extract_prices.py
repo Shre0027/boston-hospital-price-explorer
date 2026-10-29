@@ -272,6 +272,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--hospital", required=True, help="Hospital id from config/hospitals.json")
     parser.add_argument("--local-file", help="Use a local file instead of downloading")
+    parser.add_argument("--source-url", help="With --local-file: where the file was downloaded from, recorded in the profile")
     args = parser.parse_args()
 
     procedures = load_json(ROOT / "config" / "procedures.json")
@@ -279,7 +280,7 @@ def main():
 
     if args.local_file:
         path = Path(args.local_file)
-        source_url = None
+        source_url = args.source_url
     else:
         hospitals = {h["id"]: h for h in load_json(ROOT / "config" / "hospitals.json")}
         if args.hospital not in hospitals:
@@ -337,6 +338,7 @@ def main():
     profile = {
         "hospital_id": args.hospital,
         "source_url": source_url,
+        "collected": "downloaded by hand in a browser" if args.local_file else "downloaded automatically",
         "downloaded_file": path.name,
         "downloaded_mb": round(downloaded_bytes / 1e6, 1),
         "file_type": file_kind,
