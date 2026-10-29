@@ -39,16 +39,53 @@ csv.field_size_limit(sys.maxsize)
 # Matches CMS code columns like "code | 1", "code|2"
 CODE_COL = re.compile(r"^code\s*\|\s*\d+$", re.IGNORECASE)
 
+# Some hospital sites reject requests that don't look like a browser
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) price-transparency-research"
+
 
 def load_json(path):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
+def fetch_text(url):
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return resp.read().decode("utf-8", errors="replace")
+
+
+def resolve_mrf_url(hospital):
+    """
+    CMS requires each hospital website to have a cms-hpt.txt file at its root listing
+    each location's current price-file link (mrf-url). Reading it means we always get
+    the current link, even if the hospital moves its file.
+    Falls back to the mrf_url saved in config if the txt file can't be used.
+    """
+    txt_url = hospital.get("hpt_txt")
+    location = hospital.get("location_name", hospital["name"])
+    if txt_url:
+        try:
+            current = {}
+            for line in fetch_text(txt_url).splitlines():
+                key, _, value = line.partition(":")
+                key, value = key.strip().lower(), value.strip()
+                if key == "location-name":
+                    current = {"location-name": value}
+                elif key:
+                    current[key] = value
+                if current.get("location-name", "").lower() == location.lower() and current.get("mrf-url"):
+                    print(f"Found current file link in {txt_url}")
+                    return current["mrf-url"]
+            print(f"::warning::'{location}' not found in {txt_url}; using the saved link instead")
+        except Exception as e:
+            print(f"::warning::Couldn't read {txt_url} ({e}); using the saved link instead")
+    return hospital["mrf_url"]
+
+
 def download(url, dest):
     """Download a file to disk in chunks. Some hospital sites reject requests without a browser-like User-Agent."""
     dest.parent.mkdir(parents=True, exist_ok=True)
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (price-transparency research project)"})
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     start = time.time()
     with urllib.request.urlopen(req, timeout=120) as resp, open(dest, "wb") as out:
         while True:
@@ -127,7 +164,7 @@ def main():
         hospitals = {h["id"]: h for h in load_json(ROOT / "config" / "hospitals.json")}
         if args.hospital not in hospitals:
             sys.exit(f"Unknown hospital id '{args.hospital}'. Options: {', '.join(hospitals)}")
-        source_url = hospitals[args.hospital]["mrf_url"]
+        source_url = resolve_mrf_url(hospitals[args.hospital])
         path = RAW_DIR / Path(source_url.split("?")[0]).name
         print(f"Downloading {source_url}")
         download(source_url, path)
@@ -196,4 +233,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        # "::error::" makes GitHub show this message right on the run's summary page
+        print(f"::error::{type(e).__name__}: {e}")
+        raise
