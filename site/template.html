@@ -55,6 +55,19 @@ h2 { font-size: 22px; margin: 0 0 4px; font-weight: 650; }
 .sub { color: var(--text-secondary); margin: 0 0 20px; font-size: 15px; }
 section { margin: 0 0 40px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.byline { font-size: 14px; color: var(--text-muted); margin: 14px 0 0; }
+.findings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0 0; }
+.finding { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; display: flex; flex-direction: column; }
+.finding .num { font-size: 36px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.finding h3 { font-size: 17px; font-weight: 650; margin: 8px 0 4px; line-height: 1.3; }
+.finding p { margin: 0; font-size: 15px; color: var(--text-secondary); flex: 1; }
+.finding .link-btn { align-self: flex-start; margin-top: 12px; font-weight: 600; text-decoration: none; }
+.finding .link-btn:hover { text-decoration: underline; }
+.checked { font-size: 14px; color: var(--text-secondary); margin: 14px 0 0; }
+.files-sum ul { margin: 0 0 14px; padding-left: 20px; color: var(--text-secondary); font-size: 15px; }
+.files-sum li { margin: 0 0 4px; }
+details.files > summary { cursor: pointer; font-weight: 600; font-size: 15px; color: var(--accent-text); margin: 0 0 12px; }
+@media (max-width: 700px) { .findings { grid-template-columns: minmax(0, 1fr); } }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 28px 0 0; }
 .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
 .stat .num { font-size: 34px; font-weight: 700; line-height: 1.1; }
@@ -172,8 +185,14 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
     <p class="eyebrow">Boston Hospital Price Explorer</p>
     <h1>What will this actually cost me?</h1>
     <p class="lede">Hospitals must publish their prices by law, but in files too big for anyone to read. This compares common procedures across <span id="nh"></span> Greater Boston hospitals, straight from those official files, next to each hospital's CMS quality rating.</p>
-    <div class="stats" id="stats"></div>
+    <p class="byline">Built by Shreyas Tayde from each hospital's official price file · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/case-study.md">Read the case study</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer">Code</a></p>
   </header>
+
+  <section aria-labelledby="found-h">
+    <h2 id="found-h">What I found</h2>
+    <div class="findings" id="findings"></div>
+    <p class="checked" id="checked"></p>
+  </section>
 
   <section>
     <div class="card">
@@ -216,7 +235,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </section>
 
   <section>
-    <div class="card">
+    <div class="card" id="quality">
       <h2>Do higher-rated hospitals cost more?</h2>
       <p class="sub" id="pqsub"></p>
       <div id="pq"></div>
@@ -225,7 +244,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </section>
 
   <section>
-    <div class="card">
+    <div class="card" id="glance">
       <h2>Every procedure at a glance</h2>
       <p class="sub">Darker means more expensive than the typical price for that procedure (the median across hospitals). Hospitals are ordered from lowest to highest overall price level. Select a row to compare it above.</p>
       <div class="filters" id="sysfilter" role="group" aria-label="Health system"></div>
@@ -239,10 +258,14 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </section>
 
   <section>
-    <div class="card">
+    <div class="card" id="filescard">
       <h2>How usable is each hospital's file?</h2>
-      <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them (checked <span id="accdate"></span>).</p>
-      <div class="scorewrap"><table class="scoretab" id="score"></table></div>
+      <p class="sub">The law says these files must be public and machine-readable. Here's what happened when I tried to use them (checked <span id="accdate"></span>).</p>
+      <div class="files-sum" id="filesum"></div>
+      <details class="files" id="files">
+        <summary>Show all <span id="nh2"></span> hospitals in detail</summary>
+        <div class="scorewrap"><table class="scoretab" id="score"></table></div>
+      </details>
     </div>
   </section>
 
@@ -298,16 +321,77 @@ function stats() {
       if (!bestComm || r > bestComm.r) bestComm = { r, p, lo, hi };
     }
   }
-  const five = H.filter(h => h.stars === 5 && h.price_index != null);
-  const tiles = [];
-  if (bestComm) tiles.push([`${bestComm.r.toFixed(1)}×`, `${bestComm.p.name} with commercial insurance: ${money(bestComm.lo.v.median)} at ${bestComm.lo.h.short}, ${money(bestComm.hi.v.median)} at ${bestComm.hi.h.short}`]);
-  if (five.length >= 2) {
-    const lo = Math.min(...five.map(h => h.price_index)), hi = Math.max(...five.map(h => h.price_index));
-    tiles.push([`${lo.toFixed(2)}–${hi.toFixed(2)}×`, `price level of the ${five.length} hospitals with a 5-star CMS rating: top-rated care at both ends of the price range`]);
+  // Every finding is computed from DATA, so it stays true after each monthly refresh.
+  const cards = [];
+  const x = (v) => v.toFixed(v >= 9.95 ? 0 : 1) + "×";
+  if (bestComm) cards.push({
+    num: x(bestComm.r), title: "Same procedure, very different price",
+    text: `With commercial insurance, a ${bestComm.p.name.replace(/ \(.*\)/, "").toLowerCase()} costs ${money(bestComm.lo.v.median)} at ${bestComm.lo.h.name} and ${money(bestComm.hi.v.median)} at ${bestComm.hi.h.name}.`,
+    btn: "Compare all hospitals", go: () => openCompare(bestComm.p.cpt, "commercial") });
+
+  const idx = H.filter(h => h.price_index != null).sort((a, b) => b.price_index - a.price_index);
+  const top = idx.filter(h => h.price_index >= 1.5).sort((a, b) => a.price_index - b.price_index);
+  if (top.length) {
+    const sys = top[0].system, sameSys = idx.filter(h => h.system === sys && !top.includes(h));
+    const names = top.map(h => h.short).join(" and ");
+    const lo = Math.min(...top.map(h => h.price_index)), hi = Math.max(...top.map(h => h.price_index));
+    let text = `${names} ${top.length > 1 ? "are" : "is"} about ${x(hi)} the typical Boston price across procedures${lo !== hi ? ` (${lo.toFixed(2)}–${hi.toFixed(2)}×)` : ""}.`;
+    if (sameSys.length && top.every(h => h.system === sys)) {
+      const m = median(sameSys.map(h => h.price_index));
+      text += ` ${sys}'s ${sameSys.length} other indexed hospitals are about ${m.toFixed(1)}×, so the gap is within one health system.`;
+    }
+    cards.push({ num: x(hi), title: `${top.length === 1 ? "One hospital stands" : top.length === 2 ? "Two hospitals stand" : top.length + " hospitals stand"} apart`, text,
+      btn: "See every procedure", go: () => openGlance(top.every(h => h.system === sys) && BIG_SYSTEMS.includes(sys) ? sys : "All") });
   }
-  tiles.push([DATA.total_prices.toLocaleString("en-US"), `published prices compared across ${H.length} hospitals and ${DATA.procedures.length} procedures`]);
-  $("stats").innerHTML = tiles.map(t => `<div class="stat"><div class="num">${t[0]}</div><div class="what">${t[1]}</div></div>`).join("");
+
+  const five = H.filter(h => h.stars === 5 && h.price_index != null).sort((a, b) => a.price_index - b.price_index);
+  const below = five.filter(h => h.price_index < 1);
+  if (five.length >= 2) cards.push({
+    num: `${below.length} of ${five.length}`, title: "Higher price doesn't mean a higher rating",
+    text: `${below.length} of the ${five.length} hospitals with a 5-star CMS rating ${below.length === 1 ? "is" : "are"} priced below typical${below.length ? ` (${below.map(h => h.short).join(", ")})` : ""}. The most expensive 5-star hospital is ${five[five.length - 1].price_index.toFixed(2)}× typical.`,
+    btn: "See price vs rating", go: () => jump("quality") });
+
+  const prob = H.filter(h => hasFileProblem(h));
+  cards.push({
+    num: `${prob.length} of ${H.length}`, title: "“Public” isn't always usable",
+    text: `Of ${H.length} hospitals' price files, ${prob.length} couldn't be read the standard way: ${fileProblemTypes().map(t => `${t.hs.length} ${t.short}`).join(", ").replace(/, ([^,]*)$/, ", and $1")}.`,
+    btn: "See what went wrong", go: () => { $("files").open = true; jump("filescard"); } });
+
+  $("findings").innerHTML = cards.map((c, i) => `<div class="finding"><div class="num">${c.num}</div><h3>${c.title}</h3><p>${c.text}</p><button type="button" class="link-btn" data-i="${i}">${c.btn} →</button></div>`).join("");
+  $("findings").querySelectorAll("button").forEach(b => b.addEventListener("click", cards[b.dataset.i].go));
+  $("checked").innerHTML = `${DATA.total_prices.toLocaleString("en-US")} published prices, ${H.length} hospitals, ${DATA.procedures.length} procedures. Every number comes from the hospitals' own files and was traced back to them; <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">what I got wrong and fixed is in the decision log</a>.`;
   $("nh").textContent = H.length;
+}
+
+function jump(id) { $(id).scrollIntoView({ behavior: "smooth", block: "start" }); }
+function openCompare(cpt, payer) { $("proc").value = cpt; $("payer").value = payer; drawBars(); jump("compare"); }
+function openGlance(sys) {
+  sysFilter = sys; gridMode = "commercial";
+  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === "commercial")));
+  drawFilters(); drawGrid(); jump("glance");
+}
+
+// File problems, grouped into plain-language types (used by the finding card and the file summary)
+const hasFileProblem = (h) => [h.link_list, h.download].some(s => s && s[0] !== "good");
+function fileProblemTypes() {
+  const types = [
+    { label: "Blocked automated downloads", short: "blocked automated downloads", test: (h) => [h.link_list, h.download].some(s => s && /403/.test(s[1])) },
+    { label: "Official link list out of date", short: "had an out-of-date official link list", test: (h) => h.link_list && h.link_list[0] !== "good" && !/403/.test(h.link_list[1]) },
+    { label: "File rejected by a standard JSON parser", short: "were rejected by a standard JSON parser", test: (h) => h.download && /byte-order mark/.test(h.download[1]) },
+  ];
+  return types.map(t => ({ ...t, hs: H.filter(t.test) })).filter(t => t.hs.length);
+}
+function drawFileSummary() {
+  const listOf = (hs) => hs.length > 3 ? `${hs.length} hospitals` : hs.map(h => h.short).join(", ");
+  const items = fileProblemTypes().map(t => `<li><b>${t.label}:</b> ${listOf(t.hs)}</li>`);
+  const odd = H.filter(h => h.notes.some(n => /impossible/i.test(n)));
+  if (odd.length) items.push(`<li><b>Impossible prices</b> (such as $0.03 for a blood test), set aside: ${listOf(odd)}</li>`);
+  const few = H.filter(h => h.insurers_listed <= 6), rest = H.filter(h => h.insurers_listed > 6).map(h => h.insurers_listed);
+  if (few.length && rest.length) items.push(`<li><b>Only ${Math.min(...few.map(h => h.insurers_listed))}–${Math.max(...few.map(h => h.insurers_listed))} commercial insurers listed</b> (others list ${Math.min(...rest)}–${Math.max(...rest)}): ${listOf(few)}</li>`);
+  const heavy = H.filter(h => h.pct_set_aside >= 30);
+  if (heavy.length) items.push(`<li><b>Over 30% of rows not comparable</b> (formula rates with no amount paid): ${listOf(heavy)}</li>`);
+  $("filesum").innerHTML = `<ul>${items.join("")}</ul>`;
+  $("nh2").textContent = H.length;
 }
 
 function fillControls() {
@@ -646,7 +730,7 @@ document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click"
 $("proc").addEventListener("change", drawBars);
 $("payer").addEventListener("change", drawBars);
 ["ded", "coins", "oopmax"].forEach(id => $(id).addEventListener("input", drawBars));
-stats(); fillControls(); drawBars(); drawPQ(); drawFilters(); drawGrid(); drawScore();
+fillControls(); stats(); drawBars(); drawPQ(); drawFilters(); drawGrid(); drawScore(); drawFileSummary();
 </script>
 </body>
 </html>

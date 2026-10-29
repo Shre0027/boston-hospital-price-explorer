@@ -257,3 +257,15 @@ A running record of the key decisions in this project: what was decided, why, an
 **Tested:** the formula matched an independent calculation for 8 cases (deductible above and below the price, 0% and 100% coinsurance, the cap), a worked example by hand ($1,000 price, $500 deductible left, 20% → $600), and all 18 hospitals' displayed estimates for one procedure. Invalid inputs (missing coinsurance, over 100%, negative) show an error and no estimate. Checked on phone width and in dark mode.
 
 **Also added:** [`requirements.md`](requirements.md) (user stories with acceptance criteria, non-functional requirements and a traceability table linking each requirement to where it's met and how it was checked; written up after the first build, from this log), and [`data-dictionary.md`](data-dictionary.md) (every column in the combined table, its CMS source field and the rules behind derived fields). The README now has a pipeline diagram.
+
+---
+
+## 2026-10-29: Dashboard leads with findings
+
+**Problem:** the dashboard was built as a patient tool. It opened with a search box and dropdowns, the main findings (MGH and Brigham at about 1.9× typical, top-rated hospitals at below-typical prices) were never stated in words, and the file-usability table took up almost half the page. Someone opening it for the first time, such as a reviewer, couldn't see the results quickly.
+
+**Decision:** put a "What I found" section at the top with four findings in plain words. Each has one number and a button that opens the chart or table that proves it. Add a byline linking the case study and code, and a line on how the numbers were checked. Replace the jargon tile ("0.71–1.89×"). Collapse the file-usability table behind a short summary of problem types. All the tools stay as they were.
+
+**Why:** portfolio reviewers look for the insight first, explained in plain English, then how it was reached. Patients still get every tool.
+
+**Kept honest:** every finding is computed from the same data as the charts, so the wording updates with each monthly refresh instead of going stale. Checked: the numbers match the SQL results, each button opens the right view, the plain-English search still passes 30/30, and the layout works on a phone and in dark mode. The page is about 25% shorter.
