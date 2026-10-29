@@ -1,0 +1,20 @@
+[
+  {"cpt": "73721", "name": "MRI knee (no contrast)", "category": "Imaging"},
+  {"cpt": "72148", "name": "MRI lower back (no contrast)", "category": "Imaging"},
+  {"cpt": "70551", "name": "MRI brain (no contrast)", "category": "Imaging"},
+  {"cpt": "74177", "name": "CT abdomen and pelvis (with contrast)", "category": "Imaging"},
+  {"cpt": "71046", "name": "Chest X-ray (2 views)", "category": "Imaging"},
+  {"cpt": "77067", "name": "Screening mammogram", "category": "Imaging"},
+  {"cpt": "76700", "name": "Abdominal ultrasound (complete)", "category": "Imaging"},
+  {"cpt": "45378", "name": "Colonoscopy (diagnostic)", "category": "Procedure"},
+  {"cpt": "66984", "name": "Cataract surgery", "category": "Procedure"},
+  {"cpt": "29881", "name": "Knee arthroscopy (meniscus)", "category": "Procedure"},
+  {"cpt": "47562", "name": "Gallbladder removal (laparoscopic)", "category": "Procedure"},
+  {"cpt": "85025", "name": "Complete blood count (CBC)", "category": "Lab test"},
+  {"cpt": "80053", "name": "Comprehensive metabolic panel", "category": "Lab test"},
+  {"cpt": "80061", "name": "Cholesterol (lipid) panel", "category": "Lab test"},
+  {"cpt": "93000", "name": "ECG (electrocardiogram)", "category": "Lab test"},
+  {"cpt": "99283", "name": "ER visit (moderate)", "category": "Visit"},
+  {"cpt": "99284", "name": "ER visit (serious)", "category": "Visit"},
+  {"cpt": "99213", "name": "Doctor office visit (established patient)", "category": "Visit"}
+]

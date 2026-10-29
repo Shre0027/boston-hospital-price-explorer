@@ -1,0 +1,52 @@
+name: Extract hospital prices
+
+# Run by hand from the Actions tab: choose a hospital id from config/hospitals.json
+on:
+  workflow_dispatch:
+    inputs:
+      hospital:
+        description: "Hospital id (from config/hospitals.json)"
+        required: true
+        default: "mgh"
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download and extract prices
+        run: python scripts/extract_prices.py --hospital "${{ inputs.hospital }}"
+
+      - name: Show the profile report
+        run: cat "data/processed/${{ inputs.hospital }}_profile.json"
+
+      - name: Keep the results as a downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.hospital }}-results
+          path: data/processed/${{ inputs.hospital }}_*
+
+      - name: Save results to the repo (skipped if over GitHub's file size limit)
+        run: |
+          f="data/processed/${{ inputs.hospital }}_prices.csv"
+          size=$(stat -c%s "$f")
+          echo "prices file: $((size / 1000000)) MB"
+          if [ "$size" -gt 90000000 ]; then
+            echo "Too large to commit; it's still available as the artifact above."
+            git add "data/processed/${{ inputs.hospital }}_profile.json"
+          else
+            git add "data/processed/${{ inputs.hospital }}_"*
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update extracted prices: ${{ inputs.hospital }}" || echo "Nothing changed"
+          git push

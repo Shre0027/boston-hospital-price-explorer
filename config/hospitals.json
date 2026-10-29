@@ -1,0 +1,10 @@
+[
+  {
+    "id": "mgh",
+    "name": "Massachusetts General Hospital",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneral.org/notices/billing/cms-required-hospital-charge-data",
+    "mrf_url": "https://www.massgeneralbrigham.org/content/dam/mgb-global/en/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip",
+    "url_found_via": "https://www.massgeneral.org/cms-hpt.txt"
+  }
+]
