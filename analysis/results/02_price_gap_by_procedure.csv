@@ -1,0 +1,15 @@
+procedure,hospitals_listing,lowest_hospital,lowest_price,highest_hospital,highest_price,times_more
+Complete blood count (CBC),5,Tufts Medical Center,9.0,Massachusetts General Hospital,90.0,9.5
+Comprehensive metabolic panel,5,Tufts Medical Center,14.0,Massachusetts General Hospital,125.0,9.1
+Cholesterol (lipid) panel,5,Tufts Medical Center,18.0,Massachusetts General Hospital,116.0,6.6
+ER visit (moderate),5,Boston Medical Center,454.0,Massachusetts General Hospital,1477.0,3.3
+ER visit (serious),5,Tufts Medical Center,630.0,Massachusetts General Hospital,2008.0,3.2
+Chest X-ray (2 views),5,Beth Israel Deaconess Medical Center,110.0,Brigham and Women's Hospital,335.0,3.0
+Doctor office visit (established patient),5,Boston Medical Center,73.0,Massachusetts General Hospital,216.0,2.9
+MRI brain (no contrast),5,Tufts Medical Center,571.0,Massachusetts General Hospital,1614.0,2.8
+MRI lower back (no contrast),5,Tufts Medical Center,571.0,Brigham and Women's Hospital,1365.0,2.4
+Screening mammogram,5,Tufts Medical Center,204.0,Massachusetts General Hospital,472.0,2.3
+Colonoscopy (diagnostic),5,Tufts Medical Center,905.0,Massachusetts General Hospital,1975.0,2.2
+Abdominal ultrasound (complete),5,Beth Israel Deaconess Medical Center,199.0,Massachusetts General Hospital,423.0,2.1
+MRI knee (no contrast),5,Tufts Medical Center,571.0,Massachusetts General Hospital,1046.0,1.8
+CT abdomen and pelvis (with contrast),5,Tufts Medical Center,755.0,Boston Medical Center,1360.0,1.8

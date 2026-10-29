@@ -1,0 +1,6 @@
+hospital,procedures_compared,median_times_cheapest,avg_times_cheapest,avg_rank_1_is_cheapest,times_cheapest_hospital
+Tufts Medical Center,14,1.0,1.1,1.4,10
+Beth Israel Deaconess Medical Center,14,1.36,1.43,2.4,2
+Boston Medical Center,14,1.4,1.4,2.3,2
+Brigham and Women's Hospital,14,2.27,3.49,4.1,0
+Massachusetts General Hospital,14,2.89,3.73,4.8,0

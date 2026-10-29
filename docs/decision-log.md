@@ -162,6 +162,23 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: SQL analysis layer, and a hypothesis that was only half right
+
+**Decision:** Eight documented SQL queries in `sql/`, run with DuckDB directly on `prices_clean.csv` (`scripts/run_sql.py`). DuckDB was chosen over a database server because it runs standard SQL on the CSV with nothing to install or host, so anyone can re-run the whole analysis with one command. Results are saved to `analysis/results/` and summarized in `analysis/README.md`; the monthly refresh re-runs them. Numbers were cross-checked against the Python analysis (e.g. MGH brain MRI median $1,614).
+
+**Checked before trusting:** the most extreme results were traced to source rows. UnitedHealthcare pays BMC $6.99 for a blood count on a fixed fee schedule but about $98 at Brigham under a percent-of-billed-charges contract; Cigna's $3,429 lower-back MRI at BMC is 85% of BMC's $4,034 sticker price. Both are real.
+
+**Ranking made robust:** the overall hospital ranking (query 05) reports the median as well as the average, because a few very large lab-test gaps inflate the average. Tufts is the cheapest hospital for 10 of 14 procedures; MGH and Brigham are typically 2.3–2.9× the cheapest (median).
+
+**Hypothesis:** "percent of billed charges" contracts are more expensive than fixed fee schedules.
+- First test (all hospitals pooled) was confounded: MGH and Brigham use percent-of-charges almost exclusively, so it mostly compared hospitals. Redesigned to compare within each hospital (query 07).
+- Result: at BMC, percent-of-charges contracts cost a median 2.7× more than fee schedules (14 of 15 procedures). At Tufts it's the opposite: 0.64× (cheaper for 13 of 14).
+- Follow-up prediction: this would make sense if Tufts' sticker prices are low. Query 08 confirms: Tufts has the lowest sticker prices of the five and the lowest insurer prices; BMC has the highest sticker prices but mostly fee-schedule contracts, so insurers pay comparatively little; MGH and Brigham have high sticker prices and tie contracts to them, and are the most expensive.
+
+**Conclusion:** what insurers pay depends on two things together: the hospital's sticker-price level and whether contracts are tied to it. This is a consistent pattern across five hospitals, not proof of cause.
+
+---
+
 ## 2026-10-29: Automatic monthly refresh
 
 **Decision:** `.github/workflows/refresh.yml` runs on the 1st of every month (and on demand). It re-downloads MGH, Brigham, BMC and BIDMC, rebuilds the combined table and the dashboard, saves the results, and republishes the site (by calling `pages.yml`). Tufts Medical Center is skipped because it blocks automated downloads; its hand-downloaded data stays in place.
