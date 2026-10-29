@@ -277,6 +277,9 @@ def main():
 
     procedures = load_json(ROOT / "config" / "procedures.json")
     wanted = {p["cpt"] for p in procedures}
+    # Some codes are only meaningful with a specific code type, e.g. MS-DRG "419" must not
+    # match a revenue code or charge-item number that happens to be "419"
+    required_type = {p["cpt"]: p["code_type"].upper() for p in procedures if p.get("code_type")}
 
     if args.local_file:
         path = Path(args.local_file)
@@ -306,6 +309,8 @@ def main():
 
     lower = [h.lower() for h in header_clean]
     code_idx = [i for i, h in enumerate(lower) if CODE_COL.match(h)]
+    # Position of each code column's matching "code|N|type" column (None if absent)
+    type_idx = {i: (lower.index(lower[i] + "|type") if lower[i] + "|type" in lower else None) for i in code_idx}
     if not code_idx:
         raise ValueError(f"No 'code | N' columns found. First columns: {header_clean[:15]}")
     file_format = "tall" if "payer_name" in lower else "wide"
@@ -331,6 +336,11 @@ def main():
                 if i < len(row):
                     v = row[i].strip()
                     if v in wanted:
+                        need = required_type.get(v)
+                        if need:
+                            t = type_idx.get(i)
+                            if t is None or t >= len(row) or row[t].strip().upper().replace("_", "-") != need:
+                                continue
                         hit = v
                         break
             if hit:

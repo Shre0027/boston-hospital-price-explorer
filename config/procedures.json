@@ -9,11 +9,11 @@
   {"cpt": "45378", "name": "Colonoscopy (diagnostic)", "category": "Procedure"},
   {"cpt": "66984", "name": "Cataract surgery", "category": "Procedure"},
   {"cpt": "29881", "name": "Knee arthroscopy (meniscus)", "category": "Procedure"},
-  {"cpt": "47562", "name": "Gallbladder removal (laparoscopic)", "category": "Procedure"},
+  {"cpt": "419", "name": "Gallbladder removal, laparoscopic (hospital stay)", "category": "Procedure", "code_type": "MS-DRG"},
   {"cpt": "85025", "name": "Complete blood count (CBC)", "category": "Lab test"},
   {"cpt": "80053", "name": "Comprehensive metabolic panel", "category": "Lab test"},
   {"cpt": "80061", "name": "Cholesterol (lipid) panel", "category": "Lab test"},
-  {"cpt": "93000", "name": "ECG (electrocardiogram)", "category": "Lab test"},
+  {"cpt": "93005", "name": "ECG (electrocardiogram, hospital tracing)", "category": "Lab test"},
   {"cpt": "99283", "name": "ER visit (moderate)", "category": "Visit"},
   {"cpt": "99284", "name": "ER visit (serious)", "category": "Visit"},
   {"cpt": "99213", "name": "Doctor office visit (established patient)", "category": "Visit"}
