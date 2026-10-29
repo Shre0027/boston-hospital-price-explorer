@@ -1,0 +1,14 @@
+{
+ "fetched_on": "2026-10-29",
+ "hospital_addresses": "CMS Hospital General Information (data/quality), matched by CMS Certification Number",
+ "geocoder": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress (benchmark Public_AR_Current)",
+ "towns": "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_25_cousub_500k.zip",
+ "bbox": [
+  -71.36,
+  42.12,
+  -70.82,
+  42.57
+ ],
+ "simplify_degrees": 0.0012,
+ "note": "Cambridge Health Alliance's file covers three campuses; the map shows the CMS-listed main address (Cambridge Hospital)."
+}
