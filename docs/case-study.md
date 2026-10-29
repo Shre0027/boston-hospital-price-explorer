@@ -1,6 +1,6 @@
 # Case study: Can Boston patients actually compare hospital prices?
 
-> **Status: draft for review.** Numbers come from [`analysis/README.md`](../analysis/README.md) (SQL queries in [`sql/`](../sql/)); method details and every correction are in the [decision log](decision-log.md). Live dashboard: https://shre0027.github.io/boston-hospital-price-explorer/
+> **Status: draft for review.** Numbers come from [`analysis/README.md`](../analysis/README.md) (SQL queries in [`sql/`](../sql/)); method details and every correction are in the [decision log](decision-log.md). Data story: https://shre0027.github.io/boston-hospital-price-explorer/ · Dashboard: https://shre0027.github.io/boston-hospital-price-explorer/explore.html
 
 ## Summary
 

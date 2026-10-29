@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boston Hospital Price Explorer</title>
+<meta name="description" content="The same brain MRI can cost 8.6× more depending on the Boston hospital. A scroll-through story built from 18 hospitals' official price files, next to CMS quality ratings.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%232a78d6%27/%3E%3Crect x=%277%27 y=%2718%27 width=%275%27 height=%277%27 rx=%271%27 fill=%27%23fff%27/%3E%3Crect x=%2714%27 y=%2712%27 width=%275%27 height=%2713%27 rx=%271%27 fill=%27%23fff%27/%3E%3Crect x=%2721%27 y=%277%27 width=%275%27 height=%2718%27 rx=%271%27 fill=%27%23fff%27/%3E%3C/svg%3E">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f6f5f2; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e3e1db;
+  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+  --accent: #2a78d6; --accent-text: #1c5cab; --muted-dot: #b7d3f6; --rail: #e3e1db;
+  --critical: #d03b3b; --warning: #c98a00; --good: #0ca30c;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+    --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
+    --critical: #e66767; --warning: #f0b43c;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
+  --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+  --accent: #3987e5; --accent-text: #86b6ef; --muted-dot: #2b4a72; --rail: #33332f;
+  --critical: #e66767; --warning: #f0b43c;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--page); color: var(--text-primary); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+a { color: var(--accent-text); }
+.topbar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 16px; background: color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid transparent; transition: border-color .3s; }
+.topbar.scrolled { border-bottom-color: var(--border); }
+.brand { font-size: 13px; font-weight: 650; color: var(--accent-text); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.skip { font-size: 13px; font-weight: 600; text-decoration: none; background: var(--accent); color: #fff; padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+/* Opening */
+.intro { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 80px 0 40px; }
+.intro .kicker { font-size: 14px; font-weight: 600; color: var(--accent-text); margin: 0 0 14px; }
+.intro h1 { font-size: clamp(34px, 6.5vw, 68px); line-height: 1.05; margin: 0; font-weight: 750; letter-spacing: -.02em; max-width: 15ch; }
+.intro .lead { font-size: clamp(19px, 2.6vw, 26px); color: var(--text-secondary); margin: 22px 0 0; max-width: 32ch; line-height: 1.35; }
+.big { font-size: clamp(88px, 20vw, 200px); font-weight: 800; line-height: .95; letter-spacing: -.04em; color: var(--accent); margin: 10px 0 0; font-variant-numeric: tabular-nums; }
+.intro .small { font-size: 15px; color: var(--text-muted); margin: 18px 0 0; max-width: 52ch; }
+.cue { margin-top: 40px; font-size: 13px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 8px; }
+.cue span { display: inline-block; animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(5px); } }
+
+/* Scrolly */
+.scrolly { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; }
+.steps { padding: 20vh 0 30vh; grid-column: 1; grid-row: 1; }
+.stage { grid-column: 2; grid-row: 1; }
+.step { min-height: 88vh; display: flex; align-items: center; }
+.step .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: 0 10px 30px rgba(0,0,0,.05); opacity: .35; transition: opacity .4s; }
+.step.active .card { opacity: 1; }
+.step .n { font-size: 12px; font-weight: 650; letter-spacing: .06em; color: var(--accent-text); margin: 0 0 6px; }
+.step h2 { font-size: 24px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -.01em; }
+.step p { margin: 0 0 10px; color: var(--text-secondary); font-size: 17px; }
+.step p:last-child { margin-bottom: 0; }
+.step b { color: var(--text-primary); }
+.stage { position: sticky; top: 64px; height: calc(100vh - 80px); display: flex; align-items: center; }
+.chart { --row: 26px; --lab: 128px; --rm: 92px; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 14px; }
+.chart-t { font-size: 17px; font-weight: 650; margin: 0; line-height: 1.3; }
+.chart-s { font-size: 13px; color: var(--text-muted); margin: 2px 0 12px; min-height: 1.3em; }
+.plot { position: relative; height: calc(var(--row) * 18); }
+.row { position: absolute; left: 0; right: 0; height: var(--row); transition: transform .8s cubic-bezier(.2,.8,.2,1), opacity .5s; display: flex; align-items: center; }
+.row .lab { width: var(--lab); flex: none; font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; transition: color .4s, font-weight .4s; }
+.row.em .lab { color: var(--text-primary); font-weight: 650; }
+.track { position: relative; flex: 1; height: 100%; margin-right: var(--rm); }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--rail); }
+.stem { position: absolute; left: 0; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--muted-dot); width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1), background .4s, opacity .4s; }
+.dot { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--accent); left: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), background .4s, transform .4s, opacity .4s; }
+.ghost { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; border: 2px solid var(--text-muted); left: 0; opacity: 0; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s; }
+.val { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; color: var(--text-muted); font-variant-numeric: tabular-nums; transition: left .8s cubic-bezier(.2,.8,.2,1), opacity .4s, color .4s; padding-left: 12px; }
+.row.em .val { color: var(--text-primary); font-weight: 650; }
+.row.em .dot { transform: scale(1.35); }
+.row.mute .dot { background: var(--muted-dot); }
+.row.crit .dot { background: var(--critical); transform: scale(1.35); }
+.row.crit .val, .row.crit .lab { color: var(--critical); font-weight: 650; }
+.row.warn .dot { background: var(--warning); transform: scale(1.35); }
+.row.warn .val, .row.warn .lab { color: var(--warning); font-weight: 650; }
+.row.none { opacity: .35; }
+.row.none .dot { opacity: 0; }
+.ref { position: absolute; top: -4px; bottom: 0; border-left: 1.5px dashed var(--text-muted); opacity: 0; transition: opacity .4s, left .8s; pointer-events: none; }
+.axis { position: relative; height: 22px; margin: 6px var(--rm) 0 var(--lab); font-size: 11px; color: var(--text-muted); }
+.axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; transition: left .6s, opacity .4s; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--text-secondary); margin: 8px 0 0; min-height: 18px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.legend .hollow { background: none; border: 2px solid var(--text-muted); }
+
+/* Finale */
+.finale { padding: 12vh 0 8vh; }
+.finale h2 { font-size: clamp(30px, 4.5vw, 46px); line-height: 1.1; margin: 0 0 8px; letter-spacing: -.02em; }
+.finale .sub { color: var(--text-secondary); font-size: 18px; margin: 0 0 28px; max-width: 60ch; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.num { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.num b { display: block; font-size: 36px; line-height: 1.05; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.num span { font-size: 14px; color: var(--text-secondary); }
+.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 28px 0 0; }
+.pipe .p { background: var(--surface-2); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; }
+.pipe .arr { color: var(--text-muted); }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin: 32px 0 0; }
+.btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 10px; font-weight: 650; font-size: 16px; text-decoration: none; }
+.btn.pri { background: var(--accent); color: #fff; }
+.btn.sec { border: 1px solid var(--border); color: var(--text-primary); background: var(--surface); }
+.by { margin: 28px 0 0; font-size: 15px; color: var(--text-secondary); }
+footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); }
+.fade { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.fade.in { opacity: 1; transform: none; }
+
+@media (max-width: 860px) {
+  .scrolly { display: block; }
+  .stage { top: 50px; height: auto; z-index: 2; padding: 6px 0 0; background: var(--page); }
+  .chart { padding: 12px 12px 8px; }
+  .chart-t { font-size: 15px; }
+  .chart-s { font-size: 12px; margin-bottom: 8px; }
+  .chart { --row: 16px; --lab: 84px; --rm: 74px; }
+  .row .lab { font-size: 11px; }
+  .val { font-size: 10.5px; padding-left: 9px; }
+  .axis { margin-top: 4px; font-size: 10px; height: 16px; }
+  .dot, .ghost { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; }
+  .legend { font-size: 11px; gap: 10px; margin-top: 4px; }
+  .steps { padding: 4vh 0 20vh; position: relative; z-index: 3; }
+  .step { min-height: 80vh; align-items: flex-end; padding-bottom: 1vh; }
+  .step .card { opacity: 1; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .step h2 { font-size: 20px; }
+  .step p { font-size: 15.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .row, .stem, .dot, .ghost, .val, .ref, .axis span, .step .card, .fade { transition: none; }
+  .fade { opacity: 1; transform: none; }
+  .cue span { animation: none; }
+}
+</style>
+</head>
+<body>
+<nav class="topbar" id="topbar">
+  <a class="brand" href="#top">Boston Hospital Price Explorer</a>
+  <a class="skip" href="explore.html">Skip to the dashboard →</a>
+</nav>
+
+<header class="intro wrap" id="top">
+  <p class="kicker">A data story · <span id="nh"></span> Greater Boston hospitals</p>
+  <h1>You need a brain MRI in Boston.</h1>
+  <p class="lead">Where you go can change the price by</p>
+  <p class="big" id="bigx" aria-live="polite"></p>
+  <p class="small" id="introsmall"></p>
+  <p class="cue" aria-hidden="true"><span>↓</span> Scroll to see what I found</p>
+</header>
+
+<main>
+  <div class="wrap scrolly">
+    <div class="stage">
+      <figure class="chart" aria-label="Chart that changes with each step of the story" style="margin:0">
+        <p class="chart-t" id="ct"></p>
+        <p class="chart-s" id="cs"></p>
+        <div class="plot" id="plot"></div>
+        <div class="axis" id="axis"></div>
+        <div class="legend" id="legend"></div>
+      </figure>
+    </div>
+    <div class="steps" id="steps"></div>
+  </div>
+
+  <section class="finale wrap" id="finale">
+    <h2 class="fade">How I built it</h2>
+    <p class="sub fade">Hospitals publish these prices in files built for machines, not people. Here's what it took to turn them into this story.</p>
+    <div class="nums" id="nums"></div>
+    <div class="pipe fade" aria-label="Pipeline">
+      <span class="p">Find each file</span><span class="arr">→</span><span class="p">Download &amp; filter</span><span class="arr">→</span><span class="p">Standardize &amp; check</span><span class="arr">→</span><span class="p">Analyze in SQL</span><span class="arr">→</span><span class="p">Publish &amp; refresh monthly</span>
+    </div>
+    <div class="ctas fade">
+      <a class="btn pri" href="explore.html">Explore the data yourself →</a>
+      <a class="btn sec" href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/case-study.md">Read the case study</a>
+      <a class="btn sec" href="https://github.com/Shre0027/boston-hospital-price-explorer">See the code</a>
+    </div>
+    <p class="by fade">Built by <b>Shreyas Tayde</b>. Every number on this page is computed from the hospitals' own price files (CMS Hospital Price Transparency rule, 45 CFR Part 180) and CMS star ratings. Every decision and correction is in the <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>. <span id="asof"></span></p>
+  </section>
+</main>
+
+<footer class="wrap">Prices are what hospitals publish, not a quote. Not medical or financial advice; always confirm costs with the hospital and your insurer.</footer>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = (id) => document.getElementById(id);
+const H = DATA.hospitals;
+const CALM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const money = (v) => "$" + Math.round(v).toLocaleString("en-US");
+const times = (r) => r.toFixed(1) + "×";
+const MRI = "70551";
+const procName = (cpt) => DATA.procedures.find(p => p.cpt === cpt).name;
+const cash = (cpt, id) => DATA.prices[cpt][id].cash;
+const comm = (cpt, id) => (DATA.prices[cpt][id].commercial || {}).median ?? null;
+const median = (a) => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const names = (rows) => rows.map(r => r.h.short).join(" and ");
+function extremes(getter) {
+  const rows = H.map(h => ({ h, v: getter(h.id) })).filter(r => r.v != null).sort((a, b) => a.v - b.v);
+  const lo = rows[0], hiV = rows[rows.length - 1].v;
+  return { rows, lo, his: rows.filter(r => r.v === hiV), hi: rows[rows.length - 1], r: hiV / lo.v };
+}
+
+// ---------- Facts, all computed from DATA ----------
+const DED = 500, COINS = 20;
+const share = (p) => { const d = Math.min(p, DED); return d + COINS / 100 * (p - d); };
+const F = {};
+F.cash = extremes(id => cash(MRI, id));
+F.comm = extremes(id => comm(MRI, id));
+F.share = extremes(id => { const c = comm(MRI, id); return c == null ? null : share(c); });
+F.idx = H.filter(h => h.price_index != null).sort((a, b) => a.price_index - b.price_index);
+F.top = F.idx.filter(h => h.price_index >= 1.5);
+const topSys = F.top.length && F.top.every(h => h.system === F.top[0].system) ? F.top[0].system : null;
+F.sysRest = topSys ? F.idx.filter(h => h.system === topSys && !F.top.includes(h)) : [];
+F.five = F.idx.filter(h => h.stars === 5);
+F.fiveBelow = F.five.filter(h => h.price_index < 1);
+const problemOf = (h) => {
+  const s = [h.link_list, h.download];
+  if (s.some(x => x && /403/.test(x[1]))) return "blocked downloads";
+  if (h.link_list && h.link_list[0] !== "good") return "outdated link list";
+  if (h.download && /byte-order mark/.test(h.download[1])) return "broke a JSON parser";
+  return null;
+};
+F.prob = H.filter(problemOf);
+F.odd = H.filter(h => h.notes.some(n => /impossible/i.test(n)));
+const countOf = (label) => F.prob.filter(h => problemOf(h) === label).length;
+
+// ---------- The story: each step sets the chart ----------
+const STEPS = [
+  {
+    kicker: "1 · PAYING CASH",
+    title: "Same scan, very different bill",
+    text: `Paying without insurance, a brain MRI is <b>${money(F.cash.lo.v)}</b> at ${F.cash.lo.h.name}. At ${names(F.cash.his)} it's <b>${money(F.cash.hi.v)}</b>.`,
+    text2: `That's <b>${times(F.cash.r)}</b> as much for the same scan, a few miles apart.`,
+    chart: () => moneyChart(`${procName(MRI)}: cash price`, "Each dot is one hospital's listed cash price", id => cash(MRI, id), [F.cash.lo.h.id, ...F.cash.his.map(r => r.h.id)]),
+  },
+  {
+    kicker: "2 · WITH INSURANCE",
+    title: "Insurance lowers the price, not the gap",
+    text: `With commercial insurance, the typical price ranges from <b>${money(F.comm.lo.v)}</b> at ${F.comm.lo.h.name} to <b>${money(F.comm.hi.v)}</b> at ${names(F.comm.his)}: still <b>${times(F.comm.r)}</b>.`,
+    text2: "And that money comes back to you through premiums, deductibles and coinsurance.",
+    chart: () => moneyChart(`${procName(MRI)}: commercial insurance`, `Typical price across each hospital's commercial plans (at least ${DATA.min_plans} plan prices)`, id => comm(MRI, id), [F.comm.lo.h.id, ...F.comm.his.map(r => r.h.id)]),
+  },
+  {
+    kicker: "3 · EVERY PROCEDURE",
+    title: F.top.length === 2 ? "Two hospitals stand apart" : "The pattern holds across procedures",
+    text: `It's not just one scan. Across all ${DATA.procedures.length} procedures, ${F.top.map(h => h.short).join(" and ")} ${F.top.length > 1 ? "are" : "is"} about <b>${F.top.length ? times(Math.max(...F.top.map(h => h.price_index))) : ""}</b> the typical Boston price.`,
+    text2: F.sysRest.length ? `${topSys}'s other hospitals? About <b>${median(F.sysRest.map(h => h.price_index)).toFixed(1)}×</b>. Same system, very different prices.` : "",
+    chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), () => ""),
+  },
+  {
+    kicker: "4 · QUALITY",
+    title: "Is the expensive care better?",
+    text: `Not reliably. <b>${F.fiveBelow.length} of the ${F.five.length}</b> hospitals with a 5-star CMS rating are priced <b>below</b> typical: ${F.fiveBelow.map(h => `${h.short} (${h.price_index.toFixed(2)}×)`).join(" and ")}.`,
+    text2: `Price and rating move together only loosely (rank correlation ${DATA.rank_correlation.toFixed(2)}, where 1 would mean price always rises with rating).`,
+    chart: () => indexChart("Overall price level, colored by CMS star rating", "Highlighted: hospitals with a 5-star CMS rating", F.five.map(h => h.id), () => "", true),
+  },
+  {
+    kicker: "5 · WHAT YOU'D PAY",
+    title: "But what would you actually pay?",
+    text: `Say you have <b>${money(DED)}</b> of deductible left and <b>${COINS}%</b> coinsurance. Your share of that MRI runs from <b>${money(F.share.lo.v)}</b> to <b>${money(F.share.hi.v)}</b>.`,
+    text2: `The hospitals' gap was ${money(F.comm.hi.v - F.comm.lo.v)}. Yours is <b>${money(F.share.hi.v - F.share.lo.v)}</b>: smaller, but still real money for one scan.`,
+    chart: () => shareChart(),
+  },
+  {
+    kicker: "6 · THE DATA ITSELF",
+    title: "“Public” isn't the same as usable",
+    text: `This almost couldn't be built. <b>${F.prob.length} of ${H.length}</b> price files couldn't be read the standard way: ${[["blocked downloads", "blocked automated downloads"], ["outdated link list", "had an out-of-date official link list"], ["broke a JSON parser", "broke a standard JSON parser"]].filter(([k]) => countOf(k)).map(([k, t]) => `${countOf(k)} ${t}`).join(", ")}.`,
+    text2: F.odd.length ? `And ${F.odd.map(h => h.short).join(", ")} listed impossible prices, like <b>$0.03</b> for a blood test. Those were set aside, not hidden.` : "",
+    chart: () => problemChart(),
+  },
+];
+
+// ---------- Chart engine: 18 rows that slide and re-sort ----------
+let rows = {};
+function buildPlot() {
+  $("plot").innerHTML = H.map(h => `<div class="row" id="r-${h.id}"><div class="lab">${h.short}</div><div class="track"><div class="stem"></div><div class="ghost"></div><div class="dot"></div><span class="val"></span></div></div>`).join("") +
+    `<div class="ref" id="ref"></div>`;
+  H.forEach(h => { const el = $("r-" + h.id); rows[h.id] = { el, stem: el.querySelector(".stem"), dot: el.querySelector(".dot"), ghost: el.querySelector(".ghost"), val: el.querySelector(".val") }; });
+}
+function niceMax(v) { const step = v > 3000 ? 1000 : v > 1200 ? 500 : v > 400 ? 200 : 100; return Math.ceil(v * 1.05 / step) * step; }
+function moneyTicks(max) { const step = max > 3000 ? 1000 : max > 1200 ? 500 : max > 400 ? 200 : 100; const t = []; for (let v = 0; v <= max + 1; v += step) t.push(v); return t; }
+const LO = 0.5, HI = 2.2, L = Math.log;
+const ipos = (x) => Math.max(0, Math.min(100, (L(x) - L(LO)) / (L(HI) - L(LO)) * 100));
+
+// spec: { title, sub, items: [{id, x (0–100) or null, label, cls, ghostX}], stems: bool, ref: x|null, ticks: [[x, label]], legend: html }
+function render(spec) {
+  $("ct").textContent = spec.title; $("cs").textContent = spec.sub;
+  const order = [...spec.items].sort((a, b) => (a.x == null) - (b.x == null) || (a.x ?? 0) - (b.x ?? 0) || a.id.localeCompare(b.id));
+  const rowH = parseFloat(getComputedStyle($("plot")).getPropertyValue("--row")) || 26; // inherited from .chart
+  order.forEach((it, i) => {
+    const r = rows[it.id];
+    r.el.style.transform = `translateY(${i * rowH}px)`;
+    r.el.className = "row " + (it.x == null ? "none " : "") + (it.cls || "");
+    const x = it.x ?? 0;
+    r.dot.style.left = x + "%";
+    r.stem.style.width = spec.stems && it.x != null ? x + "%" : "0";
+    r.val.style.left = Math.max(x, it.ghostX ?? 0) + "%";
+    r.val.textContent = it.label;
+    r.ghost.style.opacity = it.ghostX != null ? 1 : 0;
+    if (it.ghostX != null) r.ghost.style.left = it.ghostX + "%";
+  });
+  const ref = $("ref");
+  if (spec.ref != null) { ref.style.opacity = .8; ref.style.left = `calc(var(--lab) + (100% - var(--lab) - var(--rm)) * ${spec.ref / 100})`; } else ref.style.opacity = 0;
+  $("axis").innerHTML = spec.ticks.map(([x, t]) => `<span style="left:${x}%">${t}</span>`).join("");
+  $("legend").innerHTML = spec.legend || "";
+}
+function moneyChart(title, sub, get, em) {
+  const vals = H.map(h => get(h.id)).filter(v => v != null), max = niceMax(Math.max(...vals));
+  return render({ title, sub, stems: true, ref: null,
+    items: H.map(h => { const v = get(h.id); return { id: h.id, x: v == null ? null : v / max * 100, label: v == null ? "not listed" : money(v), cls: em.includes(h.id) ? "em" : "" }; }),
+    ticks: moneyTicks(max).map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]) });
+}
+const idxTicks = [[ipos(.5), "0.5×"], [ipos(.75), "0.75×"], [ipos(1), "1× typical"], [ipos(1.5), "1.5×"], [ipos(2), "2×"]];
+function indexChart(title, sub, em, extra, byStars) {
+  return render({ title, sub, stems: false, ref: ipos(1),
+    items: H.map(h => ({ id: h.id, x: h.price_index == null ? null : ipos(h.price_index),
+      label: h.price_index == null ? "too little data" : h.price_index.toFixed(2) + "×" + (byStars ? (h.stars ? "  " + "★".repeat(h.stars) : "  no rating") : ""),
+      cls: em.includes(h.id) ? "em" : (byStars ? "mute" : "") })),
+    ticks: idxTicks,
+    legend: byStars ? `<span><i style="background:var(--accent)"></i>5-star CMS rating</span><span><i style="background:var(--muted-dot)"></i>1–4 stars or not rated</span>` : "" });
+}
+function shareChart() {
+  const vals = H.map(h => comm(MRI, h.id)).filter(v => v != null), max = niceMax(Math.max(...vals));
+  const em = [F.share.lo.h.id, ...F.share.his.map(r => r.h.id)];
+  return render({ title: `${procName(MRI)}: your estimated share`, sub: `$${DED} of deductible left, ${COINS}% coinsurance, at each hospital's typical commercial price`, stems: true, ref: null,
+    items: H.map(h => { const c = comm(MRI, h.id); return c == null ? { id: h.id, x: null, label: "not listed" } :
+      { id: h.id, x: share(c) / max * 100, ghostX: c / max * 100, label: `you ≈ ${money(share(c))}`, cls: em.includes(h.id) ? "em" : "" }; }),
+    ticks: moneyTicks(max).map(v => [v / max * 100, v ? "$" + (v >= 1000 ? v / 1000 + "k" : v) : "$0"]),
+    legend: `<span><i style="background:var(--accent)"></i>Your estimated share</span><span><i class="hollow"></i>Price paid to the hospital</span>` });
+}
+function problemChart() {
+  return render({ title: "Whose price files were hard to use", sub: "Same price-level chart; highlighted rows had a file problem", stems: false, ref: ipos(1),
+    items: H.map(h => { const p = problemOf(h), odd = F.odd.includes(h);
+      return { id: h.id, x: h.price_index == null ? null : ipos(h.price_index), label: p || (odd ? "impossible prices" : h.price_index == null ? "too little data" : ""), cls: p ? "crit" : odd ? "warn" : "mute" }; }),
+    ticks: idxTicks,
+    legend: `<span><i style="background:var(--critical)"></i>File couldn't be read the standard way</span>${F.odd.length ? `<span><i style="background:var(--warning)"></i>Impossible prices listed</span>` : ""}` });
+}
+
+// ---------- Steps, scrolling and count-ups ----------
+$("steps").innerHTML = STEPS.map((s, i) => `<div class="step" data-i="${i}"><div class="card"><p class="n">${s.kicker}</p><h2>${s.title}</h2><p>${s.text}</p>${s.text2 ? `<p>${s.text2}</p>` : ""}</div></div>`).join("");
+let current = -1;
+function go(i) { if (i === current) return; current = i; STEPS[i].chart(); document.querySelectorAll(".step").forEach(s => s.classList.toggle("active", +s.dataset.i === i)); }
+
+function countUp(el, text, ms = 1100) {
+  const m = text.match(/^(\$?)([\d.,]+)(.*)$/);
+  if (CALM || !m) { el.textContent = text; return; }
+  const target = parseFloat(m[2].replace(/,/g, "")), dec = (m[2].split(".")[1] || "").length, t0 = performance.now();
+  const tick = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = m[1] + (target * e).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + m[3];
+    if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+
+const maxRows = Math.max(...H.map(h => h.rows_in_file));
+const NUMS = [
+  [String(H.length), "official hospital price files collected"],
+  [(maxRows / 1e6).toFixed(1) + "M", "rows in the largest single file"],
+  [DATA.total_prices.toLocaleString("en-US"), "published prices standardized"],
+  [String(DATA.insurer_names), "different insurer names mapped to brands a patient knows"],
+  [String(DATA.sql_queries), "documented SQL queries behind every finding"],
+  ["0", "mismatches when 180 random rows were traced back to the source files"],
+];
+$("nums").innerHTML = NUMS.map(([n, t]) => `<div class="num fade"><b data-n="${n}">${n}</b><span>${t}</span></div>`).join("");
+
+$("nh").textContent = H.length;
+$("introsmall").textContent = `Same scan. Same city. ${money(F.cash.lo.v)} at ${F.cash.lo.h.name}, ${money(F.cash.hi.v)} at ${names(F.cash.his)}, paying cash. Every number here comes from the hospitals' own official price files.`;
+$("asof").textContent = `Prices refreshed ${DATA.built_on}; updated automatically every month.`;
+buildPlot(); go(0);
+setTimeout(() => countUp($("bigx"), times(F.cash.r), 1400), CALM ? 0 : 300);
+
+addEventListener("scroll", () => $("topbar").classList.toggle("scrolled", scrollY > 20), { passive: true });
+if ("IntersectionObserver" in window) {
+  const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) go(+e.target.dataset.i); }), { rootMargin: "-45% 0px -45% 0px" });
+  document.querySelectorAll(".step").forEach(s => so.observe(s));
+  const fo = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add("in"); fo.unobserve(e.target);
+    const b = e.target.querySelector("b[data-n]"); if (b) countUp(b, b.dataset.n); }), { threshold: .15 });
+  document.querySelectorAll(".fade").forEach(el => fo.observe(el));
+} else document.querySelectorAll(".fade").forEach(el => el.classList.add("in"));
+addEventListener("resize", () => { const i = current; current = -1; go(i < 0 ? 0 : i); });
+</script>
+</body>
+</html>

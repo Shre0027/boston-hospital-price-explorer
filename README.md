@@ -2,7 +2,7 @@
 
 **What will this actually cost me?**
 
-👉 **[Open the live dashboard](https://shre0027.github.io/boston-hospital-price-explorer/)** · [Case study](docs/case-study.md) · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md) · [Requirements](docs/requirements.md) · [Data dictionary](docs/data-dictionary.md)
+👉 **[See the data story](https://shre0027.github.io/boston-hospital-price-explorer/)** · [Open the dashboard](https://shre0027.github.io/boston-hospital-price-explorer/explore.html) · [Case study](docs/case-study.md) · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md) · [Requirements](docs/requirements.md) · [Data dictionary](docs/data-dictionary.md)
 
 Since 2021, US hospitals have been legally required to publish their prices. But they publish them in huge, messy files that patients can't realistically use. The same MRI can cost very different amounts depending on the hospital and the insurer, and patients usually find out only when the bill arrives.
 
@@ -60,7 +60,7 @@ flowchart LR
 | Combine | `scripts/combine.py` | Standardizes insurer names, numbers and markets; picks a fair comparison price; flags rows that can't be compared |
 | Quality | `scripts/fetch_quality.py` | Downloads CMS star ratings, matched to hospitals by CMS Certification Number |
 | Analyze (SQL) | `sql/*.sql`, `scripts/run_sql.py` | Ten documented SQL queries (CTEs, window functions, rank correlation) run with DuckDB; results in [`analysis/`](analysis/README.md) |
-| Publish | `scripts/build_site.py` | Builds the dashboard in `site/`, published with GitHub Pages |
+| Publish | `scripts/build_site.py` | Builds the scroll-driven story (`site/index.html`) and the dashboard (`site/explore.html`), published with GitHub Pages |
 
 Downloads run on GitHub Actions (`.github/workflows/`), with an automatic monthly refresh (`refresh.yml`) that re-downloads, rebuilds and republishes. Every decision, finding and correction is in the [decision log](docs/decision-log.md).
 

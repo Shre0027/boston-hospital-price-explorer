@@ -287,3 +287,13 @@ A running record of the key decisions in this project: what was decided, why, an
 **Decision:** show the story and one tool, and keep the detail one click away. Search and compare are now one "Look up a price" card: typing a question also updates the chart under it. The full price table and most of the method notes are collapsed; the "See every procedure" finding opens the table. Three example questions instead of five. Nothing was removed.
 
 **Result:** the desktop page went from about 8,100 to 4,700 pixels tall. All checks still pass: plain-English search 30/30, estimator, animations, phone width and dark mode.
+
+---
+
+## 2026-10-29: A scroll-driven data story as the front page
+
+**Decision:** the front page is now a scroll-driven story (`site/index.html`), and the dashboard moved to `site/explore.html`. The story opens full-screen on one fact (the cash price for the same brain MRI differs 8.6×). Then a single chart of all 18 hospitals re-sorts and changes as the reader scrolls through six steps: cash price, insurance, overall price level, star ratings, the patient's estimated share, and the file problems. It ends with how the project was built and links to the dashboard, case study and code. A "Skip to the dashboard" button is always visible.
+
+**Why:** a dashboard makes the reader find the story; a guided story shows it in order, then hands them the tool. Data journalism uses this format, so it shows communication as well as analysis.
+
+**Kept honest:** every sentence's numbers are computed from the same data, so the story updates with the monthly refresh. Checked against the SQL results: cash $449 vs $3,858 (8.6×), commercial $338 vs $1,614 (4.8×), MGH 1.88× and Brigham 1.89×, 2 of 7 five-star hospitals below typical, the patient's share $338 vs $723, and 7 of 18 files with problems. Tested on desktop and phone, in dark mode and with reduced motion (no animation, final values shown). Each step activates the right chart, and there's no horizontal scroll.

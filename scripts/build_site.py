@@ -3,8 +3,10 @@ Build the dashboard website from the combined price table.
 
 Reads:  data/combined/prices_clean.csv, data/processed/*_profile.json, data/quality/*.csv,
         config/hospitals.json, config/procedures.json, config/data_access.json
-Writes: site/index.html  (site/template.html with a small summary of the data embedded,
-        so the page works as a single file with no server)
+Writes: site/index.html    the scroll-driven story (site/story_template.html)
+        site/explore.html  the full dashboard (site/template.html)
+        Both get the same small summary of the data embedded, so each page works as a single
+        file with no server.
 
 What goes into the summary:
   - per procedure and hospital: cash price, sticker price (gross charge), the typical commercial price
@@ -71,11 +73,14 @@ def main():
     rows_total = defaultdict(int)
     rows_flagged = defaultdict(int)
     insurers_listed = defaultdict(set)
+    insurer_names = set()
 
     with open(ROOT / "data/combined/prices_clean.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             hid = r["hospital_id"]
             rows_total[hid] += 1
+            if r["payer_raw"]:
+                insurer_names.add(r["payer_raw"])
             if r["flag"]:
                 rows_flagged[hid] += 1
             if r["market"] == "Commercial" and r["insurer"] not in ("", "Other") and r["cpt"] != "419":
@@ -170,14 +175,18 @@ def main():
         "rated_hospitals": len(rated),
         "min_plans": MIN_PLANS,
         "total_prices": sum(rows_total.values()),
+        "insurer_names": len(insurer_names),
+        "sql_queries": len([q for q in (ROOT / "sql").glob("[0-9][0-9]_*.sql") if not q.name.startswith("00_")]),
     }
 
-    template = (ROOT / "site/template.html").read_text(encoding="utf-8")
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
-    html = template.replace("/*__DATA__*/null", payload)
-    (ROOT / "site/index.html").write_text(html, encoding="utf-8")
-    print(f"Wrote site/index.html ({len(html) / 1000:.0f} KB, data {len(payload) / 1000:.0f} KB); "
-          f"{len(price_index)} hospitals indexed, rank correlation {rank_corr}")
+    for src, out in (("story_template.html", "index.html"), ("template.html", "explore.html")):
+        template = (ROOT / "site" / src).read_text(encoding="utf-8")
+        assert "/*__DATA__*/null" in template, f"{src} has no data placeholder"
+        html = template.replace("/*__DATA__*/null", payload)
+        (ROOT / "site" / out).write_text(html, encoding="utf-8")
+        print(f"Wrote site/{out} ({len(html) / 1000:.0f} KB)")
+    print(f"Data {len(payload) / 1000:.0f} KB; {len(price_index)} hospitals indexed, rank correlation {rank_corr}")
 
 
 if __name__ == "__main__":
