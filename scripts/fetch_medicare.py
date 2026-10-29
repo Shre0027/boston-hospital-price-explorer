@@ -60,7 +60,7 @@ def main():
     for name in t2:
         for r in rows_from(name, z.read(name)):
             joined = " | ".join(r).lower()
-            if header is None and ("provider" in joined or "ccn" in joined) and "wage index" in joined:
+            if header is None and sum(1 for v in r if v) >= 5 and ("provider" in joined or "ccn" in joined) and "wage index" in joined:
                 header = r
                 print(f"::notice::{name} header: " + " | ".join(header))
                 continue
