@@ -1,0 +1,39 @@
+name: Medicare benchmark data
+
+# Run by hand. step=find: list the download links on the CMS pages (scripts/find_medicare_files.py).
+# step=fetch: download the Medicare rate files and save the rates for our procedures (scripts/fetch_medicare.py).
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "find or fetch"
+        required: true
+        default: "find"
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - name: Find links
+        if: inputs.step == 'find'
+        run: python scripts/find_medicare_files.py
+      - name: Fetch rates
+        if: inputs.step == 'fetch'
+        run: python scripts/fetch_medicare.py
+      - name: Save results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/investigations data/medicare 2>/dev/null || true
+          git commit -m "Medicare benchmark: ${{ inputs.step }}" || echo "Nothing changed"
+          git pull --rebase
+          git push
