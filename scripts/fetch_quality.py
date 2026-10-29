@@ -35,16 +35,34 @@ KEEP = ["Facility ID", "Facility Name", "Address", "City/Town", "State", "ZIP Co
         "Hospital overall rating footnote"]
 
 
-def get(url):
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+# A mirror of the same CMS dataset on HealthData.gov (HHS), used if data.cms.gov refuses the request
+MIRROR = "https://healthdata.gov/api/views/n7m7-8qpq/rows.csv?accessType=DOWNLOAD"
+
+
+def get(url, plain=False):
+    # data.cms.gov is a public open-data API; "plain" sends a standard client header instead of our custom one
+    headers = {"User-Agent": "python-urllib/3 (open-data research)" if plain else USER_AGENT, "Accept": "*/*"}
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=120) as resp:
         return body_stream(resp).read()
+
+
+def first_working(urls):
+    """Try each (label, url, plain) in order; return (label, url, bytes) for the first that works."""
+    errors = []
+    for label, url, plain in urls:
+        try:
+            return label, url, get(url, plain)
+        except Exception as e:
+            errors.append(f"{label}: {e}")
+            print(f"::warning::{label} failed ({e})")
+    raise RuntimeError("All sources failed: " + "; ".join(errors))
 
 
 def main():
     modified, url = None, FALLBACK
     try:
-        meta = json.loads(get(METASTORE))
+        meta = json.loads(first_working([("CMS catalog", METASTORE, False), ("CMS catalog (plain header)", METASTORE, True)])[2])
         modified = meta.get("modified")
         for d in meta.get("distribution", []):
             u = d.get("downloadURL") or d.get("data", {}).get("downloadURL")
@@ -55,7 +73,10 @@ def main():
     except Exception as e:
         print(f"::warning::Couldn't read the CMS catalog ({e}); using the fallback link")
 
-    text = get(url).decode("utf-8-sig", errors="replace")
+    source, url, raw = first_working([
+        ("CMS file", url, False), ("CMS file (plain header)", url, True), ("HealthData.gov mirror", MIRROR, True)])
+    print(f"::notice::Downloaded from {source}")
+    text = raw.decode("utf-8-sig", errors="replace")
     reader = csv.DictReader(io.StringIO(text))
     missing = [c for c in KEEP if c not in reader.fieldnames]
     if missing:
@@ -73,6 +94,7 @@ def main():
         "dataset": "CMS Hospital General Information (xubh-q36u)",
         "catalog_modified": modified,
         "download_url": url,
+        "source": source,
         "downloaded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "massachusetts_rows": len(rows),
     }, indent=2), encoding="utf-8")
