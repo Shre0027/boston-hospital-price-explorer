@@ -1,0 +1,93 @@
+matched_cpt,description,code|1,code|1|type,code|2,code|2|type,code|3,code|3|type,code|4,code|4|type,modifiers,setting,standard_charge|gross,standard_charge|discounted_cash,payer_name,plan_name,standard_charge|negotiated_dollar,standard_charge|negotiated_percentage,standard_charge|negotiated_algorithm,median_amount,10th_percentile,90th_percentile,count,standard_charge|min,standard_charge|max,standard_charge|methodology,additional_generic_notes
+71046,HC RADIOLOGIC EXAM CHEST 2 VIEWS,3240000007,CDM,0324,RC,71046,HCPCS,,,,both,234.0,234.0,,,,,,,,,,,,,Gross Charge Type: standard
+74177,HC CT ABD AND PELVIS W CONTRAST MATERIAL,3500000045,CDM,0352,RC,74177,HCPCS,,,,both,2563.0,2563.0,,,,,,,,,,,,,Gross Charge Type: standard
+76700,HC US ABDOMINAL REAL TIME W IMAGE DOCUMENTATION,4020000010,CDM,0402,RC,76700,HCPCS,,,,both,744.0,744.0,,,,,,,,,,,,,Gross Charge Type: standard
+77067,HC SCREENING MAMMOGRAPHY BI 2 VIEW BREAST INC CAD,4030000004,CDM,0403,RC,77067,HCPCS,,,,both,649.0,649.0,,,,,,,,,,,,,Gross Charge Type: standard
+99283,HC EMERGENCY DEPT VISIT MODERATE SEVERITY,4500000002,CDM,0450,RC,99283,HCPCS,,,,both,841.0,841.0,,,,,,,,,,,,,Gross Charge Type: standard
+99284,HC EMERGENCY DEPT VISIT HIGH URGENT SEVERITY,4500000003,CDM,0450,RC,99284,HCPCS,,,,both,1115.0,1115.0,,,,,,,,,,,,,Gross Charge Type: standard
+99213,HC OFFICE OR OP VISIT EST PT LEVEL 3,5100000955,CDM,0510,RC,99213,HCPCS,,,,both,173.0,173.0,,,,,,,,,,,,,Gross Charge Type: standard
+29881,"HC KNEE SCOPE,MED/LAT MENISECTOMY",5100001229,CDM,0510,RC,29881,HCPCS,,,,both,10075.0,10075.0,,,,,,,,,,,,,Gross Charge Type: standard
+70551,HC MRI BRAIN BRAIN STEM WO CONTRAST MATERIAL,6100000010,CDM,0611,RC,70551,HCPCS,,,,both,1760.0,1760.0,,,,,,,,,,,,,Gross Charge Type: standard
+72148,HC MRI SPINAL CANAL LUMBAR WO CONTRAST MATERIAL,6100000021,CDM,0612,RC,72148,HCPCS,,,,both,1760.0,1760.0,,,,,,,,,,,,,Gross Charge Type: standard
+73721,HC MRI ANY JOINT LOWER EXT WO CONTRAST MATERIAL,6100000041,CDM,0610,RC,73721,HCPCS,,,,both,1760.0,1760.0,,,,,,,,,,,,,Gross Charge Type: standard
+93005,HC ROUTINE ECG TRACING WO INTER AND RPT,7300000000,CDM,0730,RC,93005,HCPCS,,,,both,203.0,203.0,,,,,,,,,,,,,Gross Charge Type: standard
+45378,HC COLONOSCOPY FLEX DX W SPEC COLL WHEN PFRMD,7500000098,CDM,0750,RC,45378,HCPCS,,,,both,2470.0,2470.0,,,,,,,,,,,,,Gross Charge Type: standard
+80053,CHG COMPREHENSIVE METABOLIC PANEL,80053,CDM,0301,RC,80053,HCPCS,,,,both,109.0,109.0,,,,,,,,,,,,,Gross Charge Type: standard
+80061,CHG LIPID PANEL,80061,CDM,0301,RC,80061,HCPCS,,,,both,90.0,90.0,,,,,,,,,,,,,Gross Charge Type: standard
+85025,CHG BLOOD COUNT COMPLETE AUTO&AUTO DIFRNTL WBC,85025,CDM,0305,RC,85025,HCPCS,,,,both,53.0,53.0,,,,,,,,,,,,,Gross Charge Type: standard
+29881,Knee arthroscopy/surgery,29881,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,3908.92,,,,,,,2447.0,3908.92,fee schedule,
+29881,Knee arthroscopy/surgery,29881,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,2532.08,,,,,,,2447.0,3908.92,fee schedule,
+29881,Knee arthroscopy/surgery,29881,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,3908.92,,,,,,,2447.0,3908.92,fee schedule,
+29881,Knee arthroscopy/surgery,29881,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,2447.0,,,,,,,2447.0,3908.92,fee schedule,
+29881,Knee arthroscopy/surgery,29881,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,2863.0,,,,,,,2447.0,3908.92,fee schedule,
+45378,Diagnostic colonoscopy,45378,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,1109.92,,,,,,,1082.75,2263.0,fee schedule,
+45378,Diagnostic colonoscopy,45378,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,1973.58,,,,,,,1082.75,2263.0,fee schedule,
+45378,Diagnostic colonoscopy,45378,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,1109.92,,,,,,,1082.75,2263.0,fee schedule,
+45378,Diagnostic colonoscopy,45378,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,1082.75,,,,,,,1082.75,2263.0,fee schedule,
+45378,Diagnostic colonoscopy,45378,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,2263.0,,,,,,,1082.75,2263.0,fee schedule,
+66984,Cataract surg w/iol 1 stage,66984,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,2856.67,,,,,,,2503.0,4111.91,fee schedule,
+66984,Cataract surg w/iol 1 stage,66984,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,4111.91,,,,,,,2503.0,4111.91,fee schedule,
+66984,Cataract surg w/iol 1 stage,66984,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,2856.67,,,,,,,2503.0,4111.91,fee schedule,
+66984,Cataract surg w/iol 1 stage,66984,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,2503.0,,,,,,,2503.0,4111.91,fee schedule,
+70551,Mri brain stem w/o dye,70551,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+70551,Mri brain stem w/o dye,70551,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+70551,Mri brain stem w/o dye,70551,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,547.07,,,,,,,420.8,547.07,fee schedule,
+71046,X-ray exam chest 2 views,71046,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,71.24,,,,,,,71.24,210.89,fee schedule,
+71046,X-ray exam chest 2 views,71046,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,210.89,,,,,,,71.24,210.89,fee schedule,
+71046,X-ray exam chest 2 views,71046,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,71.24,,,,,,,71.24,210.89,fee schedule,
+72148,Mri lumbar spine w/o dye,72148,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+72148,Mri lumbar spine w/o dye,72148,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+72148,Mri lumbar spine w/o dye,72148,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,547.07,,,,,,,420.8,547.07,fee schedule,
+73721,Mri jnt of lwr extre w/o dye,73721,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+73721,Mri jnt of lwr extre w/o dye,73721,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,420.8,,,,,,,420.8,547.07,fee schedule,
+73721,Mri jnt of lwr extre w/o dye,73721,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,547.07,,,,,,,420.8,547.07,fee schedule,
+74177,Ct abd & pelv w/contrast,74177,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,704.28,,,,,,,704.28,704.28,fee schedule,
+74177,Ct abd & pelv w/contrast,74177,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,704.28,,,,,,,704.28,704.28,fee schedule,
+76700,Us exam abdom complete,76700,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,128.66,,,,,,,128.66,388.58,fee schedule,
+76700,Us exam abdom complete,76700,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,388.58,,,,,,,128.66,388.58,fee schedule,
+76700,Us exam abdom complete,76700,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,128.66,,,,,,,128.66,388.58,fee schedule,
+76700,Us exam abdom complete,76700,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,141.0,,,,,,,128.66,388.58,fee schedule,
+77067,Scr mammo bi incl cad,77067,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,177.13,,,,,,,177.13,343.39,fee schedule,
+77067,Scr mammo bi incl cad,77067,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,343.39,,,,,,,177.13,343.39,fee schedule,
+77067,Scr mammo bi incl cad,77067,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,177.13,,,,,,,177.13,343.39,fee schedule,
+80053,Comprehen metabolic panel,80053,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,20.62,,,,,,,8.86,20.62,fee schedule,
+80053,Comprehen metabolic panel,80053,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,15.94,,,,,,,8.86,20.62,fee schedule,
+80053,Comprehen metabolic panel,80053,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,20.62,,,,,,,8.86,20.62,fee schedule,
+80053,Comprehen metabolic panel,80053,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,19.72,,,,,,,8.86,20.62,fee schedule,
+80053,Comprehen metabolic panel,80053,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,8.86,,,,,,,8.86,20.62,fee schedule,
+80061,Lipid panel,80061,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,26.35,,,,,,,11.23,26.35,fee schedule,
+80061,Lipid panel,80061,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,20.19,,,,,,,11.23,26.35,fee schedule,
+80061,Lipid panel,80061,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,26.35,,,,,,,11.23,26.35,fee schedule,
+80061,Lipid panel,80061,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,25.0,,,,,,,11.23,26.35,fee schedule,
+80061,Lipid panel,80061,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,11.23,,,,,,,11.23,26.35,fee schedule,
+85025,Complete cbc w/auto diff wbc,85025,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,15.47,,,,,,,6.52,15.47,fee schedule,
+85025,Complete cbc w/auto diff wbc,85025,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,11.71,,,,,,,6.52,15.47,fee schedule,
+85025,Complete cbc w/auto diff wbc,85025,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,15.47,,,,,,,6.52,15.47,fee schedule,
+85025,Complete cbc w/auto diff wbc,85025,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,14.5,,,,,,,6.52,15.47,fee schedule,
+85025,Complete cbc w/auto diff wbc,85025,HCPCS,,,,,,,,outpatient,,,Unitedhealthcare,All Commercial Plans,6.52,,,,,,,6.52,15.47,fee schedule,
+93005,Electrocardiogram tracing,93005,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,83.29,,,,,,,43.6,102.6,fee schedule,
+93005,Electrocardiogram tracing,93005,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,102.6,,,,,,,43.6,102.6,fee schedule,
+93005,Electrocardiogram tracing,93005,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,83.29,,,,,,,43.6,102.6,fee schedule,
+93005,Electrocardiogram tracing,93005,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,43.6,,,,,,,43.6,102.6,fee schedule,
+99213,Office/outpatient visit est,99213,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,109.83,,,,,,,31.0,110.38,fee schedule,
+99213,Office/outpatient visit est,99213,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,109.83,,,,,,,31.0,110.38,fee schedule,
+99213,Office/outpatient visit est,99213,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,97.74,,,,,,,31.0,110.38,fee schedule,
+99213,Office/outpatient visit est,99213,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,31.0,,,,,,,31.0,110.38,fee schedule,
+99213,Office/outpatient visit est,99213,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,110.38,,,,,,,31.0,110.38,fee schedule,
+99283,Emergency dept visit,99283,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,332.27,,,,,,,106.0,374.93,fee schedule,
+99283,Emergency dept visit,99283,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,374.93,,,,,,,106.0,374.93,fee schedule,
+99283,Emergency dept visit,99283,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,332.27,,,,,,,106.0,374.93,fee schedule,
+99283,Emergency dept visit,99283,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,106.0,,,,,,,106.0,374.93,fee schedule,
+99284,Emergency dept visit,99284,HCPCS,,,,,,,,outpatient,,,Bcbs,All Commercial Plans,536.97,,,,,,,106.0,737.0,fee schedule,
+99284,Emergency dept visit,99284,HCPCS,,,,,,,,outpatient,,,Cigna,All Commercial Plans,737.0,,,,,,,106.0,737.0,fee schedule,
+99284,Emergency dept visit,99284,HCPCS,,,,,,,,outpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,536.97,,,,,,,106.0,737.0,fee schedule,
+99284,Emergency dept visit,99284,HCPCS,,,,,,,,outpatient,,,Unicare,Gic Wellpoint All Commercial Plans,106.0,,,,,,,106.0,737.0,fee schedule,
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Aetna,All Commercial Plans,9373.49,,,,,,,9373.49,10101.46,fee schedule,
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Unicare,Gic Wellpoint All Commercial Plans,10101.46,,,,,,,9373.49,10101.46,fee schedule,
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Aetna,All Commercial Plans,,,[Lesser Than Charges paid at %: 100] [MSDRG Base Rate: FEE SCHEDULE],,,,0,,,other,No services performed during 15-month lookback period.
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Bcbs,All Commercial Plans,,,[Stop Loss: Total Charges > FeeSchedule | Excess % of Charge: 42.22] [Inpatient Services: Short Stays-Per Diem: 2499] [Transfers-Per Diem: 3066] [APR DRG Base Rate: FEE SCHEDULE] [Alcohol/ Chemical Dependency-Per Diem: 3597] [Psych-Per Diem: 3597],28074.94,28074.94,28074.94,1 through 10,,,other,"Contracting method is an algorithm described in the 'standard_charges|algorithm' field. The allowed amount provided accounts for the structural rates, conditions, and utilization elements inherent in the payer’s algorithm."
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Cigna,All Commercial Plans,,,[Lesser Than Charges paid at %: 100] [Medical-Per Diem: 2956.77] [Surgical-Per Diem: 2956.77] [ICU-Per Diem: 3184.21] [CCU-Per Diem: 3184.21] [IP High Cost Drugs ($): 0 Charge Threshold 1098.03 (%BC): 35] [IP Prosthetics/Implants/Devices ($): 0 Charge Threshold 3294.09 (%BC): 48.6],,,,0,,,other,No services performed during 15-month lookback period.
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Harvard Pilgrim Healthcare,All Commercial Plans,,,[APR DRG Base Rate: FEE SCHEDULE],,,,0,,,other,No services performed during 15-month lookback period.
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Masshealth,Aco Medicaid Managed Care Plan,,,"[Inpatient Services: Payer leverages state specific Medicaid payment methodology. Available, referenceable algorithm logic found here: https://www.mass.gov/topics/masshealth]",,,,0,,,other,No services performed during 15-month lookback period.
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Unicare,Gic Wellpoint All Commercial Plans,,,[Stop Loss: Total Charges > 45000 | Excess % of Charge: 60] [MSDRG Base Rate: FEE SCHEDULE],,,,0,,,other,No services performed during 15-month lookback period.
+419,Laparoscopic Cholecystectomy Without C.D.E. Without Cc/Mcc,419,MS-DRG,,,,,,,,inpatient,,,Unitedhealthcare,All Commercial Plans,,,[Lesser Than Charges paid at %: 100] [Medical-Per Diem: 3934] [Surgical-Per Diem: 3934] [ICU-Per Diem: 3934] [Step Down-Per Diem: 3934] [Rehab-Per Diem: 1740] [SNF-Per Diem: 1740] [IP Prosthetics/Implants/Devices ($): 0 Charge Threshold 5345 (%BC): 48.6],,,,0,,,other,No services performed during 15-month lookback period.
