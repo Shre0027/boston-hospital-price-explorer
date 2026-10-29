@@ -6,7 +6,9 @@
     "system": "Mass General Brigham",
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
-    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip"
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip",
+    "short": "MGH",
+    "phase": 1
   },
   {
     "id": "bwh",
@@ -15,7 +17,9 @@
     "system": "Mass General Brigham",
     "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
     "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
-    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip"
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
+    "short": "Brigham",
+    "phase": 1
   },
   {
     "id": "bmc",
@@ -24,7 +28,9 @@
     "system": "BMC Health System",
     "source_page": "https://www.bmchealthsystem.org/pricing-and-estimates",
     "hpt_txt": "https://www.bmc.org/cms-hpt.txt",
-    "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip"
+    "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip",
+    "short": "BMC",
+    "phase": 1
   },
   {
     "id": "bidmc",
@@ -33,7 +39,9 @@
     "system": "Beth Israel Lahey Health",
     "source_page": "https://bidmc.org/patients-visitors/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bidmc.org/cms-hpt.txt",
-    "mrf_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json"
+    "mrf_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json",
+    "short": "BIDMC",
+    "phase": 1
   },
   {
     "id": "tmc",
@@ -43,6 +51,152 @@
     "source_page": "https://www.tuftsmedicine.org/get-care/cost-estimate",
     "hpt_txt": "https://www.tuftsmedicine.org/cms-hpt.txt",
     "mrf_url": "https://www.tuftsmedicine.org/sites/default/files/2026-03/043400617_tuftsmedicalcenter_standardcharges.csv.zip",
-    "note": "cms-hpt.txt returned HTTP 403 to automated requests on 2026-10-29; mrf_url found manually on the source page"
+    "note": "cms-hpt.txt returned HTTP 403 to automated requests on 2026-10-29; mrf_url found manually on the source page",
+    "short": "Tufts MC",
+    "manual": true,
+    "phase": 1
+  },
+  {
+    "id": "faulkner",
+    "name": "Brigham and Women's Faulkner Hospital",
+    "location_name": "Brigham and Women's Faulkner Hospital",
+    "short": "Faulkner",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042768256_Brigham-and-Womens-Faulkner-Hospital_StandardCharges.zip",
+    "phase": 2
+  },
+  {
+    "id": "nwh",
+    "name": "Newton-Wellesley Hospital",
+    "location_name": "Newton Wellesley Hospital",
+    "short": "Newton-Wellesley",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042103611_Newton-Wellesley-Hospital_StandardCharges.zip",
+    "phase": 2
+  },
+  {
+    "id": "mee",
+    "name": "Massachusetts Eye and Ear",
+    "location_name": "Massachusetts Eye and Ear",
+    "short": "Mass Eye and Ear",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/042103591_Massachusetts-Eye-and-Ear_StandardCharges.zip",
+    "phase": 2
+  },
+  {
+    "id": "salem",
+    "name": "Salem Hospital",
+    "location_name": "Salem Hospital",
+    "short": "Salem",
+    "system": "Mass General Brigham",
+    "source_page": "https://www.massgeneralbrigham.org/en/patients-visitors/billing-insurance/billing/cms-required-hospital-charge-data",
+    "hpt_txt": "https://www.massgeneralbrigham.org/cms-hpt.txt",
+    "mrf_url": "https://www.massgeneralbrigham.org/price-transparency/043399616_Salem-Hospital_StandardCharges.zip",
+    "phase": 2
+  },
+  {
+    "id": "mah",
+    "name": "Mount Auburn Hospital",
+    "location_name": "Mount Auburn Hospital",
+    "short": "Mount Auburn",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://mountauburnhospital.org/042103606_mount-auburn-hospital_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "lahey",
+    "name": "Lahey Hospital & Medical Center",
+    "location_name": "Lahey Hospital & Medical Center",
+    "short": "Lahey",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://www.lahey.org/042704686_lahey-hospital-medical-center-burlington_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "nebh",
+    "name": "New England Baptist Hospital",
+    "location_name": "New England Baptist Hospital",
+    "short": "NE Baptist",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://nebh.org/042103612_new-england-baptist-hospital_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "bidmilton",
+    "name": "Beth Israel Deaconess Hospital–Milton",
+    "location_name": "Beth Israel Deaconess Hospital–Milton",
+    "short": "BID Milton",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://bidmilton.org/042103604_beth-israel-deaconess-hospital-milton-inc_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "bidneedham",
+    "name": "Beth Israel Deaconess Hospital–Needham",
+    "location_name": "Beth Israel Deaconess Hospital–Needham",
+    "short": "BID Needham",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://bidneedham.org/043229679_beth-israel-deaconess-hospital---needham_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "winchester",
+    "name": "Winchester Hospital",
+    "location_name": "Winchester Hospital",
+    "short": "Winchester",
+    "system": "Beth Israel Lahey Health",
+    "source_page": "https://bilh.org/billing-financial-services/price-transparency",
+    "hpt_txt": "https://www.bilh.org/cms-hpt.txt",
+    "mrf_url": "https://winchesterhospital.org/042104434_winchester-hospital_standardcharges.json",
+    "phase": 2
+  },
+  {
+    "id": "bmcbrighton",
+    "name": "Boston Medical Center Brighton",
+    "location_name": "Boston Medical Center Brighton",
+    "short": "BMC Brighton",
+    "system": "BMC Health System",
+    "source_page": "https://www.bmchealthsystem.org/pricing-and-estimates",
+    "hpt_txt": "https://www.bmc.org/cms-hpt.txt",
+    "mrf_url": "https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip",
+    "phase": 2
+  },
+  {
+    "id": "cha",
+    "name": "Cambridge Health Alliance",
+    "location_name": "Cambridge Health Alliance",
+    "short": "Cambridge HA",
+    "system": "Cambridge Health Alliance",
+    "source_page": "https://www.challiance.org/",
+    "hpt_txt": "https://www.challiance.org/cms-hpt.txt",
+    "mrf_url": "https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv",
+    "phase": 2
+  },
+  {
+    "id": "ssh",
+    "name": "South Shore Hospital",
+    "location_name": "South Shore Hospital",
+    "short": "South Shore",
+    "system": "South Shore Health",
+    "source_page": "https://www.southshorehealth.org/",
+    "hpt_txt": "https://www.southshorehealth.org/cms-hpt.txt",
+    "mrf_url": "https://zencloud-southshorehealth.s3.us-east-1.amazonaws.com/www.southshorehealth.org/assets/2026-03/042769210_south-shore-hospital_standardcharges.json",
+    "phase": 2
   }
 ]

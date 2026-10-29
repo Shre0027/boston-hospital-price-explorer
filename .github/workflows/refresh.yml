@@ -2,8 +2,8 @@ name: Monthly refresh
 
 # On the 1st of every month (and on demand): re-download each hospital's price file,
 # rebuild the combined table and the dashboard, save the results, and republish the site.
-# Tufts Medical Center is skipped because it blocks automated downloads (see docs/decision-log.md);
-# its hand-downloaded data stays in place.
+# Hospitals marked "manual" in config/hospitals.json (Tufts Medical Center) are skipped because they block
+# automated downloads (see docs/decision-log.md); their hand-downloaded data stays in place.
 on:
   schedule:
     - cron: "17 9 1 * *"
@@ -32,7 +32,9 @@ jobs:
         # One hospital failing doesn't stop the others; its previous results are kept
         run: |
           failed=""
-          for h in mgh bwh bmc bidmc; do
+          # Every hospital in the config except ones marked "manual" (they block automated downloads)
+          ids=$(python -c "import json; print(' '.join(h['id'] for h in json.load(open('config/hospitals.json')) if not h.get('manual')))")
+          for h in $ids; do
             echo "::group::$h"
             python scripts/extract_prices.py --hospital "$h" || failed="$failed $h"
             echo "::endgroup::"

@@ -1,11 +1,11 @@
 name: Extract hospital prices
 
-# Run by hand from the Actions tab: choose a hospital id from config/hospitals.json
+# Run by hand from the Actions tab: one or more hospital ids from config/hospitals.json
 on:
   workflow_dispatch:
     inputs:
       hospital:
-        description: "Hospital id (from config/hospitals.json)"
+        description: "Hospital id(s) from config/hospitals.json, space-separated"
         required: true
         default: "mgh"
 
@@ -27,29 +27,31 @@ jobs:
         run: pip install ijson
 
       - name: Download and extract prices
-        run: python scripts/extract_prices.py --hospital "${{ inputs.hospital }}"
-
-      - name: Show the profile report
-        run: cat "data/processed/${{ inputs.hospital }}_profile.json"
+        # One hospital failing doesn't stop the others; its previous results are kept
+        run: |
+          failed=""
+          for h in ${{ inputs.hospital }}; do
+            echo "::group::$h"
+            python scripts/extract_prices.py --hospital "$h" || failed="$failed $h"
+            echo "::endgroup::"
+          done
+          if [ -n "$failed" ]; then echo "::warning::Failed:$failed"; fi
 
       - name: Keep the results as a downloadable artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.hospital }}-results
-          path: data/processed/${{ inputs.hospital }}_*
+          name: extract-results
+          path: data/processed/
 
-      - name: Save results to the repo (skipped if over GitHub's file size limit)
+      - name: Save results to the repo (files over GitHub's size limit are kept as the artifact only)
         run: |
-          f="data/processed/${{ inputs.hospital }}_prices.csv"
-          size=$(stat -c%s "$f")
-          echo "prices file: $((size / 1000000)) MB"
-          if [ "$size" -gt 90000000 ]; then
-            echo "Too large to commit; it's still available as the artifact above."
-            git add "data/processed/${{ inputs.hospital }}_profile.json"
-          else
-            git add "data/processed/${{ inputs.hospital }}_"*
-          fi
+          for f in data/processed/*_prices.csv data/processed/*_profile.json; do
+            [ -f "$f" ] || continue
+            size=$(stat -c%s "$f")
+            if [ "$size" -gt 90000000 ]; then echo "::warning::$f is too large to commit"; else git add "$f"; fi
+          done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Update extracted prices: ${{ inputs.hospital }}" || echo "Nothing changed"
+          git pull --rebase
           git push
