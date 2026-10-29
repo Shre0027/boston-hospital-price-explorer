@@ -162,6 +162,30 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Phase 2 — 18 hospitals and CMS quality ratings
+
+**Scope:** 13 hospitals added, for 18 in total: general acute-care hospitals within about 15 miles of downtown Boston, plus Mass Eye and Ear (to check where Mass General Brigham prices cataract surgery) and New England Baptist. Excluded: children's, cancer, psychiatric and rehabilitation hospitals, and hospitals farther out (Beverly, Emerson). MelroseWakefield (Tufts Medicine) is in scope but not yet added, because Tufts Medicine blocks automated downloads. All 13 were found through their systems' `cms-hpt.txt` files.
+
+**Pipeline changes:** the extract workflow takes several hospitals at once; the monthly refresh now covers every hospital in the config except those marked `"manual"` (Tufts MC) and also refreshes the quality ratings.
+
+**New problems and fixes:**
+- **Five JSON files failed to parse** (Mount Auburn, New England Baptist, BID Milton, Winchester, South Shore). Each starts with a UTF-8 byte-order mark, which the JSON standard says not to add. The script now skips it, and errors print the parser's full context on one line so the cause shows on the run page. Recorded as a data-access finding.
+- **Cambridge Health Alliance lists impossible prices** ($0.03 for a blood count, $0.05 for a cholesterol panel, about $5 for a colonoscopy, across every payer type). Added a second pass in `combine.py` that flags any price under 10% of the typical commercial price for that procedure. It flagged 56 rows: 48 at CHA, 5 office-visit rates of about $14 at Tufts MC, and 3 others. Flagged rows are kept but left out of comparisons.
+- **New insurer names (90) reviewed by hand.** Added markets for dental and vision plans and behavioral-health plans (not medical insurance for these procedures) and an "unclear" group for names that could be commercial or Medicaid (e.g. Neighborhood Health Plan, CeltiCare), which are left out rather than guessed. This also corrected about 80 Phase 1 rows at Tufts MC that had been counted as commercial (CompSych, Magellan, Carelon, Spectera).
+- **"Typical" prices resting on one or two plans.** Mass Eye and Ear's metabolic-panel "typical" price came from 2 plans and would have become the headline gap. Rule added: a typical commercial price needs at least 3 plan prices (SQL view and dashboard). 21 hospital–procedure pairs no longer show a typical price; the dashboard says why.
+
+**New measure — price level:** with 18 hospitals, "times the cheapest" depends too much on whichever hospital is cheapest. Queries 05 and 08 now compare each hospital with the median hospital for each procedure, then take the median across procedures (1.0× = typical). Only procedures listed by at least 8 hospitals and hospitals with at least 8 such procedures count. The dashboard computes the same index independently in Python; both give identical values for all 17 indexed hospitals.
+
+**Quality ratings:** `scripts/fetch_quality.py` downloads CMS Hospital General Information (overall star rating), reading the current file link from the CMS catalog API. The first run got HTTP 403 from data.cms.gov; the script now also tries a standard request header and a HealthData.gov mirror, and the second run succeeded from data.cms.gov directly. Hospitals are matched by CMS Certification Number, checked by name and city (Salem Hospital appears as "North Shore Medical Center").
+
+**Results:** rank correlation between price level and star rating is 0.42 across 17 rated hospitals (SQL and an independent Python calculation agree). The 5-star hospitals range from 0.71× (New England Baptist) to 1.89× (Brigham). MGH and Brigham (about 1.9×) are above typical on every procedure compared; Mass General Brigham's community hospitals are about 1.1×. All Beth Israel Lahey Health hospitals list only 3–6 commercial insurers.
+
+**Checked:** row counts match the source for all 18 hospitals; 180 random rows traced to the source with 0 mismatches; the search box understood 30 of 30 test questions, including 14 about the new hospitals; the dashboard was checked in a headless browser on desktop and phone and in dark mode, with no page errors or horizontal overflow.
+
+**Dashboard changes:** a price-vs-quality chart (price level by star-rating group, log scale); the grid is ordered by price level, shaded relative to the typical price rather than the cheapest, and filterable by health system; the file-usability cards became a table with automatically computed columns (procedures found, insurers listed, share of rows set aside).
+
+---
+
 ## 2026-10-29: Why procedures were "missing", and two code corrections
 
 **Question:** MGH, Brigham and Tufts showed no price for 4 of 18 procedures. Missing data, or the wrong codes?
