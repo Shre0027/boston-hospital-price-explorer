@@ -243,3 +243,17 @@ A running record of the key decisions in this project: what was decided, why, an
 **Decision:** Download and filter the large price files on GitHub Actions.
 
 **Why:** Files can exceed 1 GB. GitHub Actions can download a file, keep only the selected procedures, and save a small result, with no local machine needed. It can also re-run on a schedule so the data stays current.
+
+---
+
+## 2026-10-29: Out-of-pocket estimator, requirements and data dictionary
+
+**Decision:** add a "What would I pay?" estimate to the dashboard. The patient enters the deductible left to meet, their coinsurance and (optionally) the out-of-pocket maximum left. Each hospital then shows: the price up to the deductible, plus coinsurance on the rest, capped at the maximum.
+
+**Why:** the price paid to the hospital isn't what the patient pays, which was the first limitation in the case study. A simple estimate makes the gap concrete. Example: for a brain MRI with $500 of deductible left and 20% coinsurance, the hospital price gap is $338 vs $1,614, but the patient's share is $338 vs about $723, a $384 difference.
+
+**Kept deliberately simple, and labeled as an estimate:** copays, plan-specific rules, out-of-network costs and doctors' fees are left out, because they need the person's plan documents. Inputs stay in the browser and nothing is saved. With "cash" selected, the page says the cash price is what you'd pay instead of estimating.
+
+**Tested:** the formula matched an independent calculation for 8 cases (deductible above and below the price, 0% and 100% coinsurance, the cap), a worked example by hand ($1,000 price, $500 deductible left, 20% → $600), and all 18 hospitals' displayed estimates for one procedure. Invalid inputs (missing coinsurance, over 100%, negative) show an error and no estimate. Checked on phone width and in dark mode.
+
+**Also added:** [`requirements.md`](requirements.md) (user stories with acceptance criteria, non-functional requirements and a traceability table linking each requirement to where it's met and how it was checked; written up after the first build, from this log), and [`data-dictionary.md`](data-dictionary.md) (every column in the combined table, its CMS source field and the rules behind derived fields). The README now has a pipeline diagram.

@@ -122,7 +122,7 @@ Sticker prices explain the difference ([query 08](../analysis/README.md#08-stick
 
 ## 6. Limitations
 
-- These are **prices paid to the hospital, not a patient's out-of-pocket cost**, which depends on deductibles, copays and plan design.
+- These are **prices paid to the hospital, not a patient's out-of-pocket cost**, which depends on deductibles, copays and plan design. The dashboard's estimate covers only deductible, coinsurance and out-of-pocket maximum.
 - Typical commercial prices are medians across listed plans, **not weighted** by how many patients use each plan. Beth Israel Lahey Health hospitals list fewer insurers, so their typical prices rest on fewer plans.
 - **Facility charges only**; physicians may bill separately. Some rates are bundled with other services (flagged rows were excluded).
 - CMS star ratings summarize overall hospital quality, not each procedure. Mass Eye and Ear has no rating and too few comparable procedures for a price level.
@@ -132,6 +132,6 @@ Sticker prices explain the difference ([query 08](../analysis/README.md#08-stick
 ## 7. Next steps
 
 1. Add MelroseWakefield Hospital (Tufts Medicine) by downloading its file by hand, as was done for Tufts Medical Center.
-2. Estimate out-of-pocket cost for common plan types (deductible and coinsurance) to make prices more meaningful for patients.
+2. **Done:** out-of-pocket estimate from deductible and coinsurance (the dashboard's "What would I pay?" section). For a brain MRI with $500 of deductible left and 20% coinsurance, the patient's share ranges from $338 (South Shore) to about $723 (MGH). Next would be common plan designs, such as copays for imaging.
 3. Track price changes month to month using the automatic refresh.
 4. Share findings with a Massachusetts health-policy audience for feedback.

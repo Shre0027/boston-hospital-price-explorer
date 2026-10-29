@@ -2,7 +2,7 @@
 
 **What will this actually cost me?**
 
-👉 **[Open the live dashboard](https://shre0027.github.io/boston-hospital-price-explorer/)** · [Case study](docs/case-study.md) · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md)
+👉 **[Open the live dashboard](https://shre0027.github.io/boston-hospital-price-explorer/)** · [Case study](docs/case-study.md) · [SQL analysis](analysis/README.md) · [Decision log](docs/decision-log.md) · [Requirements](docs/requirements.md) · [Data dictionary](docs/data-dictionary.md)
 
 Since 2021, US hospitals have been legally required to publish their prices. But they publish them in huge, messy files that patients can't realistically use. The same MRI can cost very different amounts depending on the hospital and the insurer, and patients usually find out only when the bill arrives.
 
@@ -31,7 +31,9 @@ Full write-up: [case study](docs/case-study.md).
 ## Status
 ✅ Live: 18 hospitals, 18 procedures, 11,000+ published prices, CMS quality ratings, interactive dashboard with plain-English search. Refreshes automatically every month.
 
-Next: MelroseWakefield (Tufts Medicine blocks automated downloads, so it needs a hand download), out-of-pocket cost estimates.
+Includes a rough out-of-pocket estimate from your deductible and coinsurance.
+
+Next: MelroseWakefield (Tufts Medicine blocks automated downloads, so it needs a hand download).
 
 ## Data source
 Hospital machine-readable files published under the CMS Hospital Price Transparency rule (45 CFR Part 180). Quality ratings: CMS Hospital General Information (overall star rating).
@@ -39,6 +41,18 @@ Hospital machine-readable files published under the CMS Hospital Price Transpare
 *Prices shown are published standard charges, not personal cost estimates.*
 
 ## How it works
+
+```mermaid
+flowchart LR
+    A["18 hospital websites<br/>cms-hpt.txt"] -->|find current file| B["Price files<br/>CSV · zip · JSON, up to 1.7 GB"]
+    B -->|stream, keep 18 procedures| C["Per-hospital rows<br/>data/processed/"]
+    C -->|standardize insurers,<br/>pick fair price, flag| D[("prices_clean.csv<br/>~11,500 rows")]
+    Q["CMS star ratings<br/>matched by CCN"] --> E
+    D --> E["DuckDB SQL<br/>10 queries"]
+    E --> F["Dashboard<br/>GitHub Pages"]
+    G(["Monthly GitHub Actions refresh"]) -.reruns every step.-> A
+```
+
 | Step | Script | What it does |
 |---|---|---|
 | Find files | `scripts/discover.py` | Reads each hospital's official `cms-hpt.txt` to find its current price file |
