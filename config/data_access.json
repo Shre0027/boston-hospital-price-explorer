@@ -1,0 +1,30 @@
+{
+  "checked_on": "2026-10-29",
+  "hospitals": {
+    "mgh": [
+      {"status": "warning", "label": "Old official link list broken", "detail": "massgeneral.org/cms-hpt.txt now redirects to a regular web page, and the file link it used to give returns 404. The current list is at massgeneralbrigham.org/cms-hpt.txt."},
+      {"status": "good", "label": "Automated download works", "detail": "Downloaded from the current Mass General Brigham link."},
+      {"status": "warning", "label": "4 of 18 procedures not listed", "detail": "No price under the chosen codes for cataract surgery, knee arthroscopy, gallbladder removal or ECG."}
+    ],
+    "bwh": [
+      {"status": "good", "label": "Official link list works", "detail": "Found through massgeneralbrigham.org/cms-hpt.txt."},
+      {"status": "good", "label": "Automated download works", "detail": "Downloaded automatically."},
+      {"status": "warning", "label": "4 of 18 procedures not listed", "detail": "Same gaps as MGH: cataract surgery, knee arthroscopy, gallbladder removal, ECG."}
+    ],
+    "bmc": [
+      {"status": "good", "label": "Official link list works", "detail": "Found through bmc.org/cms-hpt.txt."},
+      {"status": "good", "label": "Automated download works", "detail": "Downloaded automatically."},
+      {"status": "warning", "label": "Many rates without an amount paid", "detail": "513 insurer rates are set by a formula with no amount-paid figure, so they can't be compared fairly and are left out of comparisons."}
+    ],
+    "bidmc": [
+      {"status": "good", "label": "Official link list works", "detail": "Found through bidmc.org/cms-hpt.txt."},
+      {"status": "good", "label": "Automated download works", "detail": "Downloaded automatically (JSON format)."},
+      {"status": "warning", "label": "Only 6 insurers listed", "detail": "No Aetna, UnitedHealthcare or Tufts Health Plan prices in the file. Either the file is incomplete or those prices are recorded in a form not yet handled."}
+    ],
+    "tmc": [
+      {"status": "critical", "label": "Automated access blocked", "detail": "Both tuftsmedicine.org/cms-hpt.txt and the price file returned HTTP 403 (Forbidden) to automated requests."},
+      {"status": "good", "label": "Available to a person in a browser", "detail": "Downloaded by hand from tuftsmedicine.org/get-care/cost-estimate."},
+      {"status": "warning", "label": "4 of 18 procedures not listed", "detail": "No price under the chosen codes for cataract surgery, knee arthroscopy, gallbladder removal or ECG."}
+    ]
+  }
+}

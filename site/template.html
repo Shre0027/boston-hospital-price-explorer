@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boston Hospital Price Explorer</title>
+<meta name="description" content="Compare published prices for common procedures across five Boston hospitals, from their official price transparency files.">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f6f5f2;
+  --surface: #fcfcfb;
+  --surface-2: #f0efec;
+  --border: #e3e1db;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #7a7974;
+  --accent: #2a78d6;
+  --accent-text: #1c5cab;
+  --bar: #2a78d6;
+  --bar-muted: #b7d3f6;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec; --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95;
+  --seq-fg-1: #0b0b0b; --seq-fg-2: #0b0b0b; --seq-fg-3: #0b0b0b; --seq-fg-4: #fff; --seq-fg-5: #fff; --seq-fg-6: #fff;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+    --accent: #3987e5; --accent-text: #86b6ef; --bar: #3987e5; --bar-muted: #1c3f6b;
+    --seq-1: #1a2f4a; --seq-2: #1c4373; --seq-3: #1c5cab; --seq-4: #2a78d6; --seq-5: #5598e7; --seq-6: #86b6ef;
+    --seq-fg-1: #f0efec; --seq-fg-2: #f0efec; --seq-fg-3: #fff; --seq-fg-4: #fff; --seq-fg-5: #0b0b0b; --seq-fg-6: #0b0b0b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #121211; --surface: #1a1a19; --surface-2: #242422; --border: #33332f;
+  --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #8f8e86;
+  --accent: #3987e5; --accent-text: #86b6ef; --bar: #3987e5; --bar-muted: #1c3f6b;
+  --seq-1: #1a2f4a; --seq-2: #1c4373; --seq-3: #1c5cab; --seq-4: #2a78d6; --seq-5: #5598e7; --seq-6: #86b6ef;
+    --seq-fg-1: #f0efec; --seq-fg-2: #f0efec; --seq-fg-3: #fff; --seq-fg-4: #fff; --seq-fg-5: #0b0b0b; --seq-fg-6: #0b0b0b;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--text-primary); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+header.hero { padding: 48px 0 24px; }
+.eyebrow { font-size: 13px; letter-spacing: .02em; color: var(--accent-text); font-weight: 600; margin: 0 0 8px; }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin: 0 0 12px; font-weight: 700; }
+.lede { font-size: 18px; color: var(--text-secondary); max-width: 720px; margin: 0; }
+h2 { font-size: 22px; margin: 0 0 4px; font-weight: 650; }
+.sub { color: var(--text-secondary); margin: 0 0 20px; font-size: 15px; }
+section { margin: 0 0 40px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 28px 0 0; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.stat .num { font-size: 34px; font-weight: 700; line-height: 1.1; }
+.stat .what { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 20px; }
+.controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--text-secondary); flex: 1 1 240px; }
+select { font: inherit; font-size: 15px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; min-height: 42px; width: 100%; }
+select:focus-visible, button:focus-visible, tr:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.headline { font-size: 18px; margin: 0 0 18px; min-height: 2.6em; }
+.headline b { font-weight: 650; }
+.bars { position: relative; display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.bar-label { font-size: 14px; line-height: 1.3; }
+.bar-label small { display: block; color: var(--text-muted); font-size: 12px; }
+.bar-track { position: relative; height: 34px; display: flex; align-items: center; --room: 250px; }
+.bar { height: 26px; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; transition: width .35s ease; }
+.bar.missing { background: none; }
+.bar-value { margin-left: 10px; font-size: 14px; white-space: nowrap; color: var(--text-primary); }
+.bar-value .range { color: var(--text-muted); font-size: 12px; margin-left: 6px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 1px; background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
+.note { font-size: 13px; color: var(--text-muted); margin: 14px 0 0; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.12); max-width: 280px; z-index: 5; display: none; }
+.tip b { font-weight: 650; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 0 0 16px; }
+.seg button { font: inherit; font-size: 14px; border: 0; background: var(--surface); color: var(--text-secondary); padding: 8px 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.grid-wrap { overflow-x: auto; }
+table.grid { border-collapse: separate; border-spacing: 2px; width: 100%; min-width: 640px; font-size: 13px; }
+table.grid th { font-weight: 600; text-align: right; padding: 6px 8px; color: var(--text-secondary); white-space: nowrap; }
+table.grid th:first-child, table.grid td:first-child { text-align: left; }
+table.grid td { padding: 7px 8px; text-align: right; border-radius: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.grid tbody tr { cursor: pointer; }
+table.grid th:first-child, table.grid td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+table.grid tbody tr:hover td:first-child { color: var(--accent-text); }
+.legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin: 12px 0 0; flex-wrap: wrap; }
+.legend .sw { width: 22px; height: 12px; border-radius: 2px; display: inline-block; }
+.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.score .card { padding: 18px; }
+.score h3 { font-size: 16px; margin: 0; }
+.score .meta { font-size: 12px; color: var(--text-muted); margin: 2px 0 12px; }
+.check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; margin: 0 0 10px; font-size: 14px; }
+.check .ic { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; margin-top: 2px; }
+.ic.good { background: var(--good); } .ic.warning { background: var(--warning); color: #3a2a00; } .ic.critical { background: var(--critical); }
+.check .detail { display: block; font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+.method p, .method li { color: var(--text-secondary); font-size: 15px; }
+.method ul { padding-left: 20px; }
+a { color: var(--accent-text); }
+footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); }
+@media (max-width: 560px) {
+  .bar-row { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; }
+  .bar-label small { display: none; }
+  .card { padding: 16px; }
+  .bar-value .range { display: block; margin-left: 0; }
+  .bar-track { --room: 110px; height: 42px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Boston Hospital Price Explorer</p>
+    <h1>What will this actually cost me?</h1>
+    <p class="lede">Hospitals must publish their prices by law, but in files too big for anyone to read. This compares common procedures across five Boston hospitals, straight from those official files.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section>
+    <div class="card">
+      <h2>Compare one procedure</h2>
+      <p class="sub">Choose a procedure and who's paying.</p>
+      <div class="controls">
+        <label>Procedure <select id="proc"></select></label>
+        <label>Who's paying <select id="payer"></select></label>
+      </div>
+      <p class="headline" id="headline" aria-live="polite"></p>
+      <div class="bars" id="bars"></div>
+      <p class="note" id="barnote"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2>Every procedure at a glance</h2>
+      <p class="sub">Darker means more expensive than the cheapest hospital for that procedure. Select a row to compare it above.</p>
+      <div class="seg" role="group" aria-label="Price type">
+        <button type="button" data-mode="cash" aria-pressed="true">Cash price</button>
+        <button type="button" data-mode="commercial" aria-pressed="false">Commercial insurance</button>
+      </div>
+      <div class="grid-wrap"><table class="grid" id="grid"></table></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How usable is each hospital's file?</h2>
+    <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them.</p>
+    <div class="score" id="score"></div>
+  </section>
+
+  <section class="method">
+    <div class="card">
+      <h2>How to read this</h2>
+      <ul>
+        <li><b>These are prices paid to the hospital, not what you'll pay.</b> Your out-of-pocket cost depends on your deductible, copay and plan.</li>
+        <li><b>Cash price</b> is the hospital's listed price if you pay without insurance.</li>
+        <li><b>Commercial insurance (typical)</b> is the median price across all employer and private plans the hospital lists. It isn't weighted by how many people use each plan.</li>
+        <li>When an insurer's rate comes from a formula, the listed dollar amount can be only part of the payment. Where the hospital reports the median amount actually paid, that's used instead. Rates with no reliable figure are left out.</li>
+        <li>Procedures are matched by billing code (CPT), because each hospital names them differently. Hospital facility charges only; doctors' fees may be billed separately.</li>
+        <li>"Not listed" means no price was found under that billing code in the hospital's file.</li>
+      </ul>
+      <p>Data: each hospital's machine-readable file under the CMS Hospital Price Transparency rule (45 CFR Part 180). <span id="asof"></span></p>
+      <p>Every step, decision and correction is documented: <a href="https://github.com/Shre0027/boston-hospital-price-explorer">code on GitHub</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>.</p>
+    </div>
+  </section>
+
+  <footer>Built by Shreyas Tayde. Not medical or financial advice; always confirm costs with the hospital and your insurer.</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = (id) => document.getElementById(id);
+const H = DATA.hospitals;
+const money = (v) => v == null ? "—" : "$" + Math.round(v).toLocaleString("en-US");
+const procName = (cpt) => DATA.procedures.find(p => p.cpt === cpt).name;
+
+function valueFor(cpt, hid, payer) {
+  const e = DATA.prices[cpt][hid];
+  if (payer === "cash") return e.cash == null ? null : { median: e.cash };
+  if (payer === "commercial") return e.commercial;
+  return e.insurers[payer] || null;
+}
+
+function stats() {
+  let bestCash = null, bestComm = null;
+  for (const p of DATA.procedures) {
+    const c = H.map(h => DATA.prices[p.cpt][h.id].cash).filter(v => v != null);
+    const m = H.map(h => DATA.prices[p.cpt][h.id].commercial).filter(Boolean).map(s => s.median);
+    if (c.length >= 3) { const r = Math.max(...c) / Math.min(...c); if (!bestCash || r > bestCash.r) bestCash = { r, p, hi: Math.max(...c), lo: Math.min(...c) }; }
+    if (m.length >= 3) { const r = Math.max(...m) / Math.min(...m); if (!bestComm || r > bestComm.r) bestComm = { r, p, hi: Math.max(...m), lo: Math.min(...m) }; }
+  }
+  const tiles = [];
+  if (bestComm) tiles.push([`${bestComm.r.toFixed(0)}×`, `${bestComm.p.name} with commercial insurance: ${money(bestComm.lo)} at the cheapest hospital, ${money(bestComm.hi)} at the most expensive`]);
+  if (bestCash) tiles.push([`${bestCash.r.toFixed(1)}×`, `${bestCash.p.name}, cash price: ${money(bestCash.lo)} at the cheapest hospital, ${money(bestCash.hi)} at the most expensive`]);
+  tiles.push([DATA.total_prices.toLocaleString("en-US"), `published prices compared across ${H.length} hospitals and ${DATA.procedures.length} procedures`]);
+  $("stats").innerHTML = tiles.map(t => `<div class="stat"><div class="num">${t[0]}</div><div class="what">${t[1]}</div></div>`).join("");
+}
+
+function fillControls() {
+  const cats = [...new Set(DATA.procedures.map(p => p.category))];
+  $("proc").innerHTML = cats.map(c => `<optgroup label="${c}">` +
+    DATA.procedures.filter(p => p.category === c).map(p => `<option value="${p.cpt}">${p.name}</option>`).join("") + `</optgroup>`).join("");
+  $("payer").innerHTML = `<option value="cash">No insurance (cash price)</option><option value="commercial">Commercial insurance (typical)</option>` +
+    `<optgroup label="A specific insurer">` + DATA.insurers.map(i => `<option value="${i}">${i}</option>`).join("") + `</optgroup>`;
+  $("proc").value = "70551";
+  $("payer").value = "cash";
+}
+
+function payerLabel(payer) {
+  return payer === "cash" ? "paying cash" : payer === "commercial" ? "with commercial insurance" : `with ${payer}`;
+}
+
+function drawBars() {
+  const cpt = $("proc").value, payer = $("payer").value;
+  const rows = H.map(h => ({ h, v: valueFor(cpt, h.id, payer) }));
+  const have = rows.filter(r => r.v).sort((a, b) => a.v.median - b.v.median);
+  const missing = rows.filter(r => !r.v);
+  const max = Math.max(...have.map(r => r.v.median), 1);
+  const lo = have[0], hi = have[have.length - 1];
+  const name = procName(cpt);
+
+  if (have.length >= 2 && hi.v.median > lo.v.median) {
+    const ratio = hi.v.median / lo.v.median;
+    $("headline").innerHTML = `${name}, ${payerLabel(payer)}: <b>${money(lo.v.median)}</b> at ${lo.h.name}, <b>${money(hi.v.median)}</b> at ${hi.h.name}. That's <b>${ratio >= 1.95 ? ratio.toFixed(1) + "× as much" : Math.round((ratio - 1) * 100) + "% more"}</b> for the same procedure.`;
+  } else if (have.length === 1) {
+    $("headline").innerHTML = `${name}, ${payerLabel(payer)}: only ${have[0].h.name} lists a price, <b>${money(have[0].v.median)}</b>.`;
+  } else if (have.length === 0) {
+    $("headline").textContent = `${name}, ${payerLabel(payer)}: no hospital lists a price.`;
+  } else {
+    $("headline").innerHTML = `${name}, ${payerLabel(payer)}: about <b>${money(lo.v.median)}</b> at each hospital that lists it.`;
+  }
+
+  const showRange = payer !== "cash";
+  $("bars").innerHTML = [...have, ...missing].map((r, i) => {
+    const w = r.v ? Math.max(1, r.v.median / max * 100) : 0;
+    const range = showRange && r.v && r.v.n > 1 ? `<span class="range">${Math.round(r.v.min) === Math.round(r.v.max) ? `same price on ${r.v.n} plans` : `${money(r.v.min)}–${money(r.v.max)} across ${r.v.n} plans`}</span>` : (showRange && r.v ? `<span class="range">1 plan</span>` : "");
+    const tag = r.v && have.length > 1 && i === 0 ? `<span class="tag">Lowest</span>` : "";
+    return `<div class="bar-row" data-h="${r.h.id}">
+      <div class="bar-label">${r.h.short}<small>${r.h.name}</small></div>
+      <div class="bar-track">${r.v
+        ? `<div class="bar" style="width:calc((100% - var(--room)) * ${(w / 100).toFixed(4)})"></div><span class="bar-value">${money(r.v.median)}${tag}${range}</span>`
+        : `<div class="bar missing"></div><span class="bar-value" style="margin-left:0;color:var(--text-muted)">Not listed</span>`}</div>
+    </div>`;
+  }).join("") + `<div class="tip" id="tip"></div>`;
+
+  $("barnote").textContent = payer === "cash"
+    ? "Cash price: what the hospital lists if you pay without insurance."
+    : payer === "commercial"
+      ? "Bar = median across the hospital's commercial plans; the range shows lowest to highest plan."
+      : `Bar = median across ${payer}'s commercial plans listed by each hospital.`;
+
+  const tip = $("tip");
+  document.querySelectorAll(".bar-row").forEach(row => {
+    row.addEventListener("mousemove", ev => {
+      const h = H.find(x => x.id === row.dataset.h), v = valueFor(cpt, h.id, payer), e = DATA.prices[cpt][h.id];
+      tip.innerHTML = `<b>${h.name}</b><br>${procName(cpt)} · CPT ${cpt}<br>` +
+        (v ? `${payer === "cash" ? "Cash price" : "Median"}: <b>${money(v.median)}</b>` + (v.n ? `<br>Range: ${money(v.min)}–${money(v.max)} (${v.n} plan${v.n > 1 ? "s" : ""})` : "") : "Not listed in this hospital's file") +
+        (e.gross != null ? `<br>Sticker price: ${money(e.gross)}` : "");
+      const box = $("bars").getBoundingClientRect();
+      tip.style.display = "block";
+      tip.style.left = Math.min(ev.clientX - box.left + 14, box.width - 290) + "px";
+      tip.style.top = (ev.clientY - box.top + 14) + "px";
+    });
+    row.addEventListener("mouseleave", () => tip.style.display = "none");
+  });
+}
+
+let gridMode = "cash";
+function shade(ratio) {
+  if (ratio < 1.15) return 1; if (ratio < 1.5) return 2; if (ratio < 2) return 3; if (ratio < 3) return 4; if (ratio < 5) return 5; return 6;
+}
+function drawGrid() {
+  const head = `<thead><tr><th>Procedure</th>${H.map(h => `<th>${h.short}</th>`).join("")}</tr></thead>`;
+  const body = DATA.procedures.map(p => {
+    const vals = H.map(h => { const v = valueFor(p.cpt, h.id, gridMode); return v ? v.median : null; });
+    const have = vals.filter(v => v != null), min = have.length ? Math.min(...have) : null;
+    return `<tr tabindex="0" data-cpt="${p.cpt}"><td>${p.name}</td>${vals.map(v => {
+      if (v == null) return `<td style="color:var(--text-muted)">—</td>`;
+      const s = shade(v / min);
+      return `<td style="background:var(--seq-${s});color:var(--seq-fg-${s})" title="${(v / min).toFixed(1)}× the lowest">${money(v)}</td>`;
+    }).join("")}</tr>`;
+  }).join("");
+  $("grid").innerHTML = head + `<tbody>${body}</tbody>`;
+  $("grid").querySelectorAll("tbody tr").forEach(tr => {
+    const go = () => { $("proc").value = tr.dataset.cpt; $("payer").value = gridMode; drawBars(); $("proc").scrollIntoView({ behavior: "smooth", block: "center" }); };
+    tr.addEventListener("click", go);
+    tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+  const steps = [["Lowest", 1], ["<1.5×", 2], ["<2×", 3], ["<3×", 4], ["<5×", 5], ["5×+", 6]];
+  $("legend").innerHTML = "Compared with the cheapest hospital:" + steps.map(s => `<span><span class="sw" style="background:var(--seq-${s[1]})"></span> ${s[0]}</span>`).join("");
+}
+
+function drawScore() {
+  const icon = { good: "✓", warning: "!", critical: "✕" };
+  const word = { good: "OK", warning: "Issue", critical: "Problem" };
+  $("score").innerHTML = H.map(h => `<div class="card">
+    <h3>${h.name}</h3>
+    <div class="meta">${h.system} · file updated ${h.last_updated} · ${h.rows_in_file.toLocaleString("en-US")} rows · ${h.procedures_found} of ${DATA.procedures.length} procedures found</div>
+    ${h.access.map(a => `<div class="check"><span class="ic ${a.status}" role="img" aria-label="${word[a.status]}">${icon[a.status]}</span><span>${a.label}<span class="detail">${a.detail}</span></span></div>`).join("")}
+  </div>`).join("");
+  $("asof").textContent = `Files checked on ${DATA.built_on}.`;
+}
+
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  gridMode = b.dataset.mode;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  drawGrid();
+}));
+$("proc").addEventListener("change", drawBars);
+$("payer").addEventListener("change", drawBars);
+stats(); fillControls(); drawBars(); drawGrid(); drawScore();
+</script>
+</body>
+</html>
