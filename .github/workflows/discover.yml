@@ -1,0 +1,34 @@
+name: Discover hospital price files
+
+# Run by hand: give a space-separated list of hospital websites
+on:
+  workflow_dispatch:
+    inputs:
+      sites:
+        description: "Hospital websites, space-separated (e.g. bmc.org bidmc.org)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read each site's cms-hpt.txt
+        run: python scripts/discover.py ${{ inputs.sites }}
+
+      - name: Save what was found
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/discovery.json
+          git commit -m "Update hospital price file discovery" || echo "Nothing changed"
+          git push
