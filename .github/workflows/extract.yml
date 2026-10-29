@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install the streaming JSON reader
+        run: pip install ijson
+
       - name: Download and extract prices
         run: python scripts/extract_prices.py --hospital "${{ inputs.hospital }}"
 

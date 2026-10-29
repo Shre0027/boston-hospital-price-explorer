@@ -140,8 +140,6 @@ def open_csv_text(path):
         entry = max(csv_entries, key=lambda i: i.file_size)  # the real file is the big one
         raw = zf.open(entry)
         return io.TextIOWrapper(raw, encoding="utf-8-sig", errors="replace", newline=""), entry.filename, entry.file_size
-    if str(path).lower().endswith(".json"):
-        raise NotImplementedError("JSON-format price files aren't supported yet (planned for a later step).")
     raw = open(path, "rb")
     return io.TextIOWrapper(raw, encoding="utf-8-sig", errors="replace", newline=""), Path(path).name, Path(path).stat().st_size
 
@@ -172,6 +170,103 @@ def find_header(reader, max_rows=10):
     raise ValueError(f"Couldn't find a header row with a 'description' column. First rows: {preview}")
 
 
+def tidy(name):
+    """'code | 1' and 'code|1' mean the same column; standardize to 'code|1' so all hospitals line up."""
+    return re.sub(r"\s*\|\s*", "|", name.strip())
+
+
+# The columns we output for JSON files: the same names CMS uses in its CSV "tall" format,
+# so CSV and JSON hospitals end up in one consistent layout.
+JSON_COLUMNS = [
+    "description", "code|1", "code|1|type", "code|2", "code|2|type", "code|3", "code|3|type",
+    "code|4", "code|4|type", "modifiers", "setting", "standard_charge|gross",
+    "standard_charge|discounted_cash", "payer_name", "plan_name", "standard_charge|negotiated_dollar",
+    "standard_charge|negotiated_percentage", "standard_charge|negotiated_algorithm", "median_amount",
+    "10th_percentile", "90th_percentile", "count", "standard_charge|min", "standard_charge|max",
+    "standard_charge|methodology", "additional_generic_notes",
+]
+
+
+def csv_source(path):
+    """Read a CMS-format CSV (zipped or not). Returns (metadata, header, rows, inner_name, inner_size)."""
+    text, inner_name, inner_size = open_csv_text(path)
+    reader = csv.reader(text)
+    metadata, header = find_header(reader)
+    return metadata, [tidy(h) for h in header], reader, inner_name, inner_size
+
+
+def json_items(path):
+    """
+    Yield each service in a CMS-format JSON file, one at a time.
+    Uses the 'ijson' streaming parser when available so a huge file never has to fit in memory.
+    """
+    try:
+        import ijson
+        with open(path, "rb") as f:
+            yield from ijson.items(f, "standard_charge_information.item", use_float=True)
+    except ImportError:
+        with open(path, encoding="utf-8-sig") as f:
+            yield from json.load(f).get("standard_charge_information", [])
+
+
+def json_metadata(path):
+    """Read the hospital info fields at the top of a JSON file (everything except the big price list)."""
+    keep = {"hospital_name", "last_updated_on", "version", "location_name", "hospital_address", "type_2_npi"}
+    try:
+        import ijson
+        meta = {}
+        with open(path, "rb") as f:
+            for prefix, event, value in ijson.parse(f):
+                if prefix == "standard_charge_information":
+                    break
+                if prefix in keep and event in ("string", "number"):
+                    meta[prefix] = str(value)
+                elif prefix.split(".")[0] in keep and event in ("string", "number"):
+                    key = prefix.split(".")[0]
+                    meta[key] = (meta[key] + " | " if key in meta else "") + str(value)
+        return meta
+    except ImportError:
+        with open(path, encoding="utf-8-sig") as f:
+            d = json.load(f)
+        return {k: str(d[k]) for k in keep if k in d}
+
+
+def json_rows(path):
+    """
+    Flatten a CMS JSON file into CSV-style rows (one row per service x setting x payer plan),
+    using JSON_COLUMNS. Services with no payer list still get one row (gross and cash prices).
+    """
+    def s(v):
+        return "" if v is None else str(v)
+
+    for item in json_items(path):
+        codes = (item.get("code_information") or [])[:4]
+        code_cells = []
+        for i in range(4):
+            c = codes[i] if i < len(codes) else {}
+            code_cells += [s(c.get("code")), s(c.get("type"))]
+        for charge in item.get("standard_charges") or [{}]:
+            base = [s(item.get("description"))] + code_cells + [
+                s(charge.get("modifier_code") or ""), s(charge.get("setting")),
+                s(charge.get("gross_charge")), s(charge.get("discounted_cash")),
+            ]
+            tail = [s(charge.get("minimum")), s(charge.get("maximum"))]
+            payers = charge.get("payers_information") or [None]
+            for p in payers:
+                p = p or {}
+                yield base + [
+                    s(p.get("payer_name")), s(p.get("plan_name")), s(p.get("standard_charge_dollar")),
+                    s(p.get("standard_charge_percentage")), s(p.get("standard_charge_algorithm")),
+                    s(p.get("median_amount")), s(p.get("10th_percentile")), s(p.get("90th_percentile")),
+                    s(p.get("count")),
+                ] + tail + [s(p.get("methodology")), s(charge.get("additional_generic_notes") or p.get("additional_payer_notes"))]
+
+
+def is_json_file(path):
+    with open(path, "rb") as f:
+        return f.read(64).lstrip(b"\xef\xbb\xbf \r\n\t").startswith(b"{")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--hospital", required=True, help="Hospital id from config/hospitals.json")
@@ -199,11 +294,14 @@ def main():
     if head.lstrip().lower().startswith((b"<!doctype", b"<html")):
         snippet = head.decode("utf-8", errors="replace").replace("\n", " ")[:200]
         raise ValueError(f"Got a web page ({downloaded_bytes} bytes) instead of a price file. Starts with: {snippet}")
-    text, inner_name, inner_size = open_csv_text(path)
-    reader = csv.reader(text)
-    metadata, header = find_header(reader)
+    if is_json_file(path):
+        file_kind = "json"
+        metadata, header_clean, reader = json_metadata(path), JSON_COLUMNS, json_rows(path)
+        inner_name, inner_size = path.name, downloaded_bytes
+    else:
+        file_kind = "csv"
+        metadata, header_clean, reader, inner_name, inner_size = csv_source(path)
 
-    header_clean = [h.strip() for h in header]
     lower = [h.lower() for h in header_clean]
     code_idx = [i for i, h in enumerate(lower) if CODE_COL.match(h)]
     if not code_idx:
@@ -240,10 +338,11 @@ def main():
         "source_url": source_url,
         "downloaded_file": path.name,
         "downloaded_mb": round(downloaded_bytes / 1e6, 1),
-        "csv_inside": inner_name,
-        "csv_mb": round(inner_size / 1e6, 1),
+        "file_type": file_kind,
+        "data_file": inner_name,
+        "data_file_mb": round(inner_size / 1e6, 1),
         "hospital_metadata": metadata,
-        "format": file_format,
+        "format": file_format if file_kind == "csv" else "json (flattened to tall rows)",
         "column_count": len(header_clean),
         "code_columns": [header_clean[i] for i in code_idx],
         "total_data_rows": total_rows,
@@ -256,7 +355,7 @@ def main():
     with open(OUT_DIR / f"{args.hospital}_profile.json", "w", encoding="utf-8") as f:
         json.dump(profile, f, indent=2)
 
-    print(f"::notice::Format: {file_format}, {len(header_clean)} columns")
+    print(f"::notice::Format: {profile['format']}, {len(header_clean)} columns")
     print(f"::notice::Scanned {total_rows:,} rows, kept {matched_rows:,}")
     print(f"::notice::Found {len(found)} of {len(wanted)} procedures. Missing: {profile['procedures_missing'] or 'none'}")
 
