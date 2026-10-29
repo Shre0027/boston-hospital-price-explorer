@@ -50,10 +50,12 @@ GENERIC_PAYERS = r"CENTERS OF EXCELLENCE|INTERNATIONAL COMMERCIAL"
 
 # Market, decided from the payer name. Checked in order; the first match wins.
 MARKETS = [
-    ("Commercial", r"COMMERCIAL"),
+    ("Other public / workers comp", r"^WC\b|WORK COMP|CORRECTIONS|HRSA"),
+    ("Medicare", r"MEDICARE REPLACEMENT|MEDICARE MANAGED"),
+    ("MassHealth / safety net", r"MEDICAID REPLACEMENT"),
+    ("Commercial", r"COMMERCIAL|CONNECTORCARE"),
     ("Military", r"TRICARE|CHAMPVA|MARTIN'?S POINT|VETERANS"),
-    ("Other public / workers comp", r"WORK COMP|CORRECTIONS|HRSA"),
-    ("MassHealth / safety net", r"MEDICAID|MASSHEALTH|\bACO\b|\bMCO\b|\bMCD\b|\bHSN\b|WELLSENSE|\bCCA\b|COMMONWEALTH CARE|MOLINA|PUBLIC PLANS"),
+    ("MassHealth / safety net", r"MEDICAID|MASSHEALTH|\bACO\b|\bMCO\b|\bMCD\b|\bHSN\b|WELLSENSE|\bCCA\b|COMMONWEALTH CARE|MOLINA|PUBLIC PLAN"),
     ("Medicare", r"MEDICARE|\bAARP\b|SENIOR|\bPACE\b|\bSCO\b|ELDER SERVICES|ADVANTAGE|WELLCARE|ETERNALHEALTH|UPHAMS CORNER"),
 ]
 

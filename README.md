@@ -17,7 +17,7 @@ This project turns those public files into something a normal person can use.
 Massachusetts General Hospital · Brigham and Women's · Boston Medical Center · Beth Israel Deaconess Medical Center · Tufts Medical Center
 
 ## Status
-🚧 In progress: 4 of 5 hospitals extracted and combined into one table (`data/combined/prices_clean.csv`); Tufts Medical Center blocks automated access
+🚧 In progress: all 5 hospitals extracted and combined into one table (`data/combined/prices_clean.csv`). Next: dashboard
 
 ## Data source
 Hospital machine-readable files published under the CMS Hospital Price Transparency rule (45 CFR Part 180).

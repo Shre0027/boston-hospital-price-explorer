@@ -129,6 +129,27 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Tufts Medical Center added (downloaded by hand)
+
+**What happened:** Tufts Medicine's `cms-hpt.txt` and its price file both returned HTTP 403 (Forbidden) to automated requests from GitHub's servers. A person using a normal browser could find and download the file from the cost-estimate page (tuftsmedicine.org/get-care/cost-estimate, "Price transparency + chargemaster" section).
+
+**Decision:** Not worked around. The file was downloaded by hand in a browser, the way a patient would get it, and processed with the same script. The profile records the source link and `"collected": "downloaded by hand in a browser"`, and `config/hospitals.json` notes the 403.
+
+**Finding:** Tufts' file is published, but automated access, the "machine-readable" route the rule is meant to enable, was blocked for this project.
+
+**Result:** 1.74 GB CSV (version updated 4/1/2026), 5,877,884 rows, 3,842 matching rows, 170 insurer plans, 14 of 18 procedures. Row count matches the source; 50 random rows traced back with 0 mismatches.
+
+**Mapping fixes prompted by Tufts' insurer list** (every changed row was reviewed against the previous version):
+- About 80 workers' comp insurers prefixed "WC" were tagged Commercial → now workers comp.
+- "Medicare Replacement" / "Medicare Managed" plans from MassHealth-focused insurers (e.g. WellSense) were tagged MassHealth → now Medicare.
+- "Tufts Health Public Plan" (MassHealth) was tagged Commercial → now MassHealth. ConnectorCare plans (subsidized private insurance) are tagged Commercial.
+
+**Five-hospital results (commercial insurance, median across plans):**
+- Tufts Medical Center is lowest or near-lowest for most procedures: e.g. colonoscopy $905 vs $1,975 at MGH, and a complete blood count $9 vs $90 at MGH.
+- Brain MRI (no contrast) cash price: $3,858 at MGH and Brigham vs $1,142 at Tufts.
+
+---
+
 ## 2026-10-29: Run data collection on GitHub Actions
 
 **Decision:** Download and filter the large price files on GitHub Actions.
