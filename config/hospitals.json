@@ -34,5 +34,15 @@
     "source_page": "https://bidmc.org/patients-visitors/billing-financial-services/price-transparency",
     "hpt_txt": "https://www.bidmc.org/cms-hpt.txt",
     "mrf_url": "https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json"
+  },
+  {
+    "id": "tmc",
+    "name": "Tufts Medical Center",
+    "location_name": "Tufts Medical Center",
+    "system": "Tufts Medicine",
+    "source_page": "https://www.tuftsmedicine.org/get-care/cost-estimate",
+    "hpt_txt": "https://www.tuftsmedicine.org/cms-hpt.txt",
+    "mrf_url": "https://www.tuftsmedicine.org/sites/default/files/2026-03/043400617_tuftsmedicalcenter_standardcharges.csv.zip",
+    "note": "cms-hpt.txt returned HTTP 403 to automated requests on 2026-10-29; mrf_url found manually on the source page"
   }
 ]
