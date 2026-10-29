@@ -3,108 +3,126 @@
   "lat": 42.36249,
   "lon": -71.06983,
   "cms_address": "55 FRUIT STREET, BOSTON",
-  "matched_address": "55 FRUIT ST, BOSTON, MA, 02114"
+  "matched_address": "55 FRUIT ST, BOSTON, MA, 02114",
+  "geocoder": "US Census Geocoder"
  },
  "bwh": {
   "lat": 42.33501,
   "lon": -71.10607,
   "cms_address": "75 FRANCIS STREET, BOSTON",
-  "matched_address": "75 FRANCIS ST, BOSTON, MA, 02115"
+  "matched_address": "75 FRANCIS ST, BOSTON, MA, 02115",
+  "geocoder": "US Census Geocoder"
  },
  "bmc": {
   "lat": 42.3347,
   "lon": -71.0754,
   "cms_address": "1 BOSTON MEDICAL CENTER PLACE, BOSTON",
-  "matched_address": "1 BOSTON MEDICAL CENTER PL, BOSTON, MA, 02118"
+  "matched_address": "1 BOSTON MEDICAL CENTER PL, BOSTON, MA, 02118",
+  "geocoder": "US Census Geocoder"
  },
  "bidmc": {
   "lat": 42.33982,
   "lon": -71.10623,
   "cms_address": "330 BROOKLINE AVENUE, BOSTON",
-  "matched_address": "330 BROOKLINE AVE, BOSTON, MA, 02215"
+  "matched_address": "330 BROOKLINE AVE, BOSTON, MA, 02215",
+  "geocoder": "US Census Geocoder"
  },
  "tmc": {
   "lat": 42.35024,
   "lon": -71.06332,
   "cms_address": "800 WASHINGTON STREET, BOSTON",
-  "matched_address": "800 WASHINGTON ST, BOSTON, MA, 02111"
+  "matched_address": "800 WASHINGTON ST, BOSTON, MA, 02111",
+  "geocoder": "US Census Geocoder"
  },
  "faulkner": {
   "lat": 42.30148,
   "lon": -71.12668,
   "cms_address": "1153 CENTRE STREET, JAMAICA PLAIN",
-  "matched_address": "1153 CENTRE ST, JAMAICA PLAIN, MA, 02130"
+  "matched_address": "1153 CENTRE ST, JAMAICA PLAIN, MA, 02130",
+  "geocoder": "US Census Geocoder"
  },
  "nwh": {
   "lat": 42.33067,
   "lon": -71.24792,
   "cms_address": "2014 WASHINGTON STREET, NEWTON",
-  "matched_address": "2014 WASHINGTON ST, NEWTON, MA, 02462"
+  "matched_address": "2014 WASHINGTON ST, NEWTON, MA, 02462",
+  "geocoder": "US Census Geocoder"
  },
  "mee": {
   "lat": 42.36257,
   "lon": -71.07058,
   "cms_address": "243 CHARLES STREET, BOSTON",
-  "matched_address": "243 CHARLES ST, BOSTON, MA, 02114"
+  "matched_address": "243 CHARLES ST, BOSTON, MA, 02114",
+  "geocoder": "US Census Geocoder"
  },
  "salem": {
   "lat": 42.51239,
   "lon": -70.90812,
   "cms_address": "81 HIGHLAND AVENUE, SALEM",
-  "matched_address": "81 HIGHLAND AVE, SALEM, MA, 01970"
+  "matched_address": "81 HIGHLAND AVE, SALEM, MA, 01970",
+  "geocoder": "US Census Geocoder"
  },
  "mah": {
   "lat": 42.3748,
   "lon": -71.13314,
   "cms_address": "330 MOUNT AUBURN STREET, CAMBRIDGE",
-  "matched_address": "330 MOUNT AUBURN ST, CAMBRIDGE, MA, 02138"
+  "matched_address": "330 MOUNT AUBURN ST, CAMBRIDGE, MA, 02138",
+  "geocoder": "US Census Geocoder"
  },
  "lahey": {
-  "lat": 42.51227,
-  "lon": -71.18942,
+  "lat": 42.48464,
+  "lon": -71.20422,
   "cms_address": "41 & 45 MALL ROAD, BURLINGTON",
-  "matched_address": "41 MILL ST, BURLINGTON, MA, 01803"
+  "matched_address": "Lahey Hospital & Medical Center, 41, Burlington Mall Road, Burlington, Middlesex County, Massachusetts, 01805, United States",
+  "geocoder": "OpenStreetMap Nominatim"
  },
  "nebh": {
   "lat": 42.3304,
   "lon": -71.10801,
   "cms_address": "125 PARKER HILL AVENUE, BOSTON",
-  "matched_address": "125 PARKER HILL AVE, BOSTON, MA, 02120"
+  "matched_address": "125 PARKER HILL AVE, BOSTON, MA, 02120",
+  "geocoder": "US Census Geocoder"
  },
  "bidmilton": {
   "lat": 42.25258,
   "lon": -71.07554,
   "cms_address": "199 REEDSDALE ROAD, MILTON",
-  "matched_address": "199 REEDSDALE RD, MILTON, MA, 02186"
+  "matched_address": "199 REEDSDALE RD, MILTON, MA, 02186",
+  "geocoder": "US Census Geocoder"
  },
  "bidneedham": {
   "lat": 42.27751,
   "lon": -71.2373,
   "cms_address": "148 CHESTNUT STREET, NEEDHAM",
-  "matched_address": "148 CHESTNUT ST, NEEDHAM, MA, 02492"
+  "matched_address": "148 CHESTNUT ST, NEEDHAM, MA, 02492",
+  "geocoder": "US Census Geocoder"
  },
  "winchester": {
   "lat": 42.46547,
   "lon": -71.12151,
   "cms_address": "41 HIGHLAND AVENUE, WINCHESTER",
-  "matched_address": "41 HIGHLAND AVE, WINCHESTER, MA, 01890"
+  "matched_address": "41 HIGHLAND AVE, WINCHESTER, MA, 01890",
+  "geocoder": "US Census Geocoder"
  },
  "bmcbrighton": {
   "lat": 42.34996,
   "lon": -71.14746,
   "cms_address": "736 CAMBRIDGE STREET, NEVINS BUILDING, BRIGHTON",
-  "matched_address": "736 CAMBRIDGE ST, BRIGHTON, MA, 02135"
+  "matched_address": "736 CAMBRIDGE ST, BRIGHTON, MA, 02135",
+  "geocoder": "US Census Geocoder"
  },
  "cha": {
   "lat": 42.37413,
   "lon": -71.10349,
   "cms_address": "1493 CAMBRIDGE STREET, CAMBRIDGE",
-  "matched_address": "1493 CAMBRIDGE ST, CAMBRIDGE, MA, 02139"
+  "matched_address": "1493 CAMBRIDGE ST, CAMBRIDGE, MA, 02139",
+  "geocoder": "US Census Geocoder"
  },
  "ssh": {
   "lat": 42.1748,
   "lon": -70.95456,
   "cms_address": "55 FOGG ROAD, SOUTH WEYMOUTH",
-  "matched_address": "55 FOGG RD, SOUTH WEYMOUTH, MA, 02190"
+  "matched_address": "55 FOGG RD, SOUTH WEYMOUTH, MA, 02190",
+  "geocoder": "US Census Geocoder"
  }
 }

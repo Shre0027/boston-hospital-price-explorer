@@ -1,7 +1,7 @@
 {
  "fetched_on": "2026-10-29",
  "hospital_addresses": "CMS Hospital General Information (data/quality), matched by CMS Certification Number",
- "geocoder": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress (benchmark Public_AR_Current)",
+ "geocoder": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress (benchmark Public_AR_Current); a match is accepted only if its street name equals the CMS address's. Fallback: https://nominatim.openstreetmap.org/search",
  "towns": "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_25_cousub_500k.zip",
  "bbox": [
   -71.36,
