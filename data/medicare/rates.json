@@ -1,0 +1,104 @@
+{
+ "made_on": "2026-10-29",
+ "opps_file": "5a727334-2026_october_web_addendum_b.10.14.26.zip",
+ "clfs_file": "a03d1cd2-clfs_cy2026_q4v1.zip",
+ "wage_index": 1.2884,
+ "labor_share": 0.6,
+ "wage_adjustment_factor": 1.17304,
+ "rates": {
+  "73721": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 243.77,
+   "benchmark": 285.95
+  },
+  "72148": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 243.77,
+   "benchmark": 285.95
+  },
+  "70551": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 243.77,
+   "benchmark": 285.95
+  },
+  "74177": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 356.43,
+   "benchmark": 418.11
+  },
+  "71046": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 88.91,
+   "benchmark": 104.29
+  },
+  "76700": {
+   "system": "OPPS",
+   "status_indicator": "Q3",
+   "national_rate": 106.81,
+   "benchmark": 125.29
+  },
+  "77067": {
+   "system": "OPPS",
+   "status_indicator": "A",
+   "benchmark": null,
+   "why_not": "no separate outpatient payment rate (status indicator A)"
+  },
+  "45378": {
+   "system": "OPPS",
+   "status_indicator": "T",
+   "national_rate": 950.1,
+   "benchmark": 1114.51
+  },
+  "66984": {
+   "system": "OPPS",
+   "status_indicator": "J1",
+   "national_rate": 2357.81,
+   "benchmark": 2765.81
+  },
+  "29881": {
+   "system": "OPPS",
+   "status_indicator": "J1",
+   "national_rate": 3342.87,
+   "benchmark": 3921.32
+  },
+  "93005": {
+   "system": "OPPS",
+   "status_indicator": "Q1",
+   "national_rate": 60.27,
+   "benchmark": 70.7
+  },
+  "99283": {
+   "system": "OPPS",
+   "status_indicator": "J2",
+   "national_rate": 278.89,
+   "benchmark": 327.15
+  },
+  "99284": {
+   "system": "OPPS",
+   "status_indicator": "J2",
+   "national_rate": 426.3,
+   "benchmark": 500.07
+  },
+  "85025": {
+   "system": "CLFS",
+   "benchmark": 7.77
+  },
+  "80053": {
+   "system": "CLFS",
+   "benchmark": 10.56
+  },
+  "80061": {
+   "system": "CLFS",
+   "benchmark": 13.39
+  }
+ },
+ "not_benchmarked": {
+  "99213": "hospital outpatient clinic visits are paid under a different code (G0463)",
+  "419": "inpatient stay, paid under the inpatient system with hospital-specific add-ons"
+ }
+}

@@ -357,3 +357,20 @@ Checked everything a reviewer could see before sharing the project widely.
 - Fetched by `scripts/fetch_geo.py` on GitHub Actions (`geo.yml`), saved in `data/geo/`.
 
 **Caught while checking every result:** the Census Geocoder matched Lahey's "41 Mall Road, Burlington" to "41 **Mill** St", about 2 km away. The script now accepts a match only when the street name equals the requested one, and otherwise falls back to OpenStreetMap's geocoder, which found Lahey at 41 Burlington Mall Road. Cambridge Health Alliance's file covers three campuses; the map shows its CMS-listed main address (Cambridge Hospital).
+
+---
+
+## 2026-10-29: Medicare as a benchmark
+
+**Why:** comparing hospitals only with each other shows who is expensive, not what a reasonable price is. National studies (RAND's hospital price reports) measure commercial prices as a percent of what Medicare pays, so I added the same yardstick.
+
+**Data and method:**
+- *Outpatient rates:* CMS OPPS Addendum B, October 2026 (national unadjusted payment rate by code), multiplied by (0.6 × wage index + 0.4). 0.6 is the OPPS labor-related share.
+- *Wage index:* FY 2026 IPPS Final Rule Table 2, by CMS Certification Number. All 18 hospitals have 1.2884 (Boston area), so the factor is 1.173 for every hospital. That was checked in the table, not assumed.
+- *Lab tests:* Clinical Laboratory Fee Schedule, Q4 2026 national limitation amount.
+- *Coverage:* 15 of 18 procedures. Not benchmarked: the screening mammogram (status A, paid under a different fee schedule), the office visit (the hospital-side code is G0463, a different code) and the inpatient gallbladder stay (paid under the inpatient system with hospital-specific add-ons).
+- *Status Q1/Q3 (imaging, ECG):* these are bundled only when billed with certain other services. The listed rate is what Medicare pays when they're billed alone, which is the fair comparison. My first rule excluded them, which would have dropped all the imaging; caught when reading the real file.
+
+**Licensing:** the Addendum B and CLFS files sit behind the AMA's CPT license on cms.gov. Shreyas downloaded them by hand after accepting it. Only code numbers and Medicare dollar rates are saved (`data/medicare/rates.csv`); the files and their code descriptions are not committed (`.gitignore`). The wage index table has no license gate and is fetched automatically (`medicare.yml`).
+
+**Result (queries 11–12):** median 191% of Medicare across 230 hospital-procedure pairs; RAND found 195% for Massachusetts in 2020–22 with a different method and years, so the agreement is encouraging, not proof. By hospital: BID Milton 113% to MGH 352%. Lab tests sit furthest above Medicare (about 245%), surgeries closest (107–123%). The story has a new step and the dashboard draws a dashed "Medicare pays" line on every insured comparison. Build and SQL agree for all 17 hospitals.

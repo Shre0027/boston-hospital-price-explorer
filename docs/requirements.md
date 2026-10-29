@@ -63,6 +63,10 @@
 - AC-8.2: Every number in the story is computed from the same data as the dashboard, so it updates with the monthly refresh.
 - AC-8.3: The dashboard is one click away from any point in the story.
 
+**US-9: Know what a reasonable price is.** As an employer or policymaker, I want prices compared with what Medicare pays, so that I can judge them against a neutral benchmark, not only against each other.
+- AC-9.1: For each procedure Medicare pays separately, show Medicare's 2026 rate for these hospitals and each hospital's typical commercial price as a percent of it.
+- AC-9.2: Procedures without a comparable Medicare rate are listed with the reason, not silently dropped.
+
 ## 4. Non-functional requirements
 
 | Id | Requirement | Measure |
@@ -98,6 +102,7 @@
 | US-7 | `scripts/combine.py`, `sql/00_setup.sql` | Mapping of every insurer name reviewed by hand; flagged rows counted per hospital (`sql/06`) | Done |
 | US-8 | Scroll-driven story (`templates/story.html`, published as `site/index.html`) | Every step tested on desktop and phone; story numbers checked against SQL results | Done |
 | NFR-10 | Both pages | axe-core scan: 0 violations in light and dark mode (after raising text and button contrast) | Done |
+| US-9 | `sql/11`, `sql/12`, story step, dashboard Medicare line | Build matches SQL for all 17 hospitals; spot checks by hand (MGH brain MRI $1,614 ÷ $285.95 = 565%) | Done |
 | NFR-1 | `scripts/combine.py` | 180 random rows across 18 hospitals traced to source, 0 mismatches | Done |
 | NFR-2 | `scripts/run_sql.py` | Four consecutive runs, identical output | Done |
 | NFR-3 | `.github/workflows/refresh.yml` | Manual end-to-end run: all hospitals downloaded, rebuilt and republished | Done |

@@ -299,6 +299,8 @@ const KM = DATA.distances_km, MAP = DATA.map;
 const miles = (km) => { const m = km / 1.609; return m < 1 ? `${(m).toFixed(1)} miles` : `${m.toFixed(m < 10 ? 1 : 0)} miles`; };
 F.topH = F.top.length ? F.top[F.top.length - 1] : null;
 F.nearCheap = F.topH && KM ? F.idx.filter(h => h.price_index <= 1.0 && KM[F.topH.id] && KM[F.topH.id][h.id] != null).sort((a, b) => KM[F.topH.id][a.id] - KM[F.topH.id][b.id]).slice(0, 2) : [];
+const MED = DATA.medicare;
+F.med = MED ? H.filter(h => MED.pct_by_hospital[h.id] != null).map(h => ({ h, v: MED.pct_by_hospital[h.id] })).sort((a, b) => a.v - b.v) : [];
 const countOf = (label) => F.prob.filter(h => problemOf(h) === label).length;
 
 // ---------- The story: each step sets the chart ----------
@@ -332,6 +334,12 @@ const STEPS = [
     text: `It's not just one scan. Across all ${DATA.procedures.length} procedures, ${F.top.map(h => h.short).join(" and ")} ${F.top.length > 1 ? "are" : "is"} about <b>${F.top.length ? times(Math.max(...F.top.map(h => h.price_index))) : ""}</b> the typical Boston price.`,
     text2: F.sysRest.length ? `${topSys}'s other hospitals? About <b>${median(F.sysRest.map(h => h.price_index)).toFixed(1)}×</b>. Same system, very different prices.` : "",
     chart: () => indexChart("Overall price level, commercial insurance", "1× = the typical Boston hospital, across procedures", F.top.map(h => h.id), false),
+  },
+  F.med.length >= 5 && {
+    title: "Measured against Medicare",
+    text: `Medicare publishes what it pays hospitals for each service, which makes it a neutral yardstick. Commercial insurers typically pay these hospitals <b>${MED.overall_pct}%</b> of what Medicare pays, close to the 195% that RAND's national hospital price study found for Massachusetts.`,
+    text2: `It ranges from <b>${F.med[0].v}%</b> at ${F.med[0].h.name} to <b>${F.med[F.med.length - 1].v}%</b> at ${F.med[F.med.length - 1].h.name}.`,
+    chart: () => medicareChart(),
   },
   MAP && F.nearCheap.length && {
     title: "A few miles apart",
@@ -431,6 +439,15 @@ function cashVsChart() {
     items: H.map(h => { const x = byId[h.id]; return !x ? { id: h.id, x: null, label: "not comparable" } :
       { id: h.id, x: x.c / max * 100, ghostX: x.i / max * 100, r: x.r, label: `${x.r >= 9.95 ? x.r.toFixed(0) : x.r.toFixed(1)}×`, cls: x === F.cvi[0] || x === F.cvi[1] ? "em" : "" }; }),
     legend: `<span><i style="background:var(--charge)"></i>Cash price</span><span><i class="hollow"></i>What insurers typically pay</span><span>Label: cash as a multiple of the insurer price</span>` });
+}
+const MLO = 80, MHI = 420;
+const mpos = (p) => Math.max(0, Math.min(100, (Math.log(p) - Math.log(MLO)) / (Math.log(MHI) - Math.log(MLO)) * 100));
+function medicareChart() {
+  const em = [F.med[0].h.id, F.med[F.med.length - 1].h.id, F.med[F.med.length - 2].h.id];
+  return render({ title: "Commercial prices as a percent of Medicare", sub: `Median across up to ${Object.keys(MED.rates).length} procedures Medicare pays separately; 100% = what Medicare pays`, stems: false, ref: mpos(100),
+    ticks: [[mpos(100), "Medicare"], [mpos(150), "150%"], [mpos(200), "200%"], [mpos(300), "300%"], [mpos(400), "400%"]],
+    items: H.map(h => { const v = MED.pct_by_hospital[h.id]; return { id: h.id, x: v == null ? null : mpos(v), r: v == null ? null : v / MED.overall_pct, label: v == null ? "too little data" : v + "%", cls: em.includes(h.id) ? "em" : "" }; }),
+    legend: `<span>Below the ${MED.overall_pct}% median<span class="ramp"></span>Above it</span><span>Dashed line: what Medicare pays</span>` });
 }
 const CENTRAL = ["mgh", "mee", "tmc", "bmc", "bwh", "bidmc", "nebh"];   // within about 3 km: drawn again in a zoomed inset
 const SIDE = { bwh: "l", bidmc: "l", nebh: "l", mee: "l", mah: "l", bmcbrighton: "l", tmc: "l", nwh: "b" };

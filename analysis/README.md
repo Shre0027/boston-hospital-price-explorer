@@ -272,3 +272,57 @@ Query: [`sql/10_quality_summary.sql`](../sql/10_quality_summary.sql)
 | 4 stars | 3 | 0.73 | 1 | 1.04 |  |
 | 5 stars | 7 | 0.71 | 1.13 | 1.89 |  |
 | All rated hospitals | 17 | 0.63 | 1 | 1.89 | 0.42 |
+
+## 11. Percent of medicare by hospital
+
+**Question:** compared with what Medicare pays for the same service, how much do commercial insurers pay each hospital? This is the yardstick used by national hospital price studies (e.g. RAND), so the result can be compared with them.
+
+**Method:** each hospital's typical commercial price for a procedure / Medicare's rate for it; then the median across that hospital's procedures. Only procedures with a Medicare rate (15 of 18); hospitals need at least 8.
+
+Query: [`sql/11_percent_of_medicare_by_hospital.sql`](../sql/11_percent_of_medicare_by_hospital.sql)
+
+| hospital | procedures_compared | pct_of_medicare | lowest_pct | highest_pct | procedures_below_medicare |
+|---|---|---|---|---|---|
+| Beth Israel Deaconess Hospital–Milton | 14 | 113 | 68 | 187 | 3 |
+| South Shore Hospital | 15 | 118 | 68 | 232 | 5 |
+| New England Baptist Hospital | 15 | 123 | 96 | 156 | 1 |
+| Tufts Medical Center | 13 | 131 | 81 | 256 | 1 |
+| Winchester Hospital | 15 | 154 | 100 | 220 | 0 |
+| Mount Auburn Hospital | 15 | 159 | 106 | 249 | 0 |
+| Boston Medical Center | 15 | 176 | 52 | 325 | 2 |
+| Beth Israel Deaconess Hospital–Needham | 10 | 191 | 128 | 199 | 0 |
+| Beth Israel Deaconess Medical Center | 15 | 194 | 106 | 255 | 0 |
+| Brigham and Women's Faulkner Hospital | 11 | 202 | 166 | 710 | 0 |
+| Salem Hospital | 11 | 206 | 159 | 752 | 0 |
+| Boston Medical Center Brighton | 13 | 214 | 92 | 266 | 2 |
+| Newton-Wellesley Hospital | 11 | 215 | 162 | 710 | 0 |
+| Lahey Hospital & Medical Center | 15 | 225 | 86 | 275 | 2 |
+| Cambridge Health Alliance | 13 | 263 | 143 | 349 | 0 |
+| Brigham and Women's Hospital | 13 | 321 | 171 | 1,178 | 0 |
+| Massachusetts General Hospital | 12 | 352 | 177 | 1,180 | 0 |
+
+## 12. Percent of medicare by procedure
+
+**Question:** which services are priced furthest above Medicare?
+
+**Method:** for each procedure, every hospital's typical commercial price / Medicare's rate; median, lowest and highest across hospitals. Lab tests are paid under a different Medicare fee schedule (CLFS) than imaging, visits and procedures (OPPS), which is shown in the medicare_system column.
+
+Query: [`sql/12_percent_of_medicare_by_procedure.sql`](../sql/12_percent_of_medicare_by_procedure.sql)
+
+| procedure | medicare_system | medicare_rate | hospitals | median_pct_of_medicare | lowest_pct | highest_pct |
+|---|---|---|---|---|---|---|
+| Complete blood count (CBC) | CLFS | 7.77 | 17 | 249 | 123 | 1,155 |
+| Cholesterol (lipid) panel | CLFS | 13.39 | 17 | 246 | 131 | 868 |
+| Comprehensive metabolic panel | CLFS | 10.56 | 17 | 244 | 129 | 1,180 |
+| MRI knee (no contrast) | OPPS | 286 | 17 | 220 | 118 | 503 |
+| CT abdomen and pelvis (with contrast) | OPPS | 418 | 16 | 219 | 115 | 325 |
+| Abdominal ultrasound (complete) | OPPS | 125 | 17 | 214 | 103 | 338 |
+| MRI brain (no contrast) | OPPS | 286 | 18 | 200 | 118 | 565 |
+| MRI lower back (no contrast) | OPPS | 286 | 17 | 198 | 118 | 477 |
+| ECG (electrocardiogram, hospital tracing) | OPPS | 70.7 | 18 | 161 | 90 | 331 |
+| Colonoscopy (diagnostic) | OPPS | 1,115 | 17 | 143 | 81 | 177 |
+| ER visit (serious) | OPPS | 500 | 13 | 143 | 93 | 401 |
+| ER visit (moderate) | OPPS | 327 | 12 | 137 | 86 | 272 |
+| Cataract surgery | OPPS | 2,766 | 8 | 123 | 52 | 174 |
+| Chest X-ray (2 views) | OPPS | 104 | 17 | 107 | 68 | 349 |
+| Knee arthroscopy (meniscus) | OPPS | 3,921 | 9 | 107 | 64 | 168 |

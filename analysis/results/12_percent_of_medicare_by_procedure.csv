@@ -1,0 +1,16 @@
+procedure,medicare_system,medicare_rate,hospitals,median_pct_of_medicare,lowest_pct,highest_pct
+Complete blood count (CBC),CLFS,7.77,17,249.0,123.0,1155.0
+Cholesterol (lipid) panel,CLFS,13.39,17,246.0,131.0,868.0
+Comprehensive metabolic panel,CLFS,10.56,17,244.0,129.0,1180.0
+MRI knee (no contrast),OPPS,285.95,17,220.0,118.0,503.0
+CT abdomen and pelvis (with contrast),OPPS,418.11,16,219.0,115.0,325.0
+Abdominal ultrasound (complete),OPPS,125.29,17,214.0,103.0,338.0
+MRI brain (no contrast),OPPS,285.95,18,200.0,118.0,565.0
+MRI lower back (no contrast),OPPS,285.95,17,198.0,118.0,477.0
+"ECG (electrocardiogram, hospital tracing)",OPPS,70.7,18,161.0,90.0,331.0
+Colonoscopy (diagnostic),OPPS,1114.51,17,143.0,81.0,177.0
+ER visit (serious),OPPS,500.07,13,143.0,93.0,401.0
+ER visit (moderate),OPPS,327.15,12,137.0,86.0,272.0
+Cataract surgery,OPPS,2765.81,8,123.0,52.0,174.0
+Chest X-ray (2 views),OPPS,104.29,17,107.0,68.0,349.0
+Knee arthroscopy (meniscus),OPPS,3921.32,9,107.0,64.0,168.0

@@ -7,14 +7,16 @@ because the license restricts redistributing the files and their code descriptio
   - Clinical Laboratory Fee Schedule zip, e.g. 26CLABQ4.zip
   - data/medicare/wage_index.json (from scripts/fetch_medicare.py)
 
-Output: data/medicare/rates.json, containing only code numbers and Medicare's dollar rates (no descriptions).
+Output: data/medicare/rates.json and rates.csv, containing only code numbers and Medicare's dollar rates (no descriptions).
 
 Method (Medicare's own payment formulas):
   - Outpatient services: national unadjusted OPPS payment rate x (0.60 x wage index + 0.40).
     0.60 is the OPPS labor-related share. All 18 hospitals have the same FY 2026 wage index.
   - Lab tests: the Clinical Laboratory Fee Schedule national limitation amount (not wage adjusted).
-  - Not benchmarked: services Medicare doesn't pay as a separate outpatient rate (status indicators
-    such as N, Q1-Q4 packaged, or A = paid under another fee schedule), the office visit (99213; the
+  - Codes with status Q1/Q3 (imaging, ECG) are only bundled when billed with certain other services;
+    the listed rate is what Medicare pays when billed on their own, which is what we compare.
+  - Not benchmarked: codes with no listed OPPS rate (e.g. status N = always packaged, A = paid under
+    another fee schedule, as for the screening mammogram), the office visit (99213; the
     hospital-side equivalent is a different code, G0463), and the inpatient gallbladder stay (MS-DRG 419,
     paid under the inpatient system with hospital-specific add-ons).
 
@@ -130,7 +132,7 @@ def main():
         o = opps.get(code)
         if not o:
             rates[code] = {"system": "OPPS", "benchmark": None, "why_not": "code not in Addendum B"}
-        elif o["national_rate"] is None or o["status_indicator"].upper() in {"N", "Q1", "Q2", "Q3", "Q4", "A", "B", "M"}:
+        elif not o["national_rate"] or o["status_indicator"].upper() in {"N", "A", "B", "M", "E1", "E2"}:
             rates[code] = {"system": "OPPS", "status_indicator": o["status_indicator"], "benchmark": None,
                            "why_not": f"no separate outpatient payment rate (status indicator {o['status_indicator']})"}
         else:
@@ -146,6 +148,11 @@ def main():
            "not_benchmarked": {"99213": "hospital outpatient clinic visits are paid under a different code (G0463)",
                                "419": "inpatient stay, paid under the inpatient system with hospital-specific add-ons"}}
     (ROOT / "data/medicare/rates.json").write_text(json.dumps(out, indent=1))
+    with open(ROOT / "data/medicare/rates.csv", "w", newline="") as f:      # flat copy for SQL (sql/00_setup.sql)
+        w = csv.writer(f)
+        w.writerow(["cpt", "medicare_system", "status_indicator", "medicare_rate", "why_not"])
+        for code, r in rates.items():
+            w.writerow([code, r["system"], r.get("status_indicator", ""), r["benchmark"] if r["benchmark"] is not None else "", r.get("why_not", "")])
     print("Wrote data/medicare/rates.json")
 
 

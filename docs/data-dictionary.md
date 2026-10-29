@@ -69,3 +69,6 @@ These aren't columns, but they decide what the analysis and dashboard show:
 | `data/discovery.json` | Every location and file link read from hospitals' `cms-hpt.txt` files |
 | `data/investigations/<id>_codes.json` | Which related billing codes each hospital uses (used to choose the ECG and gallbladder codes) |
 | `config/data_access.json` | Hand-recorded findings about each file's accessibility |
+| `data/medicare/rates.csv` | Medicare's 2026 rate per procedure: `medicare_system` (OPPS outpatient or CLFS lab), `status_indicator` (OPPS payment status), `medicare_rate` (US dollars; OPPS national rate × (0.6 × wage index + 0.4)), `why_not` (reason a procedure has no rate). Code numbers and dollar amounts only; the source files aren't redistributed (AMA CPT license) |
+| `data/medicare/wage_index.json` | FY 2026 IPPS wage index for each hospital, by CMS Certification Number (all 18: 1.2884, Boston area) |
+| `data/geo/hospitals.json`, `towns.json` | Geocoded hospital locations and simplified town boundaries for the story's map |

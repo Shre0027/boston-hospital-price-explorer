@@ -1,0 +1,18 @@
+hospital,procedures_compared,pct_of_medicare,lowest_pct,highest_pct,procedures_below_medicare
+Beth Israel Deaconess Hospital–Milton,14,113.0,68.0,187.0,3
+South Shore Hospital,15,118.0,68.0,232.0,5
+New England Baptist Hospital,15,123.0,96.0,156.0,1
+Tufts Medical Center,13,131.0,81.0,256.0,1
+Winchester Hospital,15,154.0,100.0,220.0,0
+Mount Auburn Hospital,15,159.0,106.0,249.0,0
+Boston Medical Center,15,176.0,52.0,325.0,2
+Beth Israel Deaconess Hospital–Needham,10,191.0,128.0,199.0,0
+Beth Israel Deaconess Medical Center,15,194.0,106.0,255.0,0
+Brigham and Women's Faulkner Hospital,11,202.0,166.0,710.0,0
+Salem Hospital,11,206.0,159.0,752.0,0
+Boston Medical Center Brighton,13,214.0,92.0,266.0,2
+Newton-Wellesley Hospital,11,215.0,162.0,710.0,0
+Lahey Hospital & Medical Center,15,225.0,86.0,275.0,2
+Cambridge Health Alliance,13,263.0,143.0,349.0,0
+Brigham and Women's Hospital,13,321.0,171.0,1178.0,0
+Massachusetts General Hospital,12,352.0,177.0,1180.0,0

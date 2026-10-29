@@ -59,3 +59,10 @@ SELECT
 FROM hospitals h
 LEFT JOIN read_csv('data/quality/ma_hospital_general_information.csv', header = true, all_varchar = true) q
   ON q."Facility ID" = h.ccn;
+
+-- Medicare benchmark: what traditional Medicare pays these hospitals for each procedure (2026),
+-- from CMS OPPS Addendum B (outpatient, wage-adjusted for the Boston area) and the Clinical Lab
+-- Fee Schedule. Built by scripts/medicare_rates.py; procedures Medicare doesn't pay separately are NULL.
+CREATE OR REPLACE VIEW medicare AS
+SELECT cpt, medicare_system, status_indicator, TRY_CAST(medicare_rate AS DOUBLE) AS medicare_rate, why_not
+FROM read_csv('data/medicare/rates.csv', header = true, all_varchar = true);

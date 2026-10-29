@@ -10,6 +10,7 @@ This project turns those public files into something a normal person can use, an
 
 ## Key findings
 - **Same procedure, very different price:** with commercial insurance, a blood count is $10 at Tufts Medical Center and $90 at MGH (9×); a brain MRI is $338 at South Shore and $1,614 at MGH (5×).
+- **Against Medicare:** commercial insurers typically pay 191% of what Medicare pays for the same services (RAND: 195% for Massachusetts), from 113% at BID Milton to 352% at MGH.
 - **Two hospitals stand apart:** MGH and Brigham and Women's are about 1.9× the typical price across procedures; Mass General Brigham's own community hospitals are about 1.1×.
 - **Price only loosely tracks quality:** 5-star hospitals range from 0.71× to 1.89× the typical price (rank correlation 0.42 across 17 rated hospitals).
 - **"Public" isn't always usable:** one system blocks automated downloads, five files break a standard JSON parser, one file lists impossible prices, and one health system lists only 3–6 commercial insurers per hospital.
@@ -59,7 +60,9 @@ flowchart LR
 | Extract | `scripts/extract_prices.py` | Downloads each file (CSV, zipped CSV or JSON, up to 1.7 GB) and keeps only the selected procedures |
 | Combine | `scripts/combine.py` | Standardizes insurer names, numbers and markets; picks a fair comparison price; flags rows that can't be compared |
 | Quality | `scripts/fetch_quality.py` | Downloads CMS star ratings, matched to hospitals by CMS Certification Number |
-| Analyze (SQL) | `sql/*.sql`, `scripts/run_sql.py` | Ten documented SQL queries (CTEs, window functions, rank correlation) run with DuckDB; results in [`analysis/`](analysis/README.md) |
+| Medicare benchmark | `scripts/fetch_medicare.py`, `scripts/medicare_rates.py` | Medicare's 2026 rates: outpatient (OPPS Addendum B, wage-adjusted) and lab (CLFS) |
+| Map | `scripts/fetch_geo.py` | Geocodes CMS hospital addresses (US Census Geocoder) and downloads town boundaries |
+| Analyze (SQL) | `sql/*.sql`, `scripts/run_sql.py` | Twelve documented SQL queries (CTEs, window functions, rank correlation) run with DuckDB; results in [`analysis/`](analysis/README.md) |
 | Publish | `scripts/build_site.py` | Fills the page templates in `templates/` with the data to build the scroll-driven story (`site/index.html`) and the dashboard (`site/explore.html`), published with GitHub Pages |
 
 Downloads run on GitHub Actions (`.github/workflows/`), with an automatic monthly refresh (`refresh.yml`) that re-downloads, rebuilds and republishes. Every decision, finding and correction is in the [decision log](docs/decision-log.md).

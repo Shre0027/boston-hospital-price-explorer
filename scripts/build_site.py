@@ -62,6 +62,26 @@ def avg_ranks(values):
     return [(order.index(v) + 1 + order.index(v) + order.count(v)) / 2 for v in values]
 
 
+def medicare_benchmark(prices, hospitals):
+    """Medicare's 2026 rate per procedure (data/medicare/rates.csv, from scripts/medicare_rates.py) and each
+    hospital's typical commercial price as a percent of it: median over procedures, at least MIN_PROCEDURES
+    (same method as sql/11). Returns None if the Medicare rates haven't been built."""
+    path = ROOT / "data/medicare/rates.csv"
+    if not path.exists():
+        return None
+    with open(path) as f:
+        rates = {r["cpt"]: float(r["medicare_rate"]) for r in csv.DictReader(f) if r["medicare_rate"]}
+    pct, all_ratios = {}, []
+    for h in hospitals:
+        ratios = [prices[c][h["id"]]["commercial"]["median"] / m for c, m in rates.items()
+                  if c in prices and prices[c][h["id"]].get("commercial")]
+        all_ratios += ratios
+        if len(ratios) >= MIN_PROCEDURES:
+            pct[h["id"]] = round(100 * statistics.median(ratios))
+    return {"rates": rates, "pct_by_hospital": pct, "overall_pct": round(100 * statistics.median(all_ratios)),
+            "pairs": len(all_ratios), "source": json.loads((ROOT / "data/medicare/rates.json").read_text()).get("opps_file", "")}
+
+
 def build_map(hospitals):
     """Project the Census town shapes and geocoded hospitals into SVG coordinates for the story's map.
     Returns None if data/geo hasn't been fetched yet (scripts/fetch_geo.py)."""
@@ -245,6 +265,7 @@ def main():
         "total_prices": sum(rows_total.values()),
         "insurer_names": len(insurer_names),
         "map": build_map(hospitals),
+        "medicare": medicare_benchmark(prices, hospitals),
         "distances_km": distances(hospitals),
         "dots": dots,
         "receipt": {"cpt": receipt_cpt, "desc": receipt_desc},

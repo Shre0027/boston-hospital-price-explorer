@@ -7,6 +7,7 @@
 Since 2021, every US hospital has had to publish its prices in a machine-readable file. I collected these files from **18 Greater Boston hospitals**, standardized over 11,000 published prices for 18 common procedures, put them next to each hospital's CMS quality rating, and asked three questions: **do prices differ enough to matter, does higher price mean higher quality, and can anyone actually use this data?**
 
 - **Prices differ a lot.** With commercial insurance, the same blood test costs about **9× more** at the most expensive hospital than the cheapest, and a brain MRI about **5× more**.
+- **Measured against Medicare, insurers typically pay 191%** of what Medicare pays for the same services, close to the 195% RAND found for Massachusetts. It ranges from **113%** (BID Milton) to **352%** (MGH).
 - **Two hospitals stand apart.** MGH and Brigham and Women's are about **1.9×** the typical price across procedures. Mass General Brigham's own community hospitals (Faulkner, Newton-Wellesley, Salem) are about **1.1×**.
 - **Higher price only loosely tracks quality.** The seven 5-star hospitals range from **0.71×** the typical price (New England Baptist) to **1.89×** (Brigham). Across 17 rated hospitals, the rank correlation between price and rating is **0.42**: a loose link, not a rule.
 - **"Transparency" is uneven in practice.** One system blocked automated downloads, one hospital's official link was broken, five files broke a standard JSON parser, one file contained impossible prices, and every Beth Israel Lahey Health hospital listed only 3–6 commercial insurers.
@@ -57,6 +58,14 @@ The price level ([query 05](../analysis/README.md#05-overall-hospital-ranking)) 
 - **Around typical:** BMC, BMC Brighton and Mount Auburn 1.00×; Lahey 1.04×; BIDMC 1.12×.
 - **Highest:** MGH 1.88× and Brigham and Women's 1.89×, above typical on every procedure compared.
 - **Same system, different prices:** Mass General Brigham's community hospitals (Faulkner 1.10×, Newton-Wellesley 1.13×, Salem 1.13×) are far closer to typical than its two academic medical centers. Within Beth Israel Lahey Health, BIDMC (1.12×) is well above BID Milton (0.73×) and New England Baptist (0.71×).
+
+### Finding 2b: Against Medicare, commercial prices range from 113% to 352%
+
+Comparing hospitals only with each other leaves an open question: what is a reasonable price? Medicare publishes what it pays for each service, so national studies use it as the yardstick (RAND reports commercial prices as a percent of Medicare). I used Medicare's 2026 rates ([queries 11–12](../analysis/README.md#11-percent-of-medicare-by-hospital)): the outpatient rate (OPPS Addendum B, October 2026) adjusted for the Boston wage index, and the Clinical Laboratory Fee Schedule for lab tests. That covers 15 of the 18 procedures.
+
+- **Overall:** the typical commercial price is a median **191% of Medicare** across 230 hospital-procedure pairs. RAND's independent study found 195% for Massachusetts hospitals in 2020–22. The methods and years differ, so this agreement is encouraging, not proof.
+- **By hospital:** BID Milton 113%, South Shore 118%, New England Baptist 123%, Tufts MC 131% … Cambridge Health Alliance 263%, Brigham 321%, MGH 352%.
+- **By service:** lab tests are priced furthest above Medicare (median about 245%); surgeries are closest (knee arthroscopy and chest X-ray 107%, cataract surgery 123%). At the extremes, MGH's metabolic panel is 1,180% of Medicare and its brain MRI 565%.
 
 ### Finding 3: Higher-rated hospitals cost somewhat more, but top-rated care exists at low prices
 
@@ -126,6 +135,7 @@ Sticker prices explain the difference ([query 08](../analysis/README.md#08-stick
 - Typical commercial prices are medians across listed plans, **not weighted** by how many patients use each plan. Beth Israel Lahey Health hospitals list fewer insurers, so their typical prices rest on fewer plans.
 - **Facility charges only**; physicians may bill separately. Some rates are bundled with other services (flagged rows were excluded).
 - CMS star ratings summarize overall hospital quality, not each procedure. Mass Eye and Ear has no rating and too few comparable procedures for a price level.
+- **Medicare benchmark:** Medicare's listed outpatient rate is what it pays when a service is billed on its own; some services (imaging, ECG) are bundled when billed with others. The screening mammogram, office visit and inpatient gallbladder stay aren't benchmarked, because Medicare pays them under different systems.
 - **18 hospitals and 18 procedures** in one metro area. Findings are **associations**, not causes.
 - Prices are as published in each hospital's file (updated March–April 2026), collected October 2026; CMS ratings as of July 2026.
 
