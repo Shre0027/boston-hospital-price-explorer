@@ -1,15 +1,16 @@
 """
 Build the dashboard website from the combined price table.
 
-Reads:  data/combined/prices_clean.csv, data/processed/*_profile.json,
+Reads:  data/combined/prices_clean.csv, data/processed/*_profile.json, data/quality/*.csv,
         config/hospitals.json, config/procedures.json, config/data_access.json
 Writes: site/index.html  (site/template.html with a small summary of the data embedded,
         so the page works as a single file with no server)
 
-What goes into the summary, per procedure and hospital:
-  - cash price (no insurance) and sticker price (gross charge)
-  - "commercial, typical": median and range of the comparison price across commercial plans
-  - the same for each major insurer
+What goes into the summary:
+  - per procedure and hospital: cash price, sticker price (gross charge), the typical commercial price
+    (median and range across commercial plans; shown only with at least 3 plan prices), and the same
+    for each major insurer
+  - per hospital: a price index (same method as sql/05), CMS star rating, file facts and access findings
 Only unflagged rows without billing modifiers are used for price comparisons
 (see docs/decision-log.md for why).
 
@@ -31,8 +32,9 @@ MENU_INSURERS = [
     "Blue Cross Blue Shield", "Harvard Pilgrim", "Tufts Health Plan", "Aetna",
     "UnitedHealthcare", "Cigna", "Mass General Brigham Health Plan",
 ]
-
-SHORT_NAMES = {"mgh": "MGH", "bwh": "Brigham", "bmc": "BMC", "bidmc": "BIDMC", "tmc": "Tufts MC"}
+MIN_PLANS = 3          # a "typical" commercial price needs at least this many plan prices
+MIN_HOSPITALS = 8      # price index: only procedures listed by at least this many hospitals
+MIN_PROCEDURES = 8     # price index: only hospitals with at least this many such procedures
 
 
 def load(path):
@@ -51,6 +53,12 @@ def summarize(values):
     }
 
 
+def avg_ranks(values):
+    """Ranks starting at 1, with ties sharing their average rank."""
+    order = sorted(values)
+    return [(order.index(v) + 1 + order.index(v) + order.count(v)) / 2 for v in values]
+
+
 def main():
     hospitals = load("config/hospitals.json")
     procedures = load("config/procedures.json")
@@ -60,13 +68,21 @@ def main():
     gross = defaultdict(list)
     commercial = defaultdict(list)
     by_insurer = defaultdict(list)
-    insurer_names = defaultdict(set)
+    rows_total = defaultdict(int)
+    rows_flagged = defaultdict(int)
+    insurers_listed = defaultdict(set)
 
     with open(ROOT / "data/combined/prices_clean.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
+            hid = r["hospital_id"]
+            rows_total[hid] += 1
+            if r["flag"]:
+                rows_flagged[hid] += 1
+            if r["market"] == "Commercial" and r["insurer"] not in ("", "Other") and r["cpt"] != "419":
+                insurers_listed[hid].add(r["insurer"])
             if r["modifiers"]:
                 continue
-            key = (r["cpt"], r["hospital_id"])
+            key = (r["cpt"], hid)
             if r["cash_price"]:
                 cash[key].append(float(r["cash_price"]))
             if r["gross_charge"]:
@@ -74,7 +90,6 @@ def main():
             if r["market"] == "Commercial" and r["comparison_price"] and not r["flag"]:
                 price = float(r["comparison_price"])
                 commercial[key].append(price)
-                insurer_names[r["hospital_id"]].add(r["insurer"])
                 if r["insurer"] in MENU_INSURERS:
                     by_insurer[key + (r["insurer"],)].append(price)
 
@@ -83,47 +98,86 @@ def main():
         prices[p["cpt"]] = {}
         for h in hospitals:
             key = (p["cpt"], h["id"])
-            entry = {
+            typical = summarize(commercial[key])
+            prices[p["cpt"]][h["id"]] = {
                 "cash": round(statistics.median(cash[key]), 2) if cash[key] else None,
                 "gross": round(statistics.median(gross[key]), 2) if gross[key] else None,
-                "commercial": summarize(commercial[key]),
+                "commercial": typical if typical and typical["n"] >= MIN_PLANS else None,
+                "few_plans": typical["n"] if typical and typical["n"] < MIN_PLANS else None,
                 "insurers": {i: s for i in MENU_INSURERS if (s := summarize(by_insurer[key + (i,)]))},
             }
-            prices[p["cpt"]][h["id"]] = entry
+
+    # Price index (same method as sql/05): each hospital's typical price / the median across hospitals,
+    # per procedure; a hospital's index is the median of those ratios.
+    ratios = defaultdict(list)
+    for p in procedures:
+        listed = {h["id"]: prices[p["cpt"]][h["id"]]["commercial"]["median"]
+                  for h in hospitals if prices[p["cpt"]][h["id"]]["commercial"]}
+        if len(listed) < MIN_HOSPITALS:
+            continue
+        mid = statistics.median(listed.values())
+        for hid, v in listed.items():
+            ratios[hid].append(v / mid)
+    price_index = {hid: round(statistics.median(v), 2) for hid, v in ratios.items() if len(v) >= MIN_PROCEDURES}
+
+    stars = {}
+    qpath = ROOT / "data/quality/ma_hospital_general_information.csv"
+    qsource = {}
+    if qpath.exists():
+        by_ccn = {r["Facility ID"]: r for r in csv.DictReader(open(qpath, encoding="utf-8"))}
+        for h in hospitals:
+            r = by_ccn.get(h.get("ccn", ""))
+            stars[h["id"]] = int(r["Hospital overall rating"]) if r and r["Hospital overall rating"].isdigit() else None
+        qsource = load("data/quality/source.json")
+
+    rated = [(price_index[h], stars[h]) for h in price_index if stars.get(h)]
+    rank_corr = None
+    if len(rated) >= 5:
+        rank_corr = round(statistics.correlation(avg_ranks([x for x, _ in rated]), avg_ranks([y for _, y in rated])), 2)
 
     hospital_info = []
     for h in hospitals:
         profile = load(f"data/processed/{h['id']}_profile.json")
+        a = access["hospitals"].get(h["id"], {})
         hospital_info.append({
             "id": h["id"],
             "name": h["name"],
-            "short": SHORT_NAMES.get(h["id"], h["name"]),
+            "short": h.get("short", h["name"]),
             "system": h.get("system", ""),
             "last_updated": profile["hospital_metadata"].get("last_updated_on", ""),
             "rows_in_file": profile["total_data_rows"],
-            "matched_rows": profile["matched_rows"],
             "procedures_found": len(procedures) - len(profile["procedures_missing"]),
             "file_type": profile.get("file_type", "csv"),
             "collected": profile.get("collected", "downloaded automatically"),
-            "source_url": profile.get("source_url"),
-            "access": access["hospitals"].get(h["id"], []),
+            "insurers_listed": len(insurers_listed[h["id"]]),
+            "pct_set_aside": round(100 * rows_flagged[h["id"]] / rows_total[h["id"]]) if rows_total[h["id"]] else 0,
+            "price_index": price_index.get(h["id"]),
+            "stars": stars.get(h["id"]),
+            "link_list": a.get("link_list"),
+            "download": a.get("download"),
+            "notes": a.get("notes", []),
         })
 
     data = {
         "built_on": time.strftime("%Y-%m-%d", time.gmtime()),
         "access_checked_on": access["checked_on"],
+        "quality_as_of": qsource.get("catalog_modified"),
         "hospitals": hospital_info,
         "procedures": procedures,
         "insurers": MENU_INSURERS,
         "prices": prices,
-        "total_prices": sum(1 for _ in open(ROOT / "data/combined/prices_clean.csv", encoding="utf-8")) - 1,
+        "rank_correlation": rank_corr,
+        "rated_hospitals": len(rated),
+        "min_plans": MIN_PLANS,
+        "total_prices": sum(rows_total.values()),
     }
 
     template = (ROOT / "site/template.html").read_text(encoding="utf-8")
-    payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
+    payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
     html = template.replace("/*__DATA__*/null", payload)
     (ROOT / "site/index.html").write_text(html, encoding="utf-8")
-    print(f"Wrote site/index.html ({len(html) / 1000:.0f} KB, data {len(payload) / 1000:.0f} KB)")
+    print(f"Wrote site/index.html ({len(html) / 1000:.0f} KB, data {len(payload) / 1000:.0f} KB); "
+          f"{len(price_index)} hospitals indexed, rank correlation {rank_corr}")
 
 
 if __name__ == "__main__":

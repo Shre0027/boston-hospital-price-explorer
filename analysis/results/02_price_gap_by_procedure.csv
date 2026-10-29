@@ -1,16 +1,19 @@
 procedure,hospitals_listing,lowest_hospital,lowest_price,highest_hospital,highest_price,times_more
-Complete blood count (CBC),5,Tufts Medical Center,9.0,Massachusetts General Hospital,90.0,9.5
-Comprehensive metabolic panel,5,Tufts Medical Center,14.0,Massachusetts General Hospital,125.0,9.1
-Cholesterol (lipid) panel,5,Tufts Medical Center,18.0,Massachusetts General Hospital,116.0,6.6
-ER visit (moderate),5,Boston Medical Center,454.0,Massachusetts General Hospital,1477.0,3.3
-ER visit (serious),5,Tufts Medical Center,630.0,Massachusetts General Hospital,2008.0,3.2
-Chest X-ray (2 views),5,Beth Israel Deaconess Medical Center,110.0,Brigham and Women's Hospital,335.0,3.0
-Doctor office visit (established patient),5,Boston Medical Center,73.0,Massachusetts General Hospital,216.0,2.9
-MRI brain (no contrast),5,Tufts Medical Center,571.0,Massachusetts General Hospital,1614.0,2.8
-"ECG (electrocardiogram, hospital tracing)",5,Tufts Medical Center,92.0,Massachusetts General Hospital,234.0,2.5
-MRI lower back (no contrast),5,Tufts Medical Center,571.0,Brigham and Women's Hospital,1365.0,2.4
-Screening mammogram,5,Tufts Medical Center,204.0,Massachusetts General Hospital,472.0,2.3
-Colonoscopy (diagnostic),5,Tufts Medical Center,905.0,Massachusetts General Hospital,1975.0,2.2
-Abdominal ultrasound (complete),5,Beth Israel Deaconess Medical Center,199.0,Massachusetts General Hospital,423.0,2.1
-CT abdomen and pelvis (with contrast),5,Tufts Medical Center,755.0,Boston Medical Center,1360.0,1.8
-MRI knee (no contrast),5,Tufts Medical Center,571.0,Massachusetts General Hospital,1046.0,1.8
+Complete blood count (CBC),17,Tufts Medical Center,10.0,Massachusetts General Hospital,90.0,9.4
+Comprehensive metabolic panel,17,Tufts Medical Center,14.0,Massachusetts General Hospital,125.0,9.1
+Cholesterol (lipid) panel,17,Tufts Medical Center,18.0,Massachusetts General Hospital,116.0,6.6
+Doctor office visit (established patient),15,South Shore Hospital,36.0,Massachusetts General Hospital,216.0,6.0
+Chest X-ray (2 views),17,Beth Israel Deaconess Hospital–Milton,71.0,Cambridge Health Alliance,364.0,5.1
+MRI brain (no contrast),18,South Shore Hospital,338.0,Massachusetts General Hospital,1614.0,4.8
+ER visit (serious),13,Lahey Hospital & Medical Center,467.0,Massachusetts General Hospital,2008.0,4.3
+MRI knee (no contrast),17,South Shore Hospital,338.0,Newton-Wellesley Hospital,1439.0,4.3
+MRI lower back (no contrast),17,South Shore Hospital,338.0,Brigham and Women's Hospital,1365.0,4.0
+"ECG (electrocardiogram, hospital tracing)",18,South Shore Hospital,64.0,Massachusetts General Hospital,234.0,3.7
+Abdominal ultrasound (complete),17,South Shore Hospital,129.0,Massachusetts General Hospital,423.0,3.3
+Cataract surgery,8,Boston Medical Center,1436.0,Beth Israel Deaconess Medical Center,4806.0,3.3
+ER visit (moderate),12,Lahey Hospital & Medical Center,283.0,Cambridge Health Alliance,890.0,3.1
+CT abdomen and pelvis (with contrast),16,South Shore Hospital,483.0,Boston Medical Center,1360.0,2.8
+Screening mammogram,16,New England Baptist Hospital,173.0,Massachusetts General Hospital,472.0,2.7
+Knee arthroscopy (meniscus),9,Boston Medical Center,2503.0,Beth Israel Deaconess Medical Center,6576.0,2.6
+"Gallbladder removal, laparoscopic (hospital stay)",9,Beth Israel Deaconess Hospital–Milton,10101.0,Lahey Hospital & Medical Center,24186.0,2.4
+Colonoscopy (diagnostic),17,Tufts Medical Center,905.0,Massachusetts General Hospital,1975.0,2.2

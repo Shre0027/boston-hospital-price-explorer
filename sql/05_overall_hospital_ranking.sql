@@ -1,27 +1,28 @@
--- Question: Across all procedures, which hospital tends to be cheapest or most expensive
+-- Question: Across all procedures, which hospitals tend to be cheaper or more expensive
 --           for commercial insurance?
 -- Why it matters: one procedure can be a fluke; a consistent pattern across many procedures is a real finding.
--- Method: for each procedure, express each hospital's price relative to the cheapest hospital
--- (1.0 = cheapest), then take the median (robust to a few extreme gaps) and the average across procedures. Only procedures listed by at least 4 hospitals count,
--- so every hospital is compared on mostly the same set.
+-- Method: a simple price index. For each procedure, divide each hospital's typical commercial price by the
+-- median across hospitals for that procedure (1.0 = typical; 1.5 = 50% above typical). Each hospital's index
+-- is the median of these ratios. Only procedures listed by at least 8 hospitals count, and only hospitals
+-- with at least 8 such procedures are ranked, so every hospital is compared on mostly the same set.
 
-WITH relative AS (
+WITH per_procedure AS (
     SELECT
         hospital,
-        procedure,
-        median_price / MIN(median_price) OVER (PARTITION BY cpt) AS times_cheapest,
-        RANK()        OVER (PARTITION BY cpt ORDER BY median_price) AS price_rank,
-        COUNT(*)      OVER (PARTITION BY cpt)                       AS hospitals_listing
+        cpt,
+        median_price / MEDIAN(median_price) OVER (PARTITION BY cpt) AS vs_typical,
+        COUNT(*) OVER (PARTITION BY cpt)                             AS hospitals_listing
     FROM typical_commercial
 )
 SELECT
     hospital,
-    COUNT(*)                          AS procedures_compared,
-    ROUND(MEDIAN(times_cheapest), 2)  AS median_times_cheapest,
-    ROUND(AVG(times_cheapest), 2)     AS avg_times_cheapest,
-    ROUND(AVG(price_rank), 1)         AS avg_rank_1_is_cheapest,
-    COUNT(*) FILTER (WHERE price_rank = 1) AS times_cheapest_hospital
-FROM relative
-WHERE hospitals_listing >= 4
+    COUNT(*)                                          AS procedures_compared,
+    ROUND(MEDIAN(vs_typical), 2)                      AS price_index,
+    ROUND(MIN(vs_typical), 2)                         AS lowest_ratio,
+    ROUND(MAX(vs_typical), 2)                         AS highest_ratio,
+    COUNT(*) FILTER (WHERE vs_typical < 1)            AS procedures_below_typical
+FROM per_procedure
+WHERE hospitals_listing >= 8
 GROUP BY hospital
-ORDER BY median_times_cheapest;
+HAVING COUNT(*) >= 8
+ORDER BY price_index, hospital;

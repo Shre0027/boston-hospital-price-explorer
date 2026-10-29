@@ -17,7 +17,8 @@ WHERE market = 'Commercial'
   AND (flag IS NULL OR flag = '')
   AND (modifiers IS NULL OR modifiers = '');
 
--- One typical (median) commercial price per hospital and procedure
+-- One typical (median) commercial price per hospital and procedure.
+-- Requires at least 3 plan prices, so a "typical" price never rests on just one or two plans.
 CREATE OR REPLACE VIEW typical_commercial AS
 SELECT
     hospital_id,
@@ -30,7 +31,8 @@ SELECT
     MAX(comparison_price)    AS max_price,
     COUNT(*)                 AS plans
 FROM comparable
-GROUP BY ALL;
+GROUP BY ALL
+HAVING COUNT(*) >= 3;
 
 -- One cash (self-pay) price per hospital and procedure
 CREATE OR REPLACE VIEW typical_cash AS
@@ -39,3 +41,21 @@ FROM prices
 WHERE cash_price IS NOT NULL
   AND (modifiers IS NULL OR modifiers = '')
 GROUP BY ALL;
+
+-- Hospital list from the project config (id, name, health system, CMS Certification Number)
+CREATE OR REPLACE VIEW hospitals AS
+SELECT id AS hospital_id, name AS hospital, short, system, ccn
+FROM read_json('config/hospitals.json', format = 'array', columns = {
+    id: 'VARCHAR', name: 'VARCHAR', short: 'VARCHAR', system: 'VARCHAR', ccn: 'VARCHAR'});
+
+-- CMS overall star rating (1-5) per hospital, joined by CMS Certification Number.
+-- Stars are NULL when CMS shows "Not Available" (e.g. too few measures reported).
+CREATE OR REPLACE VIEW quality AS
+SELECT
+    h.hospital_id,
+    h.hospital,
+    TRY_CAST(q."Hospital overall rating" AS INTEGER) AS cms_stars,
+    q."Hospital overall rating footnote"            AS stars_footnote
+FROM hospitals h
+LEFT JOIN read_csv('data/quality/ma_hospital_general_information.csv', header = true, all_varchar = true) q
+  ON q."Facility ID" = h.ccn;

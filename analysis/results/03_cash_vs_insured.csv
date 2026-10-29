@@ -1,16 +1,16 @@
 hospital,procedure,cash_price,typical_insurer_price,cash_times_insurer
+New England Baptist Hospital,Comprehensive metabolic panel,414.0,16.0,25.7
 Beth Israel Deaconess Medical Center,Comprehensive metabolic panel,658.0,26.0,25.5
+Beth Israel Deaconess Hospital–Needham,Comprehensive metabolic panel,376.0,21.0,18.2
+Cambridge Health Alliance,Comprehensive metabolic panel,320.0,28.0,11.5
+South Shore Hospital,CT abdomen and pelvis (with contrast),4123.0,483.0,8.5
+New England Baptist Hospital,Cholesterol (lipid) panel,156.0,20.0,7.6
+South Shore Hospital,Doctor office visit (established patient),274.0,36.0,7.6
+South Shore Hospital,MRI lower back (no contrast),2476.0,338.0,7.3
+New England Baptist Hospital,MRI knee (no contrast),2772.0,390.0,7.1
+Mount Auburn Hospital,MRI knee (no contrast),4222.0,611.0,6.9
 Beth Israel Deaconess Medical Center,Abdominal ultrasound (complete),1333.0,199.0,6.7
-Beth Israel Deaconess Medical Center,MRI lower back (no contrast),3237.0,638.0,5.1
-Beth Israel Deaconess Medical Center,MRI brain (no contrast),3170.0,638.0,5.0
-Beth Israel Deaconess Medical Center,MRI knee (no contrast),2921.0,638.0,4.6
-Boston Medical Center,Comprehensive metabolic panel,78.0,19.0,4.2
-Beth Israel Deaconess Medical Center,Complete blood count (CBC),79.0,19.0,4.1
-Beth Israel Deaconess Medical Center,Cholesterol (lipid) panel,125.0,33.0,3.8
-Boston Medical Center,MRI brain (no contrast),2066.0,574.0,3.6
-Beth Israel Deaconess Medical Center,CT abdomen and pelvis (with contrast),3721.0,1068.0,3.5
-Massachusetts General Hospital,MRI lower back (no contrast),3281.0,967.0,3.4
-Boston Medical Center,MRI knee (no contrast),2076.0,628.0,3.3
-Beth Israel Deaconess Medical Center,Screening mammogram,889.0,275.0,3.2
-Boston Medical Center,MRI lower back (no contrast),1815.0,574.0,3.2
-Beth Israel Deaconess Medical Center,Chest X-ray (2 views),325.0,110.0,2.9
+New England Baptist Hospital,Complete blood count (CBC),76.0,12.0,6.6
+New England Baptist Hospital,MRI brain (no contrast),2485.0,390.0,6.4
+South Shore Hospital,Cholesterol (lipid) panel,166.0,26.0,6.3
+Winchester Hospital,Abdominal ultrasound (complete),1214.0,192.0,6.3

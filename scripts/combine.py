@@ -18,6 +18,7 @@ Usage:
 """
 
 import csv
+import statistics
 import json
 import re
 from pathlib import Path
@@ -30,7 +31,7 @@ OUT_DIR = ROOT / "data" / "combined"
 # used when the payer name is generic (see GENERIC_PAYERS), because some hospitals use the plan
 # column for pricing labels rather than the patient's actual plan.
 INSURER_GROUPS = [
-    ("Blue Cross Blue Shield", r"\bBCBS\b|BLUE CROSS|BLUE SHIELD"),
+    ("Blue Cross Blue Shield", r"\bBCBS\b|BLUE CROSS|BLUE SHIELD|\bMEDEX\b"),
     ("Harvard Pilgrim", r"HARVARD PILGRIM|\bHPHC\b"),
     ("Tufts Health Plan", r"\bTUFTS\b"),
     ("Aetna", r"\bAETNA\b"),
@@ -42,7 +43,7 @@ INSURER_GROUPS = [
     ("Health New England", r"HEALTH NEW ENGLAND|HLTH NEW ENGLAND"),
     ("Humana", r"\bHUMANA\b"),
     ("Medicare (original)", r"^MEDICARE( \[\d+\])?$"),
-    ("MassHealth", r"MASSHEALTH|^MEDICAID"),
+    ("MassHealth", r"MASS ?HEALTH|^MEDICAID"),
 ]
 
 # Payer names that don't say which insurer it is; for these, look at the plan name too
@@ -50,13 +51,18 @@ GENERIC_PAYERS = r"CENTERS OF EXCELLENCE|INTERNATIONAL COMMERCIAL"
 
 # Market, decided from the payer name. Checked in order; the first match wins.
 MARKETS = [
-    ("Other public / workers comp", r"^WC\b|WORK COMP|CORRECTIONS|HRSA"),
+    # Not medical insurance for these procedures: dental and vision plans, and behavioral-health plans
+    ("Dental / vision plan", r"DENTAL|EYEMED|VISION|SPECTERA"),
+    ("Behavioral health plan", r"BEHAVIOR|BEACON|CARELON|MAGELLAN|\bBH\b|MBHP|COMPSYCH|CBHC"),
+    ("Other public / workers comp", r"^WC\b|WORK COMP|CORRECTIONS|HRSA|\bMVA\b|\bDPH\b|OTHER GOV'?T"),
+    # Payer names that could be commercial or Medicaid; left out rather than guessed
+    ("Unclear (excluded)", r"^NEIGHBORHOOD HEALTH PLAN|RI NEIGHBORHOOD|CELTICARE|COVERAGE DISCOVERY|MODERN ASSISTANCE"),
     ("Medicare", r"MEDICARE REPLACEMENT|MEDICARE MANAGED"),
     ("MassHealth / safety net", r"MEDICAID REPLACEMENT"),
     ("Commercial", r"COMMERCIAL|CONNECTORCARE"),
     ("Military", r"TRICARE|CHAMPVA|MARTIN'?S POINT|VETERANS"),
-    ("MassHealth / safety net", r"MEDICAID|MASSHEALTH|\bACO\b|\bMCO\b|\bMCD\b|\bHSN\b|WELLSENSE|\bCCA\b|COMMONWEALTH CARE|MOLINA|PUBLIC PLAN"),
-    ("Medicare", r"MEDICARE|\bAARP\b|SENIOR|\bPACE\b|\bSCO\b|ELDER SERVICES|ADVANTAGE|WELLCARE|ETERNALHEALTH|UPHAMS CORNER"),
+    ("MassHealth / safety net", r"MEDICAID|MASS ?HEALTH|\bACO\b|\bMCO\b|\bMCD\b|\bHSN\b|SAFETY NET|WELLSENSE|\bCCA\b|COMMONWEALTH CARE|MOLINA|PUBLIC PLAN|COMMUNITY PLAN"),
+    ("Medicare", r"MEDICARE|\bAARP\b|SENIOR|\bPACE\b|\bSCO\b|ELDER SERVICE|ADVANTAGE|WELLCARE|ETERNALHEALTH|UPHAMS CORNER|EVERCARE|SCAN HEALTH|\bMEDEX\b|DUAL ELIGIBLE"),
 ]
 
 # Clear signals in the plan name that override a "Commercial" default
@@ -98,6 +104,10 @@ def classify(payer, plan):
             group = name
             break
 
+    # Dental, vision and behavioral-health plans are never medical comparisons, whatever the insurer
+    for name, pattern in MARKETS[:2]:
+        if re.search(pattern, payer_upper):
+            return group, name
     if group == "Medicare (original)":
         return group, "Medicare"
     if group == "MassHealth":
@@ -129,6 +139,7 @@ def main():
     with open(out_path, "w", newline="", encoding="utf-8") as out:
         writer = csv.DictWriter(out, fieldnames=columns)
         writer.writeheader()
+        all_rows = []
         for path in sorted(IN_DIR.glob("*_prices.csv")):
             hid = path.name.removesuffix("_prices.csv")
             if hid not in hospitals:
@@ -165,7 +176,7 @@ def main():
                         flag = "insurer rate above sticker price (likely a bundled rate)"
                     elif formula and median is None and negotiated is not None:
                         flag = "rate set by formula and no amount-paid figure given; listed amount may be only part of the payment"
-                    writer.writerow({
+                    all_rows.append({
                         "hospital_id": hid,
                         "hospital": hospitals[hid]["name"],
                         "cpt": cpt,
@@ -196,7 +207,27 @@ def main():
                     n += 1
             counts[hid] = n
 
+        # Second pass: flag prices that are implausibly low for the procedure. Some files contain
+        # rates like $0.03 for a blood count or $5 for a colonoscopy, which can't be real payments
+        # (likely units or factors entered in the dollar column). The threshold is 10% of the
+        # median commercial price for that procedure across all hospitals.
+        typical = {}
+        by_cpt = {}
+        for r in all_rows:
+            if r["market"] == "Commercial" and r["comparison_price"] is not None and not r["flag"] and not r["modifiers"]:
+                by_cpt.setdefault(r["cpt"], []).append(r["comparison_price"])
+        for cpt, values in by_cpt.items():
+            typical[cpt] = statistics.median(values)
+        low_flags = 0
+        for r in all_rows:
+            t = typical.get(r["cpt"])
+            if t and r["comparison_price"] is not None and r["comparison_price"] < 0.10 * t and not r["flag"]:
+                r["flag"] = "implausibly low (under 10% of the typical price for this procedure; likely a data error)"
+                low_flags += 1
+        writer.writerows(all_rows)
+
     total = sum(counts.values())
+    print(f"Flagged {low_flags} implausibly low prices")
     print(f"Wrote {total:,} rows to {out_path.relative_to(ROOT)}: " + ", ".join(f"{k} {v:,}" for k, v in counts.items()))
 
 

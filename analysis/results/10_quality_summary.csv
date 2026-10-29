@@ -1,0 +1,6 @@
+group_name,hospitals,lowest_price_index,median_price_index,highest_price_index,rank_correlation
+2 stars,2,0.63,0.76,0.9,
+3 stars,5,0.89,1.0,1.22,
+4 stars,3,0.73,1.0,1.04,
+5 stars,7,0.71,1.13,1.89,
+All rated hospitals,17,0.63,1.0,1.89,0.42

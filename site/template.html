@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Boston Hospital Price Explorer</title>
-<meta name="description" content="Compare published prices for common procedures across five Boston hospitals, from their official price transparency files.">
+<meta name="description" content="Compare published prices for common procedures across 18 Greater Boston hospitals, from their official price transparency files, next to CMS quality ratings.">
 <style>
 :root {
   color-scheme: light;
@@ -101,6 +101,7 @@ table.grid th:first-child, table.grid td:first-child { text-align: left; }
 table.grid td { padding: 7px 8px; text-align: right; border-radius: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 table.grid tbody tr { cursor: pointer; }
 table.grid th:first-child, table.grid td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+table.grid td:first-child { white-space: normal; min-width: 150px; max-width: 190px; line-height: 1.3; }
 table.grid tbody tr:hover td:first-child { color: var(--accent-text); }
 .legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin: 12px 0 0; flex-wrap: wrap; }
 .legend .sw { width: 22px; height: 12px; border-radius: 2px; display: inline-block; }
@@ -109,9 +110,33 @@ table.grid tbody tr:hover td:first-child { color: var(--accent-text); }
 .score h3 { font-size: 16px; margin: 0; }
 .score .meta { font-size: 12px; color: var(--text-muted); margin: 2px 0 12px; }
 .check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; margin: 0 0 10px; font-size: 14px; }
-.check .ic { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; margin-top: 2px; }
+.ic { flex: none; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; margin-top: 2px; }
 .ic.good { background: var(--good); } .ic.warning { background: var(--warning); color: #3a2a00; } .ic.critical { background: var(--critical); }
 .check .detail { display: block; font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+.pq-axis { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; font-size: 12px; color: var(--text-muted); margin: 4px 0; }
+.pq-ticks { position: relative; height: 18px; }
+.pq-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.pq-group { margin: 14px 0 4px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.pq-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; min-height: 28px; }
+.pq-name { font-size: 14px; line-height: 1.25; }
+.pq-track { position: relative; height: 28px; }
+.pq-track .ref { position: absolute; top: 0; bottom: 0; border-left: 1.5px dashed var(--text-muted); opacity: .7; }
+.pq-track .rail { position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid var(--border); }
+.pq-dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); }
+.pq-val { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; white-space: nowrap; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.stars { color: var(--text-secondary); letter-spacing: 1px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.filters button { font: inherit; font-size: 13px; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+table.grid th.h { white-space: normal; max-width: 78px; min-width: 62px; font-size: 12px; line-height: 1.2; vertical-align: bottom; }
+.scorewrap { overflow-x: auto; }
+table.scoretab { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13px; }
+table.scoretab th { text-align: left; font-weight: 600; color: var(--text-secondary); padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: bottom; }
+table.scoretab td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.scoretab td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.scoretab .sys { display: block; font-size: 12px; color: var(--text-muted); }
+table.scoretab ul { margin: 0; padding-left: 16px; color: var(--text-secondary); }
+.st { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .method p, .method li { color: var(--text-secondary); font-size: 15px; }
 .method ul { padding-left: 20px; }
 a { color: var(--accent-text); }
@@ -122,6 +147,8 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   .card { padding: 16px; }
   .bar-value .range { display: block; margin-left: 0; }
   .bar-track { --room: 110px; height: 42px; }
+  .pq-row, .pq-axis { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; }
+  .pq-name { font-size: 13px; }
 }
 </style>
 </head>
@@ -130,7 +157,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   <header class="hero">
     <p class="eyebrow">Boston Hospital Price Explorer</p>
     <h1>What will this actually cost me?</h1>
-    <p class="lede">Hospitals must publish their prices by law, but in files too big for anyone to read. This compares common procedures across five Boston hospitals, straight from those official files.</p>
+    <p class="lede">Hospitals must publish their prices by law, but in files too big for anyone to read. This compares common procedures across <span id="nh"></span> Greater Boston hospitals, straight from those official files, next to each hospital's CMS quality rating.</p>
     <div class="stats" id="stats"></div>
   </header>
 
@@ -165,8 +192,18 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
 
   <section>
     <div class="card">
+      <h2>Do higher-rated hospitals cost more?</h2>
+      <p class="sub" id="pqsub"></p>
+      <div id="pq"></div>
+      <p class="note" id="pqnote"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
       <h2>Every procedure at a glance</h2>
-      <p class="sub">Darker means more expensive than the cheapest hospital for that procedure. Select a row to compare it above.</p>
+      <p class="sub">Darker means more expensive than the typical price for that procedure (the median across hospitals). Hospitals are ordered from lowest to highest overall price level. Select a row to compare it above.</p>
+      <div class="filters" id="sysfilter" role="group" aria-label="Health system"></div>
       <div class="seg" role="group" aria-label="Price type">
         <button type="button" data-mode="cash" aria-pressed="true">Cash price</button>
         <button type="button" data-mode="commercial" aria-pressed="false">Commercial insurance</button>
@@ -177,9 +214,11 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </section>
 
   <section>
-    <h2>How usable is each hospital's file?</h2>
-    <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them (checked <span id="accdate"></span>).</p>
-    <div class="score" id="score"></div>
+    <div class="card">
+      <h2>How usable is each hospital's file?</h2>
+      <p class="sub">The law says these files must be public and machine-readable. Here's what happened when we tried to use them (checked <span id="accdate"></span>).</p>
+      <div class="scorewrap"><table class="scoretab" id="score"></table></div>
+    </div>
   </section>
 
   <section class="method">
@@ -188,13 +227,16 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
       <ul>
         <li><b>These are prices paid to the hospital, not what you'll pay.</b> Your out-of-pocket cost depends on your deductible, copay and plan.</li>
         <li><b>Cash price</b> is the hospital's listed price if you pay without insurance.</li>
-        <li><b>Commercial insurance (typical)</b> is the median price across all employer and private plans the hospital lists. It isn't weighted by how many people use each plan.</li>
-        <li>When an insurer's rate comes from a formula, the listed dollar amount can be only part of the payment. Where the hospital reports the median amount actually paid, that's used instead. Rates with no reliable figure are left out.</li>
-        <li>Procedures are matched by billing code (CPT), because each hospital names them differently. Hospital facility charges only; doctors' fees may be billed separately.</li>
+        <li><b>Commercial insurance (typical)</b> is the median price across all employer and private plans the hospital lists, shown only when there are at least 3 plan prices. It isn't weighted by how many people use each plan.</li>
+        <li><b>Price level</b> compares each hospital with the typical (median) hospital for each procedure, then takes the median across procedures: 1.0× is typical, 1.5× is 50% above typical.</li>
+        <li><b>CMS star rating</b> (1–5) is Medicare's overall hospital rating, summarizing measures such as mortality, safety, readmissions and patient experience (<span id="qasof"></span>). It doesn't measure each procedure compared here, and a price difference doesn't prove a quality difference.</li>
+        <li>Hospitals: general acute-care hospitals within about 15 miles of downtown Boston, plus two specialty hospitals (Mass Eye and Ear, New England Baptist). Children's, cancer, psychiatric and rehabilitation hospitals are not included. MelroseWakefield Hospital (Tufts Medicine) is not included yet, because Tufts Medicine blocks automated downloads.</li>
+        <li>When an insurer's rate comes from a formula, the listed dollar amount can be only part of the payment. Where the hospital reports the median amount actually paid, that's used instead. Rates with no reliable figure, and impossible values (such as $0.03 for a blood test), are set aside.</li>
+        <li>Procedures are matched by billing code (CPT, or MS-DRG for the gallbladder hospital stay), because each hospital names them differently. Hospital facility charges only; doctors' fees may be billed separately.</li>
         <li>"Not listed" means no price was found under that billing code in the hospital's file.</li>
       </ul>
-      <p>Data: each hospital's machine-readable file under the CMS Hospital Price Transparency rule (45 CFR Part 180). <span id="asof"></span></p>
-      <p>Every step, decision and correction is documented: <a href="https://github.com/Shre0027/boston-hospital-price-explorer">code on GitHub</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>.</p>
+      <p>Data: each hospital's machine-readable file under the CMS Hospital Price Transparency rule (45 CFR Part 180); quality ratings from CMS Hospital General Information. <span id="asof"></span></p>
+      <p>Every step, decision and correction is documented: <a href="https://github.com/Shre0027/boston-hospital-price-explorer">code on GitHub</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/case-study.md">case study</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/analysis/README.md">SQL analysis</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a>.</p>
     </div>
   </section>
 
@@ -215,19 +257,32 @@ function valueFor(cpt, hid, payer) {
   return e.insurers[payer] || null;
 }
 
+function fewPlans(cpt, hid, payer) {
+  return payer === "commercial" ? DATA.prices[cpt][hid].few_plans : null;
+}
+const starText = (n) => n ? "★".repeat(n) + "☆".repeat(5 - n) : "Not rated";
+const starLabel = (n) => n ? `${n} of 5 CMS stars` : "No CMS star rating";
+
 function stats() {
-  let bestCash = null, bestComm = null;
+  let bestComm = null;
   for (const p of DATA.procedures) {
-    const c = H.map(h => DATA.prices[p.cpt][h.id].cash).filter(v => v != null);
-    const m = H.map(h => DATA.prices[p.cpt][h.id].commercial).filter(Boolean).map(s => s.median);
-    if (c.length >= 3) { const r = Math.max(...c) / Math.min(...c); if (!bestCash || r > bestCash.r) bestCash = { r, p, hi: Math.max(...c), lo: Math.min(...c) }; }
-    if (m.length >= 3) { const r = Math.max(...m) / Math.min(...m); if (!bestComm || r > bestComm.r) bestComm = { r, p, hi: Math.max(...m), lo: Math.min(...m) }; }
+    const m = H.map(h => ({ h, v: DATA.prices[p.cpt][h.id].commercial })).filter(x => x.v);
+    if (m.length >= 5) {
+      const lo = m.reduce((a, b) => (b.v.median < a.v.median ? b : a)), hi = m.reduce((a, b) => (b.v.median > a.v.median ? b : a));
+      const r = hi.v.median / lo.v.median;
+      if (!bestComm || r > bestComm.r) bestComm = { r, p, lo, hi };
+    }
   }
+  const five = H.filter(h => h.stars === 5 && h.price_index != null);
   const tiles = [];
-  if (bestComm) tiles.push([`${bestComm.r.toFixed(0)}×`, `${bestComm.p.name} with commercial insurance: ${money(bestComm.lo)} at the cheapest hospital, ${money(bestComm.hi)} at the most expensive`]);
-  if (bestCash) tiles.push([`${bestCash.r.toFixed(1)}×`, `${bestCash.p.name}, cash price: ${money(bestCash.lo)} at the cheapest hospital, ${money(bestCash.hi)} at the most expensive`]);
+  if (bestComm) tiles.push([`${bestComm.r.toFixed(1)}×`, `${bestComm.p.name} with commercial insurance: ${money(bestComm.lo.v.median)} at ${bestComm.lo.h.short}, ${money(bestComm.hi.v.median)} at ${bestComm.hi.h.short}`]);
+  if (five.length >= 2) {
+    const lo = Math.min(...five.map(h => h.price_index)), hi = Math.max(...five.map(h => h.price_index));
+    tiles.push([`${lo.toFixed(2)}–${hi.toFixed(2)}×`, `price level of the ${five.length} hospitals with a 5-star CMS rating: top-rated care at both ends of the price range`]);
+  }
   tiles.push([DATA.total_prices.toLocaleString("en-US"), `published prices compared across ${H.length} hospitals and ${DATA.procedures.length} procedures`]);
   $("stats").innerHTML = tiles.map(t => `<div class="stat"><div class="num">${t[0]}</div><div class="what">${t[1]}</div></div>`).join("");
+  $("nh").textContent = H.length;
 }
 
 function fillControls() {
@@ -248,7 +303,7 @@ function drawBars() {
   const cpt = $("proc").value, payer = $("payer").value;
   const rows = H.map(h => ({ h, v: valueFor(cpt, h.id, payer) }));
   const have = rows.filter(r => r.v).sort((a, b) => a.v.median - b.v.median);
-  const missing = rows.filter(r => !r.v);
+  const missing = rows.filter(r => !r.v).sort((a, b) => (fewPlans(cpt, b.h.id, payer) || 0) - (fewPlans(cpt, a.h.id, payer) || 0));
   const max = Math.max(...have.map(r => r.v.median), 1);
   const lo = have[0], hi = have[have.length - 1];
   const name = procName(cpt);
@@ -273,7 +328,7 @@ function drawBars() {
       <div class="bar-label">${r.h.short}<small>${r.h.name}</small></div>
       <div class="bar-track">${r.v
         ? `<div class="bar" style="width:calc((100% - var(--room)) * ${(w / 100).toFixed(4)})"></div><span class="bar-value">${money(r.v.median)}${tag}${range}</span>`
-        : `<div class="bar missing"></div><span class="bar-value" style="margin-left:0;color:var(--text-muted)">Not listed</span>`}</div>
+        : `<div class="bar missing"></div><span class="bar-value" style="margin-left:0;color:var(--text-muted)">${fewPlans(cpt, r.h.id, payer) ? `Only ${fewPlans(cpt, r.h.id, payer)} plan price${fewPlans(cpt, r.h.id, payer) > 1 ? "s" : ""}, too few for a typical price` : "Not listed"}</span>`}</div>
     </div>`;
   }).join("") + `<div class="tip" id="tip"></div>`;
 
@@ -287,7 +342,7 @@ function drawBars() {
   document.querySelectorAll(".bar-row").forEach(row => {
     row.addEventListener("mousemove", ev => {
       const h = H.find(x => x.id === row.dataset.h), v = valueFor(cpt, h.id, payer), e = DATA.prices[cpt][h.id];
-      tip.innerHTML = `<b>${h.name}</b><br>${procName(cpt)} · CPT ${cpt}<br>` +
+      tip.innerHTML = `<b>${h.name}</b><br>${h.system} · ${starLabel(h.stars)}<br>${procName(cpt)} · code ${cpt}<br>` +
         (v ? `${payer === "cash" ? "Cash price" : "Median"}: <b>${money(v.median)}</b>` + (v.n ? `<br>Range: ${money(v.min)}–${money(v.max)} (${v.n} plan${v.n > 1 ? "s" : ""})` : "") : "Not listed in this hospital's file") +
         (e.gross != null ? `<br>Sticker price: ${money(e.gross)}` : "");
       const box = $("bars").getBoundingClientRect();
@@ -299,41 +354,94 @@ function drawBars() {
   });
 }
 
-let gridMode = "cash";
-function shade(ratio) {
-  if (ratio < 1.15) return 1; if (ratio < 1.5) return 2; if (ratio < 2) return 3; if (ratio < 3) return 4; if (ratio < 5) return 5; return 6;
+function drawPQ() {
+  const lo = 0.5, hi = 2.2, L = Math.log;
+  const pos = (x) => Math.max(0, Math.min(100, (L(x) - L(lo)) / (L(hi) - L(lo)) * 100));
+  const ticks = [0.5, 0.75, 1, 1.5, 2];
+  const axis = `<div class="pq-axis" aria-hidden="true"><div></div><div class="pq-ticks">${ticks.map(t => `<span style="left:${pos(t)}%">${t === 1 ? "1× typical" : t + "×"}</span>`).join("")}</div></div>`;
+  let html = axis;
+  for (const g of [5, 4, 3, 2, 1, null]) {
+    const hs = H.filter(h => h.price_index != null && (h.stars || null) === g).sort((a, b) => a.price_index - b.price_index);
+    if (!hs.length) continue;
+    html += `<div class="pq-group"><span class="stars" aria-hidden="true">${g ? starText(g) : ""}</span> ${g ? `${g}-star CMS rating` : "No CMS rating"} · ${hs.length} hospital${hs.length > 1 ? "s" : ""}</div>`;
+    html += hs.map(h => {
+      const x = pos(h.price_index), right = x > 78;
+      return `<div class="pq-row" title="${h.name}: ${h.price_index.toFixed(2)}× the typical price, ${starLabel(h.stars)}">
+        <div class="pq-name">${h.short}</div>
+        <div class="pq-track"><div class="rail"></div><div class="ref" style="left:${pos(1)}%"></div>
+          <div class="pq-dot" style="left:${x}%"></div>
+          <span class="pq-val" style="${right ? `right:calc(${100 - x}% + 12px)` : `left:calc(${x}% + 12px)`}">${h.price_index.toFixed(2)}×</span></div>
+      </div>`;
+    }).join("");
+  }
+  $("pq").innerHTML = html + axis;
+  const rated = H.filter(h => h.stars && h.price_index != null);
+  const five = rated.filter(h => h.stars === 5).sort((a, b) => a.price_index - b.price_index);
+  const rc = DATA.rank_correlation;
+  $("pqsub").textContent = rc == null ? "Each dot is a hospital's overall price level for commercial insurance." :
+    `Somewhat, but not consistently. Across ${rated.length} rated hospitals, price and rating move together only loosely (rank correlation ${rc.toFixed(2)}; 1 would mean price always rises with rating). ` +
+    (five.length >= 2 ? `The 5-star hospitals run from ${five[0].short} at ${five[0].price_index.toFixed(2)}× the typical price to ${five[five.length - 1].short} at ${five[five.length - 1].price_index.toFixed(2)}×.` : "");
+  $("pqnote").textContent = "Dot = the hospital's price level: its typical commercial price divided by the typical price across hospitals, median over procedures (log scale; dashed line = typical). Hospitals with too few comparable procedures aren't shown. A star rating summarizes overall hospital quality, not each procedure.";
 }
+
+let gridMode = "cash";
+let sysFilter = "All";
+const BIG_SYSTEMS = ["Mass General Brigham", "Beth Israel Lahey Health", "BMC Health System"];
+const sysOf = (h) => BIG_SYSTEMS.includes(h.system) ? h.system : "Other";
+function shade(ratio) {
+  if (ratio <= 0.8) return 1; if (ratio <= 1.0) return 2; if (ratio <= 1.25) return 3; if (ratio <= 1.5) return 4; if (ratio <= 2) return 5; return 6;
+}
+function median(a) { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
 function drawGrid() {
-  const head = `<thead><tr><th>Procedure</th>${H.map(h => `<th>${h.short}</th>`).join("")}</tr></thead>`;
+  const order = [...H].sort((a, b) => (a.price_index ?? 9) - (b.price_index ?? 9) || a.short.localeCompare(b.short));
+  const cols = order.filter(h => sysFilter === "All" || sysOf(h) === sysFilter);
+  const head = `<thead><tr><th>Procedure</th>${cols.map(h => `<th class="h" title="${h.name}">${h.short}</th>`).join("")}</tr></thead>`;
   const body = DATA.procedures.map(p => {
-    const vals = H.map(h => { const v = valueFor(p.cpt, h.id, gridMode); return v ? v.median : null; });
-    const have = vals.filter(v => v != null), min = have.length ? Math.min(...have) : null;
-    return `<tr tabindex="0" data-cpt="${p.cpt}"><td>${p.name}</td>${vals.map(v => {
-      if (v == null) return `<td style="color:var(--text-muted)">—</td>`;
-      const s = shade(v / min);
-      return `<td style="background:var(--seq-${s});color:var(--seq-fg-${s})" title="${(v / min).toFixed(1)}× the lowest">${money(v)}</td>`;
+    const all = H.map(h => valueFor(p.cpt, h.id, gridMode)).filter(Boolean).map(v => v.median);
+    const typ = all.length ? median(all) : null;
+    return `<tr tabindex="0" data-cpt="${p.cpt}"><td>${p.name}</td>${cols.map(h => {
+      const v = valueFor(p.cpt, h.id, gridMode);
+      if (!v) return `<td style="color:var(--text-muted)">—</td>`;
+      const r = v.median / typ, k = shade(r);
+      return `<td style="background:var(--seq-${k});color:var(--seq-fg-${k})" title="${h.name}: ${r.toFixed(2)}× the typical price">${money(v.median)}</td>`;
     }).join("")}</tr>`;
   }).join("");
   $("grid").innerHTML = head + `<tbody>${body}</tbody>`;
   $("grid").querySelectorAll("tbody tr").forEach(tr => {
-    const go = () => { $("proc").value = tr.dataset.cpt; $("payer").value = gridMode; drawBars(); $("proc").scrollIntoView({ behavior: "smooth", block: "center" }); };
+    const go = () => { $("proc").value = tr.dataset.cpt; $("payer").value = gridMode; drawBars(); $("compare").scrollIntoView({ behavior: "smooth", block: "start" }); };
     tr.addEventListener("click", go);
     tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
   });
-  const steps = [["Lowest", 1], ["<1.5×", 2], ["<2×", 3], ["<3×", 4], ["<5×", 5], ["5×+", 6]];
-  $("legend").innerHTML = "Compared with the cheapest hospital:" + steps.map(s => `<span><span class="sw" style="background:var(--seq-${s[1]})"></span> ${s[0]}</span>`).join("");
+  const steps = [["≤0.8×", 1], ["≤1×", 2], ["≤1.25×", 3], ["≤1.5×", 4], ["≤2×", 5], [">2×", 6]];
+  $("legend").innerHTML = "Compared with the typical price:" + steps.map(s => `<span><span class="sw" style="background:var(--seq-${s[1]})"></span> ${s[0]}</span>`).join("") + ` · — not listed${gridMode === "commercial" ? ", or fewer than " + DATA.min_plans + " plan prices" : ""}`;
+}
+function drawFilters() {
+  const opts = ["All", ...BIG_SYSTEMS, "Other"];
+  $("sysfilter").innerHTML = opts.map(o => `<button type="button" data-sys="${o}" aria-pressed="${o === sysFilter}">${o === "All" ? `All ${H.length} hospitals` : o === "Other" ? "Other hospitals" : o}</button>`).join("");
+  $("sysfilter").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { sysFilter = b.dataset.sys; drawFilters(); drawGrid(); }));
 }
 
 function drawScore() {
   const icon = { good: "✓", warning: "!", critical: "✕" };
-  const word = { good: "OK", warning: "Issue", critical: "Problem" };
-  $("score").innerHTML = H.map(h => `<div class="card">
-    <h3>${h.name}</h3>
-    <div class="meta">${h.system} · file updated ${h.last_updated} · ${h.rows_in_file.toLocaleString("en-US")} rows · ${h.procedures_found} of ${DATA.procedures.length} procedures found</div>
-    ${h.access.map(a => `<div class="check"><span class="ic ${a.status}" role="img" aria-label="${word[a.status]}">${icon[a.status]}</span><span>${a.label}<span class="detail">${a.detail}</span></span></div>`).join("")}
-  </div>`).join("");
+  const word = { good: "Works", warning: "Issue", critical: "Blocked" };
+  const st = (x) => x ? `<span class="st"><span class="ic ${x[0]}" role="img" aria-label="${word[x[0]]}">${icon[x[0]]}</span>${word[x[0]]}</span>` : "—";
+  const rows = [...H].sort((a, b) => a.system.localeCompare(b.system) || a.name.localeCompare(b.name));
+  $("score").innerHTML = `<thead><tr><th>Hospital</th><th>Official link list</th><th>Automated download</th><th>Procedures found</th><th>Commercial insurers listed</th><th>Rows set aside</th><th>Notes</th></tr></thead><tbody>` +
+    rows.map(h => {
+      const notes = [];
+      if (h.link_list && h.link_list[0] !== "good") notes.push(h.link_list[1]);
+      if (h.download && h.download[0] !== "good") notes.push(h.download[1]);
+      notes.push(...h.notes);
+      return `<tr><td><b style="font-weight:600">${h.name}</b><span class="sys">${h.system} · file updated ${h.last_updated} · ${h.rows_in_file.toLocaleString("en-US")} rows</span></td>
+        <td>${st(h.link_list)}</td><td>${st(h.download)}</td>
+        <td class="num">${h.procedures_found} of ${DATA.procedures.length}</td>
+        <td class="num">${h.insurers_listed}</td>
+        <td class="num">${h.pct_set_aside}%</td>
+        <td>${notes.length ? `<ul>${notes.map(n => `<li>${n}</li>`).join("")}</ul>` : ""}</td></tr>`;
+    }).join("") + "</tbody>";
   $("accdate").textContent = DATA.access_checked_on;
   $("asof").textContent = `Prices refreshed on ${DATA.built_on}; access findings checked on ${DATA.access_checked_on}. Refreshed automatically each month.`;
+  $("qasof").textContent = DATA.quality_as_of ? `CMS data updated ${DATA.quality_as_of}` : "CMS data";
 }
 
 // ---------- Plain-English search ----------
@@ -372,6 +480,19 @@ const PAYER_WORDS = [
   ["commercial", /\b(insurance|insured|my plan|employer)\b/],
 ];
 const HOSP_WORDS = [
+  ["faulkner", /\bfaulkner\b/],
+  ["bmcbrighton", /\b(bmc brighton|boston medical center brighton|st\.? elizabeth'?s?)\b/],
+  ["bidmilton", /\bmilton\b/],
+  ["bidneedham", /\bneedham\b/],
+  ["mee", /\b(mass eye|eye and ear|eye & ear)\b/],
+  ["nwh", /\b(newton[- ]?wellesley|nwh)\b/],
+  ["salem", /\b(salem|north shore medical)\b/],
+  ["mah", /\b(mount auburn|mt\.? auburn)\b/],
+  ["lahey", /\blahey\b/],
+  ["nebh", /\b(baptist|nebh)\b/],
+  ["winchester", /\bwinchester\b/],
+  ["cha", /\b(cambridge health|cambridge hospital|somerville hospital|whidden|cha)\b/],
+  ["ssh", /\bsouth shore\b/],
   ["mgh", /\b(mgh|mass general|massachusetts general)\b/],
   ["bwh", /\b(brigham|bwh)\b/],
   ["bmc", /\b(bmc|boston medical)\b/],
@@ -406,17 +527,18 @@ function answerQuestion(text) {
   let html = `<p class="understood">Understood: ${name} · ${payerText}${q.hospital ? " · " + H.find(h => h.id === q.hospital).name : ""}${q.payerGiven ? "" : " (no insurer named, so showing typical commercial insurance)"}</p>`;
 
   if (!rows.length) {
-    html += `<p>None of the five hospitals lists a price for this with ${payerText}.</p>`;
+    html += `<p>None of the ${H.length} hospitals lists a price for this with ${payerText}.</p>`;
   } else if (q.hospital) {
     const h = H.find(x => x.id === q.hospital), mine = rows.find(r => r.h.id === q.hospital);
     if (!mine) {
-      html += `<p>${h.name} doesn't list a price for this. Lowest among those that do: <b>${rows[0].h.name}, ${money(rows[0].v.median)}</b>.</p>`;
+      const few = fewPlans(q.cpt, q.hospital, q.payer);
+      html += `<p>${few ? `${h.name} lists only ${few} commercial plan price${few > 1 ? "s" : ""} for this, too few for a typical price; try naming your insurer.` : `${h.name} doesn't list a price for this.`} Lowest among those that do: <b>${rows[0].h.name}, ${money(rows[0].v.median)}</b>.</p>`;
     } else {
       const spread = mine.v.n > 1 && Math.round(mine.v.min) !== Math.round(mine.v.max) ? ` (${money(mine.v.min)}–${money(mine.v.max)} across ${mine.v.n} plans)` : "";
       html += `<p>At <b>${h.name}</b>: <b>${money(mine.v.median)}</b>${spread}.</p>`;
       const lo = rows[0];
       if (lo.h.id !== q.hospital && lo.v.median < mine.v.median * 0.95) {
-        html += `<p class="alt">The lowest of the five is <b>${lo.h.name}, ${money(lo.v.median)}</b>, which is ${money(mine.v.median - lo.v.median)} less.</p>`;
+        html += `<p class="alt">The lowest of the ${rows.length} hospitals that list it is <b>${lo.h.name}, ${money(lo.v.median)}</b>, which is ${money(mine.v.median - lo.v.median)} less.</p>`;
       } else if (lo.h.id === q.hospital && rows.length > 1) {
         html += `<p class="alt">That's the lowest of the ${rows.length} hospitals that list it.</p>`;
       }
@@ -427,10 +549,10 @@ function answerQuestion(text) {
       ? `<p>Lowest: <b>${lo.h.name}, ${money(lo.v.median)}</b>. Highest: ${hi.h.name}, ${money(hi.v.median)}.${hi.v.median > lo.v.median * 1.05 ? ` The difference is <b>${money(hi.v.median - lo.v.median)}</b>.` : ""}</p>`
       : `<p>Only ${lo.h.name} lists it: <b>${money(lo.v.median)}</b>.</p>`;
     const missing = H.length - rows.length;
-    if (missing) html += `<p class="alt">${missing} of ${H.length} hospitals don't list this price.</p>`;
+    if (missing) html += `<p class="alt">${missing} of ${H.length} hospitals don't list a comparable price for this.</p>`;
   }
   html += `<p class="alt" style="font-size:12px">Price paid to the hospital, not your out-of-pocket cost.</p>`;
-  html += `<button type="button" class="link-btn" id="showcmp">See all five hospitals compared</button>`;
+  html += `<button type="button" class="link-btn" id="showcmp">See all ${H.length} hospitals compared</button>`;
   box.innerHTML = html;
   $("showcmp").addEventListener("click", () => {
     $("proc").value = q.cpt; $("payer").value = q.payer; drawBars();
@@ -438,7 +560,7 @@ function answerQuestion(text) {
   });
 }
 
-const EXAMPLES = ["How much is a knee MRI with Blue Cross?", "Cheapest colonoscopy if I pay cash", "Blood count at MGH with Aetna", "ER visit at Tufts Medical with Harvard Pilgrim", "Mammogram without insurance"];
+const EXAMPLES = ["How much is a knee MRI with Blue Cross?", "Cheapest colonoscopy if I pay cash", "Blood count at MGH with Aetna", "Mammogram at Mount Auburn with Harvard Pilgrim", "CT scan at South Shore without insurance"];
 $("chips").innerHTML = EXAMPLES.map(e => `<button type="button" class="chip">${e}</button>`).join("");
 $("chips").querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { $("ask").value = c.textContent; $("askerr").style.display = "none"; answerQuestion(c.textContent); }));
 $("askform").addEventListener("submit", e => {
@@ -456,7 +578,7 @@ document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click"
 }));
 $("proc").addEventListener("change", drawBars);
 $("payer").addEventListener("change", drawBars);
-stats(); fillControls(); drawBars(); drawGrid(); drawScore();
+stats(); fillControls(); drawBars(); drawPQ(); drawFilters(); drawGrid(); drawScore();
 </script>
 </body>
 </html>

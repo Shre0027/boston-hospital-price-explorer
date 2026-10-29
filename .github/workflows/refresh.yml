@@ -1,7 +1,7 @@
 name: Monthly refresh
 
-# On the 1st of every month (and on demand): re-download each hospital's price file,
-# rebuild the combined table and the dashboard, save the results, and republish the site.
+# On the 1st of every month (and on demand): re-download each hospital's price file and the CMS
+# quality ratings, rebuild the combined table and the dashboard, save the results, and republish the site.
 # Hospitals marked "manual" in config/hospitals.json (Tufts Medical Center) are skipped because they block
 # automated downloads (see docs/decision-log.md); their hand-downloaded data stays in place.
 on:
@@ -40,6 +40,10 @@ jobs:
             echo "::endgroup::"
           done
           if [ -n "$failed" ]; then echo "::warning::Kept previous results for:$failed"; fi
+
+      - name: Refresh CMS quality ratings
+        # Keeps the previous ratings if CMS can't be reached
+        run: python scripts/fetch_quality.py || echo "::warning::Kept previous quality ratings"
 
       - name: Rebuild the combined table, SQL analysis and dashboard
         run: |

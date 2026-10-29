@@ -1,6 +1,18 @@
-hospital,procedures_compared,median_sticker_vs_lowest,median_insurer_paid_vs_lowest
-Tufts Medical Center,15,1.0,1.0
-Beth Israel Deaconess Medical Center,15,1.53,1.37
-Massachusetts General Hospital,15,1.61,2.83
-Brigham and Women's Hospital,15,1.61,2.39
-Boston Medical Center,15,1.74,1.36
+hospital,procedures_compared,sticker_price_index,insurer_price_index
+Boston Medical Center Brighton,15,0.54,1.0
+Beth Israel Deaconess Hospital–Milton,15,0.75,0.73
+Beth Israel Deaconess Hospital–Needham,10,0.84,0.91
+Winchester Hospital,16,0.87,0.89
+Tufts Medical Center,15,0.89,0.88
+Cambridge Health Alliance,15,0.93,1.22
+Mount Auburn Hospital,15,0.98,0.99
+New England Baptist Hospital,15,0.98,0.69
+Lahey Hospital & Medical Center,16,1.0,1.02
+Salem Hospital,13,1.02,1.13
+Beth Israel Deaconess Medical Center,16,1.06,1.07
+Brigham and Women's Faulkner Hospital,12,1.09,1.1
+Newton-Wellesley Hospital,13,1.13,1.13
+South Shore Hospital,15,1.17,0.6
+Boston Medical Center,16,1.22,1.0
+Brigham and Women's Hospital,15,1.38,1.89
+Massachusetts General Hospital,14,1.38,1.88

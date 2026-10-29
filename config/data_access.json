@@ -1,95 +1,96 @@
 {
   "checked_on": "2026-10-29",
+  "_about": "Hand-recorded findings from collecting each hospital's file. Counts (procedures found, insurers listed, rows set aside) are computed automatically by scripts/build_site.py and are not repeated here.",
   "hospitals": {
-    "mgh": [
-      {
-        "status": "warning",
-        "label": "Old official link list broken",
-        "detail": "massgeneral.org/cms-hpt.txt now redirects to a regular web page, and the file link it used to give returns 404. The current list is at massgeneralbrigham.org/cms-hpt.txt."
-      },
-      {
-        "status": "good",
-        "label": "Automated download works",
-        "detail": "Downloaded from the current Mass General Brigham link."
-      },
-      {
-        "status": "warning",
-        "label": "2 of 18 procedures not listed",
-        "detail": "No price for cataract surgery or knee arthroscopy (meniscus) under standard codes; in Mass General Brigham, eye surgery is likely done at Mass Eye and Ear, which publishes its own file. The gallbladder-removal hospital stay is priced for Medicare plans only, so there's no commercial comparison."
-      }
-    ],
-    "bwh": [
-      {
-        "status": "good",
-        "label": "Official link list works",
-        "detail": "Found through massgeneralbrigham.org/cms-hpt.txt."
-      },
-      {
-        "status": "good",
-        "label": "Automated download works",
-        "detail": "Downloaded automatically."
-      },
-      {
-        "status": "warning",
-        "label": "2 of 18 procedures not listed",
-        "detail": "No price for cataract surgery or knee arthroscopy (meniscus) under standard codes; in Mass General Brigham, eye surgery is likely done at Mass Eye and Ear, which publishes its own file. The gallbladder-removal hospital stay is priced for Medicare plans only, so there's no commercial comparison."
-      }
-    ],
-    "bmc": [
-      {
-        "status": "good",
-        "label": "Official link list works",
-        "detail": "Found through bmc.org/cms-hpt.txt."
-      },
-      {
-        "status": "good",
-        "label": "Automated download works",
-        "detail": "Downloaded automatically."
-      },
-      {
-        "status": "warning",
-        "label": "Many rates without an amount paid",
-        "detail": "547 insurer rates are set by a formula with no amount-paid figure, so they can't be compared fairly and are left out of comparisons."
-      },
-      {
-        "status": "warning",
-        "label": "Gallbladder-removal hospital stay not listed",
-        "detail": "No price under the standard inpatient code (MS-DRG 419)."
-      }
-    ],
-    "bidmc": [
-      {
-        "status": "good",
-        "label": "Official link list works",
-        "detail": "Found through bidmc.org/cms-hpt.txt."
-      },
-      {
-        "status": "good",
-        "label": "Automated download works",
-        "detail": "Downloaded automatically (JSON format)."
-      },
-      {
-        "status": "warning",
-        "label": "Only 6 insurers listed for outpatient procedures",
-        "detail": "For the 17 outpatient procedures compared, the file lists only 6 insurers; Aetna, UnitedHealthcare and Tufts Health Plan appear only for the gallbladder-removal hospital stay. Either outpatient prices for them are missing or recorded in a form not yet handled."
-      }
-    ],
-    "tmc": [
-      {
-        "status": "critical",
-        "label": "Automated access blocked",
-        "detail": "Both tuftsmedicine.org/cms-hpt.txt and the price file returned HTTP 403 (Forbidden) to automated requests."
-      },
-      {
-        "status": "good",
-        "label": "Available to a person in a browser",
-        "detail": "Downloaded by hand from tuftsmedicine.org/get-care/cost-estimate."
-      },
-      {
-        "status": "warning",
-        "label": "2 of 18 procedures not listed",
-        "detail": "No price for standard cataract surgery (only the complex version is listed) or knee arthroscopy (meniscus)."
-      }
-    ]
+    "mgh": {
+      "link_list": ["warning", "The old list at massgeneral.org/cms-hpt.txt now redirects to a web page and its file link returned 404; the current list is at massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["No cataract surgery or knee arthroscopy (meniscus) under standard codes; eye surgery in this system is likely at Mass Eye and Ear.", "Gallbladder-removal hospital stay priced for Medicare plans only."]
+    },
+    "bwh": {
+      "link_list": ["good", "Found through massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["No cataract surgery or knee arthroscopy (meniscus) under standard codes.", "Gallbladder-removal hospital stay priced for Medicare plans only."]
+    },
+    "faulkner": {
+      "link_list": ["good", "Found through massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["Gallbladder-removal hospital stay priced for Medicare plans only."]
+    },
+    "nwh": {
+      "link_list": ["good", "Found through massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": []
+    },
+    "mee": {
+      "link_list": ["good", "Found through massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["Specialty eye and ear hospital, so many general procedures aren't expected here.", "Lists cataract surgery, which Mass General Brigham's general hospitals don't.", "No CMS star rating (too few measures reported)."]
+    },
+    "salem": {
+      "link_list": ["good", "Found through massgeneralbrigham.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["Listed by CMS as North Shore Medical Center."]
+    },
+    "bmc": {
+      "link_list": ["good", "Found through bmc.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["Many insurer rates are set by a formula with no amount-paid figure, so they can't be compared fairly."]
+    },
+    "bmcbrighton": {
+      "link_list": ["good", "Found through bmc.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["Many insurer rates are set by a formula with no amount-paid figure, so they can't be compared fairly.", "Lowest cash price of all 18 hospitals for 14 of the 15 procedures it lists."]
+    },
+    "bidmc": {
+      "link_list": ["good", "Found through bidmc.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically (JSON)."],
+      "notes": ["Like every Beth Israel Lahey Health hospital, lists far fewer commercial insurers than other systems; Aetna and UnitedHealthcare appear only for the gallbladder stay."]
+    },
+    "mah": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["warning", "Downloaded automatically, but the JSON file starts with a byte-order mark, which the JSON standard says not to add; a standard parser rejected it until the script was changed to skip it."],
+      "notes": ["Lists far fewer commercial insurers than hospitals in other systems."]
+    },
+    "lahey": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically (JSON)."],
+      "notes": ["Lists far fewer commercial insurers than hospitals in other systems."]
+    },
+    "nebh": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["warning", "Downloaded automatically, but the JSON file starts with a byte-order mark, which the JSON standard says not to add; a standard parser rejected it until the script was changed to skip it."],
+      "notes": ["Specialty orthopedic hospital.", "Lists far fewer commercial insurers than hospitals in other systems."]
+    },
+    "bidmilton": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["warning", "Downloaded automatically, but the JSON file starts with a byte-order mark, which the JSON standard says not to add; a standard parser rejected it until the script was changed to skip it."],
+      "notes": ["Lists far fewer commercial insurers than hospitals in other systems."]
+    },
+    "bidneedham": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically (JSON)."],
+      "notes": ["Lists the fewest commercial insurers of all 18 hospitals, so several typical prices rest on only 2 plans and aren't shown."]
+    },
+    "winchester": {
+      "link_list": ["good", "Found through bilh.org/cms-hpt.txt."],
+      "download": ["warning", "Downloaded automatically, but the JSON file starts with a byte-order mark, which the JSON standard says not to add; a standard parser rejected it until the script was changed to skip it."],
+      "notes": ["Lists far fewer commercial insurers than hospitals in other systems."]
+    },
+    "tmc": {
+      "link_list": ["critical", "tuftsmedicine.org/cms-hpt.txt returned HTTP 403 (Forbidden) to automated requests."],
+      "download": ["critical", "The price file also returned HTTP 403 to automated requests; a person could download it in a browser from tuftsmedicine.org/get-care/cost-estimate, so it was downloaded by hand."],
+      "notes": ["Only the complex version of cataract surgery is listed."]
+    },
+    "cha": {
+      "link_list": ["good", "Found through challiance.org/cms-hpt.txt."],
+      "download": ["good", "Downloaded automatically."],
+      "notes": ["One file covers three campuses (Cambridge, Somerville, Whidden).", "Contains impossible rates (e.g. $0.03 for a blood count, about $5 for a colonoscopy), which are set aside."]
+    },
+    "ssh": {
+      "link_list": ["good", "Found through southshorehealth.org/cms-hpt.txt."],
+      "download": ["warning", "Downloaded automatically, but the JSON file starts with a byte-order mark, which the JSON standard says not to add; a standard parser rejected it until the script was changed to skip it."],
+      "notes": []
+    }
   }
 }

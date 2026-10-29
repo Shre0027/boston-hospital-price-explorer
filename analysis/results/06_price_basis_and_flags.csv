@@ -1,21 +1,72 @@
 hospital,price_basis,flag,price_rows
+Beth Israel Deaconess Hospital–Milton,negotiated dollar amount,(not flagged),69
+Beth Israel Deaconess Hospital–Milton,(no usable price),(not flagged),22
+Beth Israel Deaconess Hospital–Milton,median amount paid (rate set by formula),(not flagged),1
+Beth Israel Deaconess Hospital–Needham,negotiated dollar amount,(not flagged),48
+Beth Israel Deaconess Hospital–Needham,(no usable price),(not flagged),31
+Beth Israel Deaconess Hospital–Needham,median amount paid (rate set by formula),(not flagged),2
 Beth Israel Deaconess Medical Center,negotiated dollar amount,(not flagged),79
 Beth Israel Deaconess Medical Center,(no usable price),(not flagged),36
-Beth Israel Deaconess Medical Center,median amount paid (rate set by formula),(not flagged),6
+Beth Israel Deaconess Medical Center,median amount paid (rate set by formula),(not flagged),5
+Beth Israel Deaconess Medical Center,median amount paid (rate set by formula),implausibly low (under 10% of the typical price for this procedure; likely a data error),1
 Boston Medical Center,negotiated dollar amount,(not flagged),752
 Boston Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,547
 Boston Medical Center,median amount paid (rate set by formula),(not flagged),332
 Boston Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),109
 Boston Medical Center,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),18
+Boston Medical Center Brighton,negotiated dollar amount,(not flagged),391
+Boston Medical Center Brighton,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,251
+Boston Medical Center Brighton,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),107
+Boston Medical Center Brighton,median amount paid (rate set by formula),(not flagged),96
+Boston Medical Center Brighton,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),10
+Brigham and Women's Faulkner Hospital,median amount paid (rate set by formula),(not flagged),144
+Brigham and Women's Faulkner Hospital,negotiated dollar amount,(not flagged),79
+Brigham and Women's Faulkner Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),27
 Brigham and Women's Hospital,negotiated dollar amount,(not flagged),309
-Brigham and Women's Hospital,median amount paid (rate set by formula),(not flagged),211
+Brigham and Women's Hospital,median amount paid (rate set by formula),(not flagged),210
 Brigham and Women's Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),29
+Brigham and Women's Hospital,median amount paid (rate set by formula),implausibly low (under 10% of the typical price for this procedure; likely a data error),1
+Cambridge Health Alliance,negotiated dollar amount,(not flagged),1042
+Cambridge Health Alliance,(no usable price),(not flagged),206
+Cambridge Health Alliance,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,173
+Cambridge Health Alliance,median amount paid (rate set by formula),(not flagged),114
+Cambridge Health Alliance,negotiated dollar amount,implausibly low (under 10% of the typical price for this procedure; likely a data error),37
+Cambridge Health Alliance,median amount paid (rate set by formula),implausibly low (under 10% of the typical price for this procedure; likely a data error),11
+Cambridge Health Alliance,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),5
+Cambridge Health Alliance,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),5
+Cambridge Health Alliance,median amount paid,(not flagged),4
+Lahey Hospital & Medical Center,negotiated dollar amount,(not flagged),71
+Lahey Hospital & Medical Center,(no usable price),(not flagged),38
+Lahey Hospital & Medical Center,median amount paid (rate set by formula),(not flagged),5
+Massachusetts Eye and Ear,median amount paid (rate set by formula),(not flagged),35
+Massachusetts Eye and Ear,negotiated dollar amount,(not flagged),33
+Massachusetts Eye and Ear,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),2
 Massachusetts General Hospital,negotiated dollar amount,(not flagged),333
 Massachusetts General Hospital,median amount paid (rate set by formula),(not flagged),237
 Massachusetts General Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),10
-Tufts Medical Center,negotiated dollar amount,(not flagged),3823
+Mount Auburn Hospital,negotiated dollar amount,(not flagged),88
+Mount Auburn Hospital,(no usable price),(not flagged),21
+Mount Auburn Hospital,median amount paid (rate set by formula),(not flagged),2
+New England Baptist Hospital,negotiated dollar amount,(not flagged),89
+New England Baptist Hospital,(no usable price),(not flagged),36
+Newton-Wellesley Hospital,median amount paid (rate set by formula),(not flagged),137
+Newton-Wellesley Hospital,negotiated dollar amount,(not flagged),118
+Newton-Wellesley Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),1
+Salem Hospital,median amount paid (rate set by formula),(not flagged),180
+Salem Hospital,negotiated dollar amount,(not flagged),113
+Salem Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),16
+Salem Hospital,median amount paid (rate set by formula),implausibly low (under 10% of the typical price for this procedure; likely a data error),1
+South Shore Hospital,negotiated dollar amount,(not flagged),192
+South Shore Hospital,(no usable price),(not flagged),27
+South Shore Hospital,median amount paid (rate set by formula),(not flagged),16
+South Shore Hospital,median amount paid,(not flagged),1
+Tufts Medical Center,negotiated dollar amount,(not flagged),3818
 Tufts Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,171
 Tufts Medical Center,(no usable price),(not flagged),125
 Tufts Medical Center,median amount paid (rate set by formula),(not flagged),68
 Tufts Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),21
+Tufts Medical Center,negotiated dollar amount,implausibly low (under 10% of the typical price for this procedure; likely a data error),5
 Tufts Medical Center,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),2
+Winchester Hospital,negotiated dollar amount,(not flagged),113
+Winchester Hospital,(no usable price),(not flagged),33
+Winchester Hospital,median amount paid (rate set by formula),(not flagged),4

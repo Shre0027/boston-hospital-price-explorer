@@ -1,16 +1,16 @@
 insurer,procedure,hospitals,lowest_hospital,lowest_price,highest_hospital,highest_price,times_more
-UnitedHealthcare,Comprehensive metabolic panel,4,Boston Medical Center,10.0,Brigham and Women's Hospital,140.0,14.7
-UnitedHealthcare,Complete blood count (CBC),4,Boston Medical Center,7.0,Brigham and Women's Hospital / Massachusetts General Hospital,98.0,14.1
-UnitedHealthcare,Cholesterol (lipid) panel,4,Boston Medical Center,12.0,Massachusetts General Hospital,130.0,10.8
-Blue Cross Blue Shield,Cholesterol (lipid) panel,5,Tufts Medical Center,11.0,Brigham and Women's Hospital / Massachusetts General Hospital,87.0,8.2
-Cigna,Comprehensive metabolic panel,5,Boston Medical Center,20.0,Brigham and Women's Hospital / Massachusetts General Hospital,129.0,6.3
-Cigna,Complete blood count (CBC),5,Boston Medical Center,15.0,Brigham and Women's Hospital / Massachusetts General Hospital,90.0,6.1
-Aetna,Complete blood count (CBC),4,Tufts Medical Center,17.0,Massachusetts General Hospital,93.0,5.4
-UnitedHealthcare,Screening mammogram,4,Boston Medical Center,109.0,Tufts Medical Center,582.0,5.4
-Aetna,Comprehensive metabolic panel,4,Tufts Medical Center,25.0,Massachusetts General Hospital,133.0,5.3
-Cigna,MRI lower back (no contrast),3,Massachusetts General Hospital,673.0,Boston Medical Center,3429.0,5.1
-Cigna,Cholesterol (lipid) panel,5,Boston Medical Center,26.0,Brigham and Women's Hospital / Massachusetts General Hospital,120.0,4.7
-Blue Cross Blue Shield,Comprehensive metabolic panel,5,Boston Medical Center,21.0,Brigham and Women's Hospital / Massachusetts General Hospital,93.0,4.5
-Blue Cross Blue Shield,Complete blood count (CBC),5,Boston Medical Center,15.0,Brigham and Women's Hospital / Massachusetts General Hospital,65.0,4.2
-Cigna,MRI brain (no contrast),3,Tufts Medical Center,1019.0,Boston Medical Center,3902.0,3.8
-Aetna,Cholesterol (lipid) panel,4,Tufts Medical Center,32.0,Brigham and Women's Hospital / Massachusetts General Hospital,116.0,3.6
+Cigna,Comprehensive metabolic panel,15,New England Baptist Hospital,11.0,Massachusetts Eye and Ear,462.0,40.2
+Aetna,Comprehensive metabolic panel,11,Winchester Hospital,11.0,Massachusetts Eye and Ear,305.0,28.9
+Cigna,Cholesterol (lipid) panel,15,New England Baptist Hospital,14.0,Massachusetts Eye and Ear,226.0,16.0
+UnitedHealthcare,Comprehensive metabolic panel,12,Beth Israel Deaconess Hospital–Milton,9.0,Brigham and Women's Hospital,140.0,15.8
+UnitedHealthcare,Complete blood count (CBC),12,Beth Israel Deaconess Hospital–Milton,7.0,Brigham and Women's Hospital / Massachusetts General Hospital,98.0,15.1
+Blue Cross Blue Shield,MRI knee (no contrast),11,South Shore Hospital,264.0,Newton-Wellesley Hospital,3937.0,14.9
+UnitedHealthcare,Knee arthroscopy (meniscus),6,Boston Medical Center,695.0,Winchester Hospital,9401.0,13.5
+UnitedHealthcare,Cataract surgery,6,Boston Medical Center,695.0,Winchester Hospital,9039.0,13.0
+Aetna,MRI brain (no contrast),11,South Shore Hospital / Winchester Hospital,286.0,Massachusetts General Hospital,3634.0,12.7
+Aetna,Complete blood count (CBC),11,Winchester Hospital,8.0,Massachusetts General Hospital,93.0,12.0
+UnitedHealthcare,Cholesterol (lipid) panel,12,Beth Israel Deaconess Hospital–Milton,11.0,Massachusetts General Hospital,130.0,11.6
+Aetna,Cholesterol (lipid) panel,11,Winchester Hospital,13.0,Massachusetts Eye and Ear,150.0,11.2
+Cigna,Complete blood count (CBC),14,New England Baptist Hospital,8.0,Brigham and Women's Hospital / Massachusetts General Hospital,90.0,10.7
+Blue Cross Blue Shield,Doctor office visit (established patient),12,Boston Medical Center Brighton,35.0,Tufts Medical Center,361.0,10.4
+Aetna,MRI lower back (no contrast),11,South Shore Hospital / Winchester Hospital,286.0,Brigham and Women's Hospital,2873.0,10.0

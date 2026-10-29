@@ -1,6 +1,19 @@
 hospital,price_rows,procedures_listed,insurer_plans_listed,commercial_rows,flagged_rows,pct_flagged
-Tufts Medical Center,4210,16,193,1714,194,4.6
+Tufts Medical Center,4210,16,193,1625,199,4.7
 Boston Medical Center,1758,17,77,605,674,38.3
+Cambridge Health Alliance,1597,17,73,672,231,14.5
+Boston Medical Center Brighton,855,15,55,281,368,43.0
 Massachusetts General Hospital,580,16,30,380,10,1.7
-Brigham and Women's Hospital,549,16,30,361,29,5.3
-Beth Israel Deaconess Medical Center,121,18,15,89,0,0.0
+Brigham and Women's Hospital,549,16,30,361,30,5.5
+Salem Hospital,310,16,23,226,17,5.5
+Newton-Wellesley Hospital,256,15,22,201,1,0.4
+Brigham and Women's Faulkner Hospital,250,15,26,186,27,10.8
+South Shore Hospital,236,18,16,205,0,0.0
+Winchester Hospital,150,18,14,116,0,0.0
+New England Baptist Hospital,125,18,7,95,0,0.0
+Beth Israel Deaconess Medical Center,121,18,15,89,1,0.8
+Lahey Hospital & Medical Center,114,18,17,82,0,0.0
+Mount Auburn Hospital,111,18,7,88,0,0.0
+Beth Israel Deaconess Hospital–Milton,92,18,7,75,0,0.0
+Beth Israel Deaconess Hospital–Needham,81,18,14,58,0,0.0
+Massachusetts Eye and Ear,70,9,19,56,2,2.9

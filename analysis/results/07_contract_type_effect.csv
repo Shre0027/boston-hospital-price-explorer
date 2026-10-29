@@ -1,3 +1,6 @@
 hospital,procedures_with_both,median_ratio_pct_vs_fee,lowest_ratio,highest_ratio,procedures_where_pct_costs_more
 Boston Medical Center,16,2.53,0.65,5.4,14
+Boston Medical Center Brighton,15,1.43,0.75,2.28,13
+Cambridge Health Alliance,15,3.26,0.82,15.52,14
+South Shore Hospital,1,2.17,2.17,2.17,1
 Tufts Medical Center,15,0.64,0.39,4.3,1
