@@ -277,3 +277,13 @@ A running record of the key decisions in this project: what was decided, why, an
 **Decision:** add an animated hero chart beside the headline (cash price for the same brain MRI: $449 vs $3,858, 8.6×). Finding numbers count up, sections fade in on scroll, comparison bars grow, and the price-vs-rating dots slide out from the "typical" line. A small site icon too. No photos: hospital photos online are copyrighted, and stock images would make the page look templated. A chart of a real finding says more.
 
 **Rules kept:** motion only shows data, nothing decorative. The hero uses a different finding from the first card, so nothing repeats. Visitors who turn on "reduce motion" see the finished page with no animation. All values are computed from the data. Tested: every section ends up visible after scrolling, the final numbers are correct, the plain-English search still passes 30/30, the estimator checks still pass, and there's no horizontal scroll on a phone.
+
+---
+
+## 2026-10-29: Less on screen at once
+
+**Problem:** below the findings, the page still showed everything at once: two separate tools for the same job (search, and compare), an 18 × 18 table of more than 300 prices, and nine bullets of method notes. It felt like a data dump.
+
+**Decision:** show the story and one tool, and keep the detail one click away. Search and compare are now one "Look up a price" card: typing a question also updates the chart under it. The full price table and most of the method notes are collapsed; the "See every procedure" finding opens the table. Three example questions instead of five. Nothing was removed.
+
+**Result:** the desktop page went from about 8,100 to 4,700 pixels tall. All checks still pass: plain-English search 30/30, estimator, animations, phone width and dark mode.

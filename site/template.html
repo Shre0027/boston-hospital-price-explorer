@@ -138,6 +138,7 @@ select:focus-visible, button:focus-visible, tr:focus-visible { outline: 2px soli
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
 .chip { font: inherit; font-size: 13px; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
 .chip:hover { border-color: var(--accent); color: var(--accent-text); }
+.or { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 8px; }
 .answer { margin: 16px 0 0; padding: 16px 18px; background: var(--surface-2); border-radius: var(--radius); font-size: 16px; display: none; }
 .answer p { margin: 0 0 6px; }
 .answer .understood { font-size: 12px; color: var(--text-muted); }
@@ -227,9 +228,9 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   </section>
 
   <section>
-    <div class="card">
-      <h2>Ask in plain English</h2>
-      <p class="sub">Name a procedure, and optionally your insurer or a hospital. Answers come only from the hospitals' published prices.</p>
+    <div class="card" id="compare">
+      <h2>Look up a price</h2>
+      <p class="sub">Type a question, or choose a procedure and who's paying. Answers come only from the hospitals' published prices.</p>
       <form class="ask-row" id="askform" autocomplete="off">
         <label for="ask" class="sr-only">Your question</label>
         <input id="ask" type="text" placeholder="How much is a knee MRI with Blue Cross?">
@@ -238,13 +239,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
       <p id="askerr" role="alert" style="font-size:13px;color:var(--critical);margin:6px 0 0;display:none">Type a question first.</p>
       <div class="chips" id="chips"></div>
       <div class="answer" id="answer" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="card" id="compare">
-      <h2>Compare one procedure</h2>
-      <p class="sub">Choose a procedure and who's paying.</p>
+      <p class="or">or choose</p>
       <div class="controls">
         <label>Procedure <select id="proc"></select></label>
         <label>Who's paying <select id="payer"></select></label>
@@ -278,7 +273,9 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
   <section>
     <div class="card" id="glance">
       <h2>Every procedure at a glance</h2>
-      <p class="sub">Darker means more expensive than the typical price for that procedure (the median across hospitals). Hospitals are ordered from lowest to highest overall price level. Select a row to compare it above.</p>
+      <p class="sub">Every price in one table: darker means more expensive than the typical price for that procedure. Hospitals are ordered from lowest to highest overall price level; select a row to see it in the chart above.</p>
+      <details class="files" id="gridmore">
+      <summary>Show every price (<span id="gdim"></span>)</summary>
       <div class="filters" id="sysfilter" role="group" aria-label="Health system"></div>
       <div class="seg" role="group" aria-label="Price type">
         <button type="button" data-mode="cash" aria-pressed="true">Cash price</button>
@@ -286,6 +283,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
       </div>
       <div class="grid-wrap"><table class="grid" id="grid"></table></div>
       <div class="legend" id="legend"></div>
+      </details>
     </div>
   </section>
 
@@ -308,6 +306,10 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
         <li><b>These are prices paid to the hospital, not what you'll pay.</b> Your out-of-pocket cost depends on your deductible, copay and plan. "What would I pay?" gives a rough estimate from your deductible and coinsurance.</li>
         <li><b>Cash price</b> is the hospital's listed price if you pay without insurance.</li>
         <li><b>Commercial insurance (typical)</b> is the median price across all employer and private plans the hospital lists, shown only when there are at least 3 plan prices. It isn't weighted by how many people use each plan.</li>
+      </ul>
+      <details class="files">
+      <summary>More about the method</summary>
+      <ul>
         <li><b>Price level</b> compares each hospital with the typical (median) hospital for each procedure, then takes the median across procedures: 1.0× is typical, 1.5× is 50% above typical.</li>
         <li><b>CMS star rating</b> (1–5) is Medicare's overall hospital rating, summarizing measures such as mortality, safety, readmissions and patient experience (<span id="qasof"></span>). It doesn't measure each procedure compared here, and a price difference doesn't prove a quality difference.</li>
         <li>Hospitals: general acute-care hospitals within about 15 miles of downtown Boston, plus two specialty hospitals (Mass Eye and Ear, New England Baptist). Children's, cancer, psychiatric and rehabilitation hospitals are not included. MelroseWakefield Hospital (Tufts Medicine) is not included yet, because Tufts Medicine blocks automated downloads.</li>
@@ -315,6 +317,7 @@ footer { padding: 24px 0 48px; font-size: 13px; color: var(--text-muted); border
         <li>Procedures are matched by billing code (CPT, or MS-DRG for the gallbladder hospital stay), because each hospital names them differently. Hospital facility charges only; doctors' fees may be billed separately.</li>
         <li>"Not listed" means no price was found under that billing code in the hospital's file.</li>
       </ul>
+      </details>
       <p>Data: each hospital's machine-readable file under the CMS Hospital Price Transparency rule (45 CFR Part 180); quality ratings from CMS Hospital General Information. <span id="asof"></span></p>
       <p>Every step, decision and correction is documented: <a href="https://github.com/Shre0027/boston-hospital-price-explorer">code on GitHub</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/case-study.md">case study</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/analysis/README.md">SQL analysis</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/decision-log.md">decision log</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/requirements.md">requirements</a> · <a href="https://github.com/Shre0027/boston-hospital-price-explorer/blob/main/docs/data-dictionary.md">data dictionary</a>.</p>
     </div>
@@ -403,7 +406,7 @@ function openCompare(cpt, payer) { $("proc").value = cpt; $("payer").value = pay
 function openGlance(sys) {
   sysFilter = sys; gridMode = "commercial";
   document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === "commercial")));
-  drawFilters(); drawGrid(); jump("glance");
+  $("gridmore").open = true; drawFilters(); drawGrid(); jump("glance");
 }
 
 // File problems, grouped into plain-language types (used by the finding card and the file summary)
@@ -740,15 +743,13 @@ function answerQuestion(text) {
     if (missing) html += `<p class="alt">${missing} of ${H.length} hospitals don't list a comparable price for this.</p>`;
   }
   html += `<p class="alt" style="font-size:12px">Price paid to the hospital, not your out-of-pocket cost.</p>`;
-  html += `<button type="button" class="link-btn" id="showcmp">See all ${H.length} hospitals compared</button>`;
+  // Update the chart below to match the question
+  const hasOpt = [...$("payer").options].some(o => o.value === q.payer);
+  if (hasOpt) { $("proc").value = q.cpt; $("payer").value = q.payer; drawBars(); html += `<p class="alt" style="font-size:12px">The chart below now shows all ${H.length} hospitals for this.</p>`; }
   box.innerHTML = html;
-  $("showcmp").addEventListener("click", () => {
-    $("proc").value = q.cpt; $("payer").value = q.payer; drawBars();
-    $("compare").scrollIntoView({ behavior: "smooth", block: "start" });
-  });
 }
 
-const EXAMPLES = ["How much is a knee MRI with Blue Cross?", "Cheapest colonoscopy if I pay cash", "Blood count at MGH with Aetna", "Mammogram at Mount Auburn with Harvard Pilgrim", "CT scan at South Shore without insurance"];
+const EXAMPLES = ["Knee MRI with Blue Cross", "Cheapest colonoscopy if I pay cash", "Blood count at MGH with Aetna"];
 $("chips").innerHTML = EXAMPLES.map(e => `<button type="button" class="chip">${e}</button>`).join("");
 $("chips").querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { $("ask").value = c.textContent; $("askerr").style.display = "none"; answerQuestion(c.textContent); }));
 $("askform").addEventListener("submit", e => {
@@ -812,6 +813,7 @@ function setupMotion() {
   targets.forEach(el => io.observe(el));
 }
 
+$("gdim").textContent = `${DATA.procedures.length} procedures × ${H.length} hospitals`;
 fillControls(); stats(); drawHero(); drawBars(); drawPQ(); drawFilters(); drawGrid(); drawScore(); drawFileSummary(); setupMotion();
 </script>
 </body>
