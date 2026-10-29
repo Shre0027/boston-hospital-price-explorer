@@ -1,20 +1,21 @@
 hospital,price_basis,flag,price_rows
-Beth Israel Deaconess Medical Center,negotiated dollar amount,(not flagged),80
-Beth Israel Deaconess Medical Center,(no usable price),(not flagged),16
-Boston Medical Center,negotiated dollar amount,(not flagged),698
-Boston Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,513
-Boston Medical Center,median amount paid (rate set by formula),(not flagged),290
-Boston Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),97
-Boston Medical Center,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),12
-Brigham and Women's Hospital,negotiated dollar amount,(not flagged),286
-Brigham and Women's Hospital,median amount paid (rate set by formula),(not flagged),192
+Beth Israel Deaconess Medical Center,negotiated dollar amount,(not flagged),79
+Beth Israel Deaconess Medical Center,(no usable price),(not flagged),36
+Beth Israel Deaconess Medical Center,median amount paid (rate set by formula),(not flagged),6
+Boston Medical Center,negotiated dollar amount,(not flagged),752
+Boston Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,547
+Boston Medical Center,median amount paid (rate set by formula),(not flagged),332
+Boston Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),109
+Boston Medical Center,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),18
+Brigham and Women's Hospital,negotiated dollar amount,(not flagged),309
+Brigham and Women's Hospital,median amount paid (rate set by formula),(not flagged),211
 Brigham and Women's Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),29
-Massachusetts General Hospital,negotiated dollar amount,(not flagged),308
-Massachusetts General Hospital,median amount paid (rate set by formula),(not flagged),217
+Massachusetts General Hospital,negotiated dollar amount,(not flagged),333
+Massachusetts General Hospital,median amount paid (rate set by formula),(not flagged),237
 Massachusetts General Hospital,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),10
-Tufts Medical Center,negotiated dollar amount,(not flagged),3627
-Tufts Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,125
-Tufts Medical Center,median amount paid (rate set by formula),(not flagged),65
-Tufts Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),19
-Tufts Medical Center,(no usable price),(not flagged),4
+Tufts Medical Center,negotiated dollar amount,(not flagged),3823
+Tufts Medical Center,negotiated dollar amount,rate set by formula and no amount-paid figure given; listed amount may be only part of the payment,171
+Tufts Medical Center,(no usable price),(not flagged),125
+Tufts Medical Center,median amount paid (rate set by formula),(not flagged),68
+Tufts Medical Center,negotiated dollar amount,insurer rate above sticker price (likely a bundled rate),21
 Tufts Medical Center,median amount paid (rate set by formula),insurer rate above sticker price (likely a bundled rate),2

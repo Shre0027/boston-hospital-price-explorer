@@ -26,7 +26,7 @@
     "code|4"
   ],
   "total_data_rows": 1329567,
-  "matched_rows": 1610,
+  "matched_rows": 1758,
   "procedures_found": {
     "73721": 74,
     "72148": 74,
@@ -38,18 +38,17 @@
     "45378": 222,
     "66984": 59,
     "29881": 59,
-    "47562": 0,
+    "419": 0,
     "85025": 89,
     "80053": 89,
     "80061": 89,
-    "93000": 0,
+    "93005": 148,
     "99283": 143,
     "99284": 74,
     "99213": 130
   },
   "procedures_missing": [
-    "47562",
-    "93000"
+    "419"
   ],
   "first_columns": [
     "description",
@@ -81,5 +80,5 @@
     "standard_charge|max",
     "additional_generic_notes"
   ],
-  "extracted_at": "2026-10-29T06:42:28Z"
+  "extracted_at": "2026-10-29T06:47:58Z"
 }
