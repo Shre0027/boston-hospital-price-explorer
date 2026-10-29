@@ -150,6 +150,18 @@ A running record of the key decisions in this project: what was decided, why, an
 
 ---
 
+## 2026-10-29: Dashboard published, and a plain-English search instead of a live AI chatbot
+
+**Dashboard:** `scripts/build_site.py` turns the combined table into a small summary embedded in `site/index.html`, published with GitHub Pages: https://shre0027.github.io/boston-hospital-price-explorer/. Checked in a headless browser at desktop and phone widths and in dark mode before publishing. Fixed along the way: unreadable white text on light cells in dark mode, lowercased procedure names, a "$X–$X" range shown when all plans had the same price, and the procedure column scrolling away on phones.
+
+**Decision: plain-English search, not a live AI model.** A hosted AI model needs a secret API key, and a public static site can't keep a key secret: anyone could copy it and run up charges. The search instead uses keyword rules to recognize a procedure, who's paying, and optionally a hospital, and every number it shows is read from the published data, so it can't invent a price. It is described as a search, not as AI.
+
+**Tricky cases handled:** "Mass General Brigham Health Plan" is an insurer, so it isn't read as the MGH or Brigham hospital; "at Tufts" means Tufts Medical Center while "with Tufts" means Tufts Health Plan; questions with no recognizable procedure get an honest "couldn't tell" with the list of procedures.
+
+**Tested:** 16 realistic questions, 16 understood correctly. One answer (CBC at MGH with Aetna: $93, $70–$101 across 6 plans) matched an independent calculation from `prices_clean.csv` exactly.
+
+---
+
 ## 2026-10-29: Run data collection on GitHub Actions
 
 **Decision:** Download and filter the large price files on GitHub Actions.

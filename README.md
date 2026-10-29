@@ -21,7 +21,7 @@ Massachusetts General Hospital · Brigham and Women's · Boston Medical Center �
 ## Status
 ✅ Phase 1 live: 5 hospitals, 18 procedures, 6,590 published prices, interactive dashboard.
 
-Next: plain-English Q&A, more Greater Boston hospitals, scheduled refresh.
+Includes a plain-English price search ("knee MRI with Blue Cross"). Next: scheduled refresh, more Greater Boston hospitals.
 
 ## Data source
 Hospital machine-readable files published under the CMS Hospital Price Transparency rule (45 CFR Part 180).
