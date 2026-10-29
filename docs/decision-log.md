@@ -1,0 +1,62 @@
+# Decision Log
+
+A running record of the key decisions in this project: what was decided, why, and what was rejected. AI tools (Claude) are used to help build this project; this log records the reasoning and choices behind the work.
+
+---
+
+## 2026-10-29: Project choice
+
+**Decision:** Build a Boston hospital price comparison tool using public CMS price transparency files.
+
+**Why:**
+- Solves a real problem: patients can't compare hospital prices before getting care, even though hospitals are legally required to publish them.
+- Uses real, public, messy data instead of a pre-cleaned tutorial dataset.
+- Healthcare is a major Boston industry and a target industry for this portfolio.
+
+**Rejected:** A job-postings analysis tool. It was solid, but similar projects are common, and it had less real-world impact.
+
+---
+
+## 2026-10-29: Data availability check (before committing)
+
+**Decision:** Confirmed price files are published before starting the build.
+
+**Findings:**
+- MGH, BMC and BIDMC/BILH hospitals publish machine-readable files with public download links.
+- File quality varies widely. MGH's file is about 1.8 GB with millions of price rows, while some other files in the same region are a few MB.
+- In one third-party snapshot, a hospital download link resolved to a tiny junk file instead of real data.
+
+**Implication:** Data quality itself becomes one of the project's findings: can patients actually use what hospitals publish?
+
+---
+
+## 2026-10-29: Scope for Phase 1
+
+**Decision:** Start with 5 hospitals and about 18 procedures, then expand.
+
+**Hospitals:** Massachusetts General Hospital, Brigham and Women's, Boston Medical Center, Beth Israel Deaconess Medical Center, Tufts Medical Center.
+
+**Why 5, not 30:** Every hospital formats its file differently (CSV vs JSON, different sizes and layouts). Building a working end-to-end pipeline on a small set first avoids weeks of fighting formats before seeing any result. Adding hospitals later should mostly mean adding a file link.
+
+**Planned phases:**
+1. 5 Boston hospitals, end to end
+2. About 15 Greater Boston hospitals
+3. (Optional) All Massachusetts hospitals
+
+---
+
+## 2026-10-29: Match procedures by billing code, not name
+
+**Decision:** Compare procedures using CPT billing codes (for example, knee MRI = 73721) instead of description text.
+
+**Why:** Hospitals describe the same service differently ("MRI knee" vs "MR LOWER EXT JOINT W/O"), but the billing code is the same everywhere. The code works as a common key across hospitals, like a join key in SQL.
+
+**Next:** Confirm each code against the CMS shoppable services list.
+
+---
+
+## 2026-10-29: Run data collection on GitHub Actions
+
+**Decision:** Download and filter the large price files on GitHub Actions.
+
+**Why:** Files can exceed 1 GB. GitHub Actions can download a file, keep only the selected procedures, and save a small result, with no local machine needed. It can also re-run on a schedule so the data stays current.

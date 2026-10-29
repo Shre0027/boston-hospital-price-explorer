@@ -1,0 +1,15 @@
+# Raw hospital price files are very large; never commit them
+data/raw/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
