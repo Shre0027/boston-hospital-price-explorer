@@ -1,13 +1,17 @@
 """Demo: pull monthly US import value and duties (Census international trade API) for a few countries,
 and smartphone imports (HS 851713) by country. Writes tariff_demo/*.csv."""
-import csv, json, time, urllib.request, urllib.parse, urllib.error
+import csv, json, os, time, urllib.request, urllib.parse, urllib.error
 from pathlib import Path
 OUT = Path(__file__).parent
 BASE = "https://api.census.gov/data/timeseries/intltrade/imports/hs"
 COUNTRIES = {"5700": "China", "5520": "Vietnam", "5330": "India", "2010": "Mexico", "1220": "Canada", "4280": "Germany", "5490": "Thailand", "5800": "Taiwan"}
 
+KEY = os.environ.get("CENSUS_API_KEY", "").strip()   # free key, stored as a GitHub Actions secret; never printed
+
 def get(params):
-    url = BASE + "?" + urllib.parse.urlencode(params, safe=",+:")
+    if not KEY:
+        raise SystemExit("::error::CENSUS_API_KEY secret is not set")
+    url = BASE + "?" + urllib.parse.urlencode({**params, "key": KEY}, safe=",+:")
     for i in range(4):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "tariff-demo"}), timeout=120) as r:
@@ -20,10 +24,10 @@ def get(params):
                 print(f"::warning::Not JSON ({len(body)} chars): {body[:400]!r}")
                 time.sleep(3 * (i + 1))
         except urllib.error.HTTPError as e:
-            print(f"::warning::HTTP {e.code}: {e.read().decode()[:400]!r} for {url[:160]}"); time.sleep(3 * (i + 1))
+            print(f"::warning::HTTP {e.code}: {e.read().decode()[:400]!r} for {url.split('&key=')[0][:160]}"); time.sleep(3 * (i + 1))
         except Exception as e:
-            print(f"::warning::{e} for {url[:160]}"); time.sleep(5 * (i + 1))
-    raise SystemExit(f"::error::failed {url}")
+            print(f"::warning::{e} for {url.split('&key=')[0][:160]}"); time.sleep(5 * (i + 1))
+    raise SystemExit(f"::error::failed {url.split('&key=')[0]}")
 
 def main():
     # Save the official variable list first, so field names can be checked

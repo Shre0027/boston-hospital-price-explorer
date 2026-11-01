@@ -3,6 +3,7 @@ on:
   push:
     branches: [tariff-demo]
     paths: ["tariff_demo/fetch.py", ".github/workflows/tariff-demo.yml"]
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -14,7 +15,8 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: python tariff_demo/fetch.py
-        continue-on-error: true
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
