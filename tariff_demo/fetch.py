@@ -1,6 +1,6 @@
 """Demo: pull monthly US import value and duties (Census international trade API) for a few countries,
 and smartphone imports (HS 851713) by country. Writes tariff_demo/*.csv."""
-import csv, json, time, urllib.request, urllib.parse
+import csv, json, time, urllib.request, urllib.parse, urllib.error
 from pathlib import Path
 OUT = Path(__file__).parent
 BASE = "https://api.census.gov/data/timeseries/intltrade/imports/hs"
@@ -12,12 +12,25 @@ def get(params):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "tariff-demo"}), timeout=120) as r:
                 body = r.read().decode()
-                return json.loads(body) if body.strip() else []
+            if not body.strip():
+                return []
+            try:
+                return json.loads(body)
+            except ValueError:
+                print(f"::warning::Not JSON ({len(body)} chars): {body[:400]!r}")
+                time.sleep(3 * (i + 1))
+        except urllib.error.HTTPError as e:
+            print(f"::warning::HTTP {e.code}: {e.read().decode()[:400]!r} for {url[:160]}"); time.sleep(3 * (i + 1))
         except Exception as e:
             print(f"::warning::{e} for {url[:160]}"); time.sleep(5 * (i + 1))
     raise SystemExit(f"::error::failed {url}")
 
 def main():
+    # Save the official variable list first, so field names can be checked
+    with urllib.request.urlopen(BASE + "/variables.json", timeout=60) as r:
+        v = json.loads(r.read().decode())["variables"]
+    (OUT / "variables.txt").write_text("\n".join(f"{k}: {v[k].get('label','')}" for k in sorted(v)))
+    print("::notice::Variables: " + ", ".join(sorted(k for k in v if k.endswith("_MO") or k.startswith(("CTY", "COMM", "I_COMM", "time"))))[:900])
     rows = []
     for code, name in COUNTRIES.items():
         data = get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CON_VAL_MO,CAL_DUT_MO,DUT_VAL_MO", "time": "from 2024-01", "COMM_LVL": "HS2", "CTY_CODE": code})
