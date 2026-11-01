@@ -1,0 +1,22 @@
+name: Tariff demo data
+on:
+  push:
+    branches: [tariff-demo]
+    paths: ["tariff_demo/fetch.py", ".github/workflows/tariff-demo.yml"]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python tariff_demo/fetch.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tariff_demo
+          git commit -m "Tariff demo data" || echo "Nothing changed"
+          git push origin HEAD:tariff-demo
