@@ -1,0 +1,70 @@
+AIR_CHA_MO: 15-digit Air Charges
+AIR_CHA_YR: 15-digit Year-to-date Air Charges
+AIR_VAL_MO: 15-digit Air Value
+AIR_VAL_YR: 15-digit Year-to-Date Air Value
+AIR_WGT_MO: 15-digit Air Shipping Weight
+AIR_WGT_YR: 15-digit Year-to-Date Air Shipping Weight
+CAL_DUT_MO: 15-digit Imports for Consumption, Calculated Duty
+CAL_DUT_YR: 15-digit Year-to-Date Imports for Consumption, Calculated Duty
+CC_MO: 15-digit Card Count
+CC_YR: 15-digit Year-to-Date Card Count
+CNT_CHA_MO: 15-digit Containerized Vessel Charges
+CNT_CHA_YR: 15-digit Year-to-Date Containerized Vessel Charges
+CNT_VAL_MO: 15-digit Containerized Vessel Value
+CNT_VAL_YR: 15-digit Year-to-Date Containerized Vessel Value
+CNT_WGT_MO: 15-digit Containerized Vessel Shipping Weight
+CNT_WGT_YR: 15-digit Year-to-Date Containerized Vessel Shipping Weight
+COMM_LVL: 4-character aggregation levels for commodity code.  HS2=2-digit HS totals.  HS4=4-digit HS totals. HS6=6-digit HS totals.  HS10=10-digit HS totals.
+CON_CHA_MO: 15-digit Imports for Consumption, Charges
+CON_CHA_YR: 15-digit Year-to-Date Imports for Consumption, Charges
+CON_CIF_MO: 15-digit Imports for Consumption, CIF Value
+CON_CIF_YR: 15-digit Year-to-Date Imports for Consumption, CIF Value
+CON_QY1_MO: 15-digit Imports for Consumption, Quantity 1
+CON_QY1_MO_FLAG: 1-character True Zero Flag for  Imports for Consumption Quantity 1
+CON_QY1_YR: 15-digit Year-to-Date Imports for Consumption, Quantity 1
+CON_QY1_YR_FLAG: 1-character True Zero Flag for Year-to-Date Imports for Consumption Quantity 1
+CON_QY2_MO: 15-digit Imports for Consumption, Quantity 2
+CON_QY2_MO_FLAG: 1-character Flag Imports for Consumption, Quantity 2
+CON_QY2_YR: 15-digit Year-to-Date Imports for Consumption, Quantity 2
+CON_QY2_YR_FLAG: 1-character True Zero Flag for Year-to-Date Imports for Consumption, Quantity 2
+CON_VAL_MO: 15-digit Imports for Consumption, Total Value
+CON_VAL_YR: 15-digit Year-to-Date Imports for Consumption, Total Value
+CTY_CODE: 4-character Country Code
+CTY_NAME: 50-character Country Name
+CTY_SUBCODE: 2-character Country Subcode Code
+DISTRICT: 2-character District Code
+DIST_NAME: 50-character District name
+DUT_VAL_MO: 15-digit Imports for Consumption, Dutiable Value
+DUT_VAL_YR: 15-digit Year-to-Date Imports for Consumption, Dutiable Value
+GEN_CHA_MO: 15-digit General Imports, Charges
+GEN_CHA_YR: 15-digit Year-to-Date General Imports, Charges
+GEN_CIF_MO: 15-digit General Imports, CIF Value
+GEN_CIF_YR: 15-digit Year-to-Date General Imports, CIF Value
+GEN_QY1_MO: 15-digit General Imports, Quantity 1
+GEN_QY1_MO_FLAG: 1-character True Zero Flag for General Imports, Quantity 2
+GEN_QY1_YR: 15-digit  Year-to-Date General Imports, Quantity 1
+GEN_QY1_YR_FLAG: 1-character True Zero Flag for Year-to-Date General Imports, Quantity 2
+GEN_QY2_MO: 15-digit General Imports, Quantity 2
+GEN_QY2_MO_FLAG: 1-character True Zero Flag for General Imports, Quantity 3
+GEN_QY2_YR: 15-digit Year-to-Date General Imports, Quantity 2
+GEN_QY2_YR_FLAG: 1-character True Zero Flag for Year-to-Date General Imports, Quantity 3
+GEN_VAL_MO: 15-digit General Imports, Total Value
+GEN_VAL_YR: 15-digit Year-to-Date General Imports, Total Value
+I_COMMODITY: 2-, 4-, 6-, or 10-character Import Harmonized Code
+I_COMMODITY_LDESC: 150-character Import Harmonized Code Description
+I_COMMODITY_SDESC: 50-character Import Harmonized Code Description
+LAST_UPDATE: 10-character Date of Last Update
+MONTH: 2-character Month
+RP: 2-character Rate Provision Code
+SUMMARY_LVL: Detail ('DET') or Country Grouping ('CGP') indicator
+SUMMARY_LVL2: Variables being summarized.  See the appendix of the Guide to International Trade Datasets for a complete list of codes.
+UNIT_QY1: 3-character Import Unit of Quantity 1
+UNIT_QY2: 3-character Import Unit of Quantity 2
+VES_CHA_MO: 15-digit Vessel Charges
+VES_CHA_YR: 15-digit Year-to-Date Vessel Charges
+VES_VAL_MO: 15-digit Vessel Value
+VES_VAL_YR: 15-digit Year-to-Date Vessel Value
+VES_WGT_MO: 15-digit Vessel Shipping Weight
+VES_WGT_YR: 15-digit Year-to-Date Vessel Shipping Weight
+YEAR: 4-character Year
+time: ISO-8601 Date/Time value
