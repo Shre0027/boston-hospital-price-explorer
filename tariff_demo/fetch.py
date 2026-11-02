@@ -1,109 +1,74 @@
-"""Demo: pull monthly US import value and duties (Census international trade API) for a few countries,
-and smartphone imports (HS 851713) by country. Writes tariff_demo/*.csv."""
+"""Demo data: US monthly imports and duties from the Census international trade API (imports/hs endpoint).
+
+Writes:
+  tariff_demo/country_month.csv  every country and country group, monthly from Jan 2024: general imports,
+                                 imports for consumption, dutiable value and calculated duty
+  tariff_demo/smartphones.csv    smartphone imports (HS 851713) by country, monthly
+Notes learned from the API: requesting CTY_NAME together with COMM_LVL returns no content (HTTP 204),
+so commodity queries leave names out; country totals come from a query without COMM_LVL.
+The API key is read from the CENSUS_API_KEY Actions secret and never printed.
+"""
 import csv, json, os, time, urllib.request, urllib.parse, urllib.error
 from pathlib import Path
+
 OUT = Path(__file__).parent
 BASE = "https://api.census.gov/data/timeseries/intltrade/imports/hs"
-COUNTRIES = {"5700": "China", "5520": "Vietnam", "5330": "India", "2010": "Mexico", "1220": "Canada", "4280": "Germany", "5490": "Thailand", "5800": "Taiwan"}
+KEY = os.environ.get("CENSUS_API_KEY", "").strip()
 
-KEY = os.environ.get("CENSUS_API_KEY", "").strip()   # free key, stored as a GitHub Actions secret; never printed
 
 def get(params):
     if not KEY:
         raise SystemExit("::error::CENSUS_API_KEY secret is not set")
-    url = BASE + "?" + urllib.parse.urlencode({**params, "key": KEY}, safe=",+:")
+    q = urllib.parse.urlencode(params, safe=",+:")
+    url = f"{BASE}?{q}&key={KEY}"
+    shown = f"{BASE}?{q}"
     for i in range(4):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "tariff-demo"}), timeout=120) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "tariff-demo"}), timeout=180) as r:
                 body = r.read().decode()
-            if not body.strip():
+                status = r.status
+            if status == 204 or not body.strip():
+                print(f"::warning::No content for {shown}")
                 return []
-            try:
+            if body.lstrip().startswith("["):
                 return json.loads(body)
-            except ValueError:
-                print(f"::warning::Not JSON ({len(body)} chars): {body[:400]!r}")
-                time.sleep(3 * (i + 1))
+            print(f"::warning::Not JSON for {shown}: {body[:150]!r}")
         except urllib.error.HTTPError as e:
-            print(f"::warning::HTTP {e.code}: {e.read().decode()[:400]!r} for {url.split('&key=')[0][:160]}"); time.sleep(3 * (i + 1))
+            print(f"::warning::HTTP {e.code} for {shown}: {e.read().decode()[:150]!r}")
         except Exception as e:
-            print(f"::warning::{e} for {url.split('&key=')[0][:160]}"); time.sleep(5 * (i + 1))
-    raise SystemExit(f"::error::failed {url.split('&key=')[0]}")
+            print(f"::warning::{e} for {shown}")
+        time.sleep(5 * (i + 1))
+    raise SystemExit(f"::error::Failed: {shown}")
+
+
+def rows_of(data):
+    if not data:
+        return []
+    hdr = data[0]
+    return [dict(zip(hdr, r)) for r in data[1:]]
+
 
 def main():
-    # Key shape check (never prints the key): a Census key is 40 hex characters
-    import re as _re
-    odd = sorted({"space" if c.isspace() else "quote" if c in "\"'" else "other" for c in KEY if not c.isalnum()})
-    import hashlib as _h
-    print(f"::notice::Key fingerprint (sha256, first 10): {_h.sha256(KEY.encode()).hexdigest()[:10]}")
-    print(f"::notice::Key check: length {len(KEY)}, only letters/digits: {KEY.isalnum()}, looks like 40-char hex: {bool(_re.fullmatch(r'[0-9a-fA-F]{40}', KEY))}, unexpected characters: {odd or 'none'}")
-    # Save the official variable list first, so field names can be checked
-    with urllib.request.urlopen(BASE + "/variables.json", timeout=60) as r:
-        v = json.loads(r.read().decode())["variables"]
-    (OUT / "variables.txt").write_text("\n".join(f"{k}: {v[k].get('label','')}" for k in sorted(v)))
-    print("::notice::Variables: " + ", ".join(sorted(k for k in v if k.endswith("_MO") or k.startswith(("CTY", "COMM", "I_COMM", "time"))))[:900])
-    # Diagnostics: which simple requests succeed, with and without the key?
-    K = "&key=" + KEY
-    tests = {
-        "A_total_by_country_2025-06": BASE + "?get=CTY_CODE,CTY_NAME,GEN_VAL_MO&time=2025-06" + K,
-        "B_india_no_comm": BASE + "?get=CTY_CODE,CTY_NAME,GEN_VAL_MO,CAL_DUT_MO&time=2025-06&CTY_CODE=5330" + K,
-        "C_india_hs2_with_commodity": BASE + "?get=CTY_CODE,I_COMMODITY,GEN_VAL_MO,CAL_DUT_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2" + K,
-        "D_all_hs2_2024-01": BASE + "?get=I_COMMODITY,GEN_VAL_MO&time=2024-01&COMM_LVL=HS2" + K,
-        "E_india_from_2024": BASE + "?get=CTY_CODE,GEN_VAL_MO,CAL_DUT_MO&time=from+2024-01&CTY_CODE=5330" + K,
-        "F_latest_month_probe_2026-08": BASE + "?get=CTY_CODE,GEN_VAL_MO&time=2026-08&CTY_CODE=5330" + K,
-        "G_latest_month_probe_2026-09": BASE + "?get=CTY_CODE,GEN_VAL_MO&time=2026-09&CTY_CODE=5330" + K,
-    }
-    for label, u in tests.items():
-        try:
-            with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "tariff-demo"}), timeout=60) as r:
-                b = r.read().decode()
-            t = b[b.find("<title>") + 7:b.find("</title>")] if "<title>" in b else ("JSON rows: " + str(len(json.loads(b))) + " first: " + json.dumps(json.loads(b)[:3])[:300] if b.strip().startswith("[") else repr(b[:120]))
-            print(f"::notice::Test {label}: HTTP {r.status} -> {t}")
-        except urllib.error.HTTPError as e:
-            print(f"::notice::Test {label}: HTTP {e.code} -> {e.read().decode()[:120]!r}")
-        except Exception as e:
-            print(f"::notice::Test {label}: error {e}")
-    if os.environ.get("DIAG_ONLY", "1") == "1":
-        return
-    rows = []
-    for code, name in COUNTRIES.items():
-        data = get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CON_VAL_MO,CAL_DUT_MO,DUT_VAL_MO", "time": "from 2024-01", "COMM_LVL": "HS2", "CTY_CODE": code})
-        hdr, body = data[0], data[1:]
-        agg = {}
-        for r in body:
-            d = dict(zip(hdr, r)); t = d["time"]
-            a = agg.setdefault(t, [0.0, 0.0, 0.0, 0.0])
-            for k, f in enumerate(["GEN_VAL_MO", "CON_VAL_MO", "CAL_DUT_MO", "DUT_VAL_MO"]):
-                a[k] += float(d.get(f) or 0)
-        for t, a in sorted(agg.items()):
-            rows.append({"month": t, "country": name, "general_imports": a[0], "consumption_imports": a[1], "calculated_duty": a[2], "dutiable_value": a[3]})
-        print(f"::notice::{name}: {len(agg)} months, latest {max(agg)}")
+    rows = rows_of(get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CON_VAL_MO,DUT_VAL_MO,CAL_DUT_MO", "time": "from 2024-01"}))
+    if not rows:
+        raise SystemExit("::error::No country data")
     with open(OUT / "country_month.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
-    # all countries combined (world): no CTY_CODE filter, HS2 level, summed
-    data = get({"get": "CTY_CODE,GEN_VAL_MO,CON_VAL_MO,CAL_DUT_MO", "time": "from 2024-01", "COMM_LVL": "HS2"})
-    hdr, body = data[0], data[1:]
-    agg = {}
-    for r in body:
-        d = dict(zip(hdr, r))
-        if d["CTY_CODE"] in ("-", "", "0000") or not d["CTY_CODE"].isdigit() or len(d["CTY_CODE"]) != 4 or d["CTY_CODE"].startswith(("0", "00")):
-            continue  # skip totals and regional groupings (codes starting 0)
-        a = agg.setdefault(d["time"], [0.0, 0.0, 0.0])
-        for k, fld in enumerate(["GEN_VAL_MO", "CON_VAL_MO", "CAL_DUT_MO"]):
-            a[k] += float(d.get(fld) or 0)
-    with open(OUT / "world_month.csv", "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["month", "general_imports", "consumption_imports", "calculated_duty"])
-        for t, a in sorted(agg.items()): w.writerow([t, *a])
-    print(f"::notice::World: {len(agg)} months")
-    # smartphones HS 851713 by country
-    data = get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CAL_DUT_MO", "time": "from 2024-01", "COMM_LVL": "HS6", "I_COMMODITY": "851713"})
-    hdr, body = data[0], data[1:]
+        w = csv.writer(f)
+        w.writerow(["month", "cty_code", "country", "general_imports", "consumption_imports", "dutiable_value", "calculated_duty"])
+        for d in sorted(rows, key=lambda d: (d["time"], d["CTY_CODE"])):
+            w.writerow([d["time"], d["CTY_CODE"], d["CTY_NAME"], d["GEN_VAL_MO"], d["CON_VAL_MO"], d["DUT_VAL_MO"], d["CAL_DUT_MO"]])
+    months = sorted({d["time"] for d in rows})
+    print(f"::notice::Country data: {len(rows)} rows, {len(months)} months, {months[0]} to {months[-1]}")
+    names = {d["CTY_CODE"]: d["CTY_NAME"] for d in rows}
+
+    ph = rows_of(get({"get": "CTY_CODE,GEN_VAL_MO,CAL_DUT_MO", "time": "from 2024-01", "COMM_LVL": "HS6", "I_COMMODITY": "851713"}))
     with open(OUT / "smartphones.csv", "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["month", "cty_code", "country", "general_imports", "calculated_duty"])
-        for r in body:
-            d = dict(zip(hdr, r))
-            if d["CTY_CODE"].isdigit() and len(d["CTY_CODE"]) == 4 and not d["CTY_CODE"].startswith("0"):
-                w.writerow([d["time"], d["CTY_CODE"], d["CTY_NAME"], d["GEN_VAL_MO"], d["CAL_DUT_MO"]])
-    print(f"::notice::Smartphones: {len(body)} rows")
+        w = csv.writer(f)
+        w.writerow(["month", "cty_code", "country", "general_imports", "calculated_duty"])
+        for d in sorted(ph, key=lambda d: (d["time"], d["CTY_CODE"])):
+            w.writerow([d["time"], d["CTY_CODE"], names.get(d["CTY_CODE"], ""), d["GEN_VAL_MO"], d["CAL_DUT_MO"]])
+    print(f"::notice::Smartphones: {len(ph)} rows")
+
 
 if __name__ == "__main__":
     main()
