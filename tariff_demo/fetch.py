@@ -41,6 +41,22 @@ def main():
         v = json.loads(r.read().decode())["variables"]
     (OUT / "variables.txt").write_text("\n".join(f"{k}: {v[k].get('label','')}" for k in sorted(v)))
     print("::notice::Variables: " + ", ".join(sorted(k for k in v if k.endswith("_MO") or k.startswith(("CTY", "COMM", "I_COMM", "time"))))[:900])
+    # Diagnostics: which simple requests succeed, with and without the key?
+    tests = {
+        "acs_with_key": "https://api.census.gov/data/2022/acs/acs5?get=NAME&for=state:25&key=" + KEY,
+        "trade_small_no_key": BASE + "?get=CTY_NAME,GEN_VAL_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2",
+        "trade_small_with_key": BASE + "?get=CTY_NAME,GEN_VAL_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2&key=" + KEY,
+    }
+    for label, u in tests.items():
+        try:
+            with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "tariff-demo"}), timeout=60) as r:
+                b = r.read().decode()
+            t = b[b.find("<title>") + 7:b.find("</title>")] if "<title>" in b else ("JSON rows: " + str(len(json.loads(b))) if b.strip().startswith("[") else b[:80])
+            print(f"::notice::Test {label}: HTTP {r.status} -> {t}")
+        except urllib.error.HTTPError as e:
+            print(f"::notice::Test {label}: HTTP {e.code} -> {e.read().decode()[:120]!r}")
+        except Exception as e:
+            print(f"::notice::Test {label}: error {e}")
     rows = []
     for code, name in COUNTRIES.items():
         data = get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CON_VAL_MO,CAL_DUT_MO,DUT_VAL_MO", "time": "from 2024-01", "COMM_LVL": "HS2", "CTY_CODE": code})
