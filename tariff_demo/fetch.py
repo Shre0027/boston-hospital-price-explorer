@@ -33,6 +33,8 @@ def main():
     # Key shape check (never prints the key): a Census key is 40 hex characters
     import re as _re
     odd = sorted({"space" if c.isspace() else "quote" if c in "\"'" else "other" for c in KEY if not c.isalnum()})
+    import hashlib as _h
+    print(f"::notice::Key fingerprint (sha256, first 10): {_h.sha256(KEY.encode()).hexdigest()[:10]}")
     print(f"::notice::Key check: length {len(KEY)}, only letters/digits: {KEY.isalnum()}, looks like 40-char hex: {bool(_re.fullmatch(r'[0-9a-fA-F]{40}', KEY))}, unexpected characters: {odd or 'none'}")
     # Save the official variable list first, so field names can be checked
     with urllib.request.urlopen(BASE + "/variables.json", timeout=60) as r:
