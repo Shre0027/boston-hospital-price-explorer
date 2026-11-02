@@ -42,21 +42,28 @@ def main():
     (OUT / "variables.txt").write_text("\n".join(f"{k}: {v[k].get('label','')}" for k in sorted(v)))
     print("::notice::Variables: " + ", ".join(sorted(k for k in v if k.endswith("_MO") or k.startswith(("CTY", "COMM", "I_COMM", "time"))))[:900])
     # Diagnostics: which simple requests succeed, with and without the key?
+    K = "&key=" + KEY
     tests = {
-        "acs_with_key": "https://api.census.gov/data/2022/acs/acs5?get=NAME&for=state:25&key=" + KEY,
-        "trade_small_no_key": BASE + "?get=CTY_NAME,GEN_VAL_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2",
-        "trade_small_with_key": BASE + "?get=CTY_NAME,GEN_VAL_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2&key=" + KEY,
+        "A_total_by_country_2025-06": BASE + "?get=CTY_CODE,CTY_NAME,GEN_VAL_MO&time=2025-06" + K,
+        "B_india_no_comm": BASE + "?get=CTY_CODE,CTY_NAME,GEN_VAL_MO,CAL_DUT_MO&time=2025-06&CTY_CODE=5330" + K,
+        "C_india_hs2_with_commodity": BASE + "?get=CTY_CODE,I_COMMODITY,GEN_VAL_MO,CAL_DUT_MO&time=2025-06&CTY_CODE=5330&COMM_LVL=HS2" + K,
+        "D_all_hs2_2024-01": BASE + "?get=I_COMMODITY,GEN_VAL_MO&time=2024-01&COMM_LVL=HS2" + K,
+        "E_india_from_2024": BASE + "?get=CTY_CODE,GEN_VAL_MO,CAL_DUT_MO&time=from+2024-01&CTY_CODE=5330" + K,
+        "F_latest_month_probe_2026-08": BASE + "?get=CTY_CODE,GEN_VAL_MO&time=2026-08&CTY_CODE=5330" + K,
+        "G_latest_month_probe_2026-09": BASE + "?get=CTY_CODE,GEN_VAL_MO&time=2026-09&CTY_CODE=5330" + K,
     }
     for label, u in tests.items():
         try:
             with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "tariff-demo"}), timeout=60) as r:
                 b = r.read().decode()
-            t = b[b.find("<title>") + 7:b.find("</title>")] if "<title>" in b else ("JSON rows: " + str(len(json.loads(b))) if b.strip().startswith("[") else b[:80])
+            t = b[b.find("<title>") + 7:b.find("</title>")] if "<title>" in b else ("JSON rows: " + str(len(json.loads(b))) + " first: " + json.dumps(json.loads(b)[:3])[:300] if b.strip().startswith("[") else repr(b[:120]))
             print(f"::notice::Test {label}: HTTP {r.status} -> {t}")
         except urllib.error.HTTPError as e:
             print(f"::notice::Test {label}: HTTP {e.code} -> {e.read().decode()[:120]!r}")
         except Exception as e:
             print(f"::notice::Test {label}: error {e}")
+    if os.environ.get("DIAG_ONLY", "1") == "1":
+        return
     rows = []
     for code, name in COUNTRIES.items():
         data = get({"get": "CTY_CODE,CTY_NAME,GEN_VAL_MO,CON_VAL_MO,CAL_DUT_MO,DUT_VAL_MO", "time": "from 2024-01", "COMM_LVL": "HS2", "CTY_CODE": code})
