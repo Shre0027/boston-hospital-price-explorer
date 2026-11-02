@@ -30,6 +30,10 @@ def get(params):
     raise SystemExit(f"::error::failed {url.split('&key=')[0]}")
 
 def main():
+    # Key shape check (never prints the key): a Census key is 40 hex characters
+    import re as _re
+    odd = sorted({"space" if c.isspace() else "quote" if c in "\"'" else "other" for c in KEY if not c.isalnum()})
+    print(f"::notice::Key check: length {len(KEY)}, only letters/digits: {KEY.isalnum()}, looks like 40-char hex: {bool(_re.fullmatch(r'[0-9a-fA-F]{40}', KEY))}, unexpected characters: {odd or 'none'}")
     # Save the official variable list first, so field names can be checked
     with urllib.request.urlopen(BASE + "/variables.json", timeout=60) as r:
         v = json.loads(r.read().decode())["variables"]
